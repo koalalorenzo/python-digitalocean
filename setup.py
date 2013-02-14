@@ -7,5 +7,6 @@ setup(name='digitalocean',
       description='digitalocean API to manage droplets',
       author='Lorenzo Setale ( http://who.is.koalalorenzo.com/? )',
       author_email='koalalorenzo@gmail.com',
+      url='https://github.com/koalalorenzo/python-digitalocean',
       packages=['digitalocean'],
      )

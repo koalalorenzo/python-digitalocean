@@ -68,7 +68,7 @@ class Manager(object):
             sizes.append(size)
         return sizes
 
-   def get_all_images(self):
+    def get_all_images(self):
         """
             This function returns a list of Image object.
         """

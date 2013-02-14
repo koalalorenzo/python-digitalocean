@@ -2,9 +2,9 @@
 
 from distutils.core import setup
 
-setup(name='digitalocean',
+setup(name='python-digitalocean',
       version='0.1',
-      description='digitalocean API to manage droplets',
+      description='digitalocean.com API to manage Droplets and Images',
       author='Lorenzo Setale ( http://who.is.koalalorenzo.com/? )',
       author_email='koalalorenzo@gmail.com',
       url='https://github.com/koalalorenzo/python-digitalocean',

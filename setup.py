@@ -1,9 +1,13 @@
 #!/usr/bin/env python
 
 from distutils.core import setup
+import os
 
-with open('README.md') as file:
-    long_description = file.read()
+long_description = """python-digitalocean is a python package that provide easy acces to digitalocean.com APIs to manage droplets, images and more."""
+
+if os.path.isfile("README.md"):
+    with open('README.md') as file:
+        long_description = file.read()
 
 setup(name='python-digitalocean',
       version='0.2.1',

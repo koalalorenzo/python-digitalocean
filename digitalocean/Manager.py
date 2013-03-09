@@ -8,15 +8,15 @@ class Manager(object):
     def __init__(self, client_id="", api_key=""):
         self.client_id = client_id
         self.api_key = api_key
-        
+
     def __call_api(self, path, params=dict()):
         payload = {'client_id': self.client_id, 'api_key': self.api_key}
         payload.update(params)
-        r = requests.get("https://api.digitalocean.com/%s" % path, params=payload)    
+        r = requests.get("https://api.digitalocean.com/%s" % path, params=payload)
         data = r.json()
         if data['status'] != "OK":
             return None # Raise?
-        return data 
+        return data
 
     def get_all_regions(self):
         """

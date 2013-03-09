@@ -12,15 +12,15 @@ class Droplet(object):
         self.image_id = None
         self.size_id = None
         self.status = None
-    
+
     def __call_api(self, path, params=dict()):
         payload = {'client_id': self.client_id, 'api_key': self.api_key}
         payload.update(params)
-        r = requests.get("https://api.digitalocean.com/droplets/%s%s" % ( self.id, path ), params=payload)    
+        r = requests.get("https://api.digitalocean.com/droplets/%s%s" % ( self.id, path ), params=payload)
         data = r.json()
         if data['status'] != "OK":
             return None # Raise?
-        return data        
+        return data
 
     def load(self):
         droplet = self.__call_api("")['droplet']
@@ -49,36 +49,36 @@ class Droplet(object):
             restart the droplet
         """
         self.__call_api("/reboot/")
-        
+
     def power_cycle(self):
         """
             restart the droplet
         """
         self.__call_api("/power_cycle/")
-        
+
     def power_off(self):
         """
             restart the droplet
         """
         self.__call_api("/power_off/")
-        
+
     def reset_root_password(self):
         """
             reset the root password
         """
         self.__call_api("/reset_root_password/")
-        
+
     def resize(self, new_size):
         """
-            resize the droplet to a new size 
+            resize the droplet to a new size
         """
         self.__call_api("/resize/", {"size_id": new_size})
-        
-    def take_snapshot(self):
+
+    def take_snapshot(self, snapshot_name):
         """
             Take a snapshot!
         """
-        self.__call_api("/snapshot/", {"size_id": new_size})
+        self.__call_api("/snapshot/", {"name": snapshot_name})
 
     def restore(self, image_id):
         """
@@ -92,7 +92,7 @@ class Droplet(object):
         """
         if self.image_id and not image_id:
             image_id = self.image_id
-        self.__call_api("/restore/", {"image_id": image_id})
+        self.__call_api("/rebuild/", {"image_id": image_id})
 
     def enable_backups(self):
         """

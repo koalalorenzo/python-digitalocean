@@ -74,11 +74,11 @@ class Droplet(object):
         """
         self.__call_api("/resize/", {"size_id": new_size})
 
-    def take_snapshot(self):
+    def take_snapshot(self, snapshot_name):
         """
             Take a snapshot!
         """
-        self.__call_api("/snapshot/", {"size_id": new_size})
+        self.__call_api("/snapshot/", {"name": snapshot_name})
 
     def restore(self, image_id):
         """

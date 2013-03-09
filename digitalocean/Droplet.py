@@ -92,7 +92,7 @@ class Droplet(object):
         """
         if self.image_id and not image_id:
             image_id = self.image_id
-        self.__call_api("/restore/", {"image_id": image_id})
+        self.__call_api("/rebuild/", {"image_id": image_id})
 
     def enable_backups(self):
         """

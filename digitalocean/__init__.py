@@ -12,3 +12,4 @@ from digitalocean.Droplet import Droplet
 from digitalocean.Region import Region
 from digitalocean.Size import Size
 from digitalocean.Image import Image
+from digitalocean.Event import Event

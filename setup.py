@@ -1,7 +1,11 @@
 #!/usr/bin/env python
-
-from distutils.core import setup
 import os
+try:
+    from setuptools import setup
+except ImportError:
+    from ez_setup import use_setuptools
+    use_setuptools()
+    from setuptools import setup
 
 long_description = """python-digitalocean is a python package that provide easy acces to digitalocean.com APIs to manage droplets, images and more."""
 

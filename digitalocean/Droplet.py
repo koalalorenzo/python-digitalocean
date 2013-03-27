@@ -13,6 +13,7 @@ class Droplet(object):
         self.image_id = None
         self.size_id = None
         self.status = None
+        self.ip_address = None
         self.events = []
 
     def __call_api(self, path, params=dict()):
@@ -27,7 +28,7 @@ class Droplet(object):
         if not event_id and u'event_id' in data.get(u'droplet',{}):
             event_id = data.get(u'droplet')[u'event_id'] 
         
-        if event_id: self.events.append(event_id)
+        if event_id: self.events.append(event_id)        
         return data
 
     def load(self):
@@ -38,6 +39,7 @@ class Droplet(object):
         self.image_id = droplet['image_id']
         self.status = droplet['status']
         self.name = droplet['name']
+        self.ip_address = droplet.get('ip_address')
         self.id = droplet['id']
 
     def power_on(self):

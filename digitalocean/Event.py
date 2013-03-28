@@ -1,10 +1,10 @@
 import requests
 
 class Event(object):
-    def __init__(self, event_id="", client_id="", api_key=""):
+    def __init__(self, event_id=""):
         self.id = event_id
-        self.client_id = client_id
-        self.api_key = api_key
+        self.client_id = None
+        self.api_key = None
         self.event_type_id = None
         self.percentage = None
         self.droplet_id = None

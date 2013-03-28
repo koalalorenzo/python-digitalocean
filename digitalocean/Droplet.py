@@ -143,6 +143,9 @@ class Droplet(object):
         """
         events = []
         for event_id in self.events:
-            event = Event(client_id=self.client_id,api_key=self.api_key,event_id=event_id)
+            event = Event(event_id)
+            event.client_id = self.client_id
+            event.api_key = self.api_key
+            event.load()
             events.append(event)
         return events

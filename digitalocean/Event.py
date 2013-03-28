@@ -9,7 +9,6 @@ class Event(object):
         self.percentage = None
         self.droplet_id = None
         self.action_status = None
-        self.load()
         
     def __call_api(self, path, params=dict()):
         payload = {'client_id': self.client_id, 'api_key': self.api_key}

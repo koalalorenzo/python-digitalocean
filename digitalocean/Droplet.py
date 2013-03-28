@@ -1,4 +1,5 @@
 import requests
+from Event import Event
 
 class Droplet(object):
     def __init__(self, droplet_id="", client_id="", api_key=""):
@@ -12,6 +13,8 @@ class Droplet(object):
         self.image_id = None
         self.size_id = None
         self.status = None
+        self.ip_address = None
+        self.events = []
 
     def __call_api(self, path, params=dict()):
         payload = {'client_id': self.client_id, 'api_key': self.api_key}
@@ -20,6 +23,12 @@ class Droplet(object):
         data = r.json()
         if data['status'] != "OK":
             return None # Raise?
+        #add the event to the object's event list.
+        event_id = data.get(u'event_id',None)
+        if not event_id and u'event_id' in data.get(u'droplet',{}):
+            event_id = data.get(u'droplet')[u'event_id'] 
+        
+        if event_id: self.events.append(event_id)        
         return data
 
     def load(self):
@@ -30,6 +39,7 @@ class Droplet(object):
         self.image_id = droplet['image_id']
         self.status = droplet['status']
         self.name = droplet['name']
+        self.ip_address = droplet.get('ip_address')
         self.id = droplet['id']
 
     def power_on(self):
@@ -122,4 +132,17 @@ class Droplet(object):
                 "image_id": self.image_id,
                 "region_id": self.region_id
             }
-        self.__call_api("/new", data)
+        data = self.__call_api("new", data)
+        if data:
+            self.id = data['droplet']['id']
+
+    def get_events(self):
+        """
+            Returns a list of Event objects
+            This events can be used to check the droplet's status
+        """
+        events = []
+        for event_id in self.events:
+            event = Event(client_id=self.client_id,api_key=self.api_key,event_id=event_id)
+            events.append(event)
+        return events

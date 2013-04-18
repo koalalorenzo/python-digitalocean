@@ -9,6 +9,7 @@ class Event(object):
         self.percentage = None
         self.droplet_id = None
         self.action_status = None
+        self.call_response = None
         
     def __call_api(self, path, params=dict()):
         payload = {'client_id': self.client_id, 'api_key': self.api_key}
@@ -16,7 +17,8 @@ class Event(object):
         r = requests.get("https://api.digitalocean.com/events/%s%s" % ( self.id, path ), params=payload)
         data = r.json()
         if data['status'] != "OK":
-            return None # Raise?
+            self.call_response = data
+            raise Exception(data[u'error_message'])
         return data
 
     def load(self):

@@ -8,6 +8,7 @@ class Manager(object):
     def __init__(self, client_id="", api_key=""):
         self.client_id = client_id
         self.api_key = api_key
+        self.call_response = None
 
     def __call_api(self, path, params=dict()):
         payload = {'client_id': self.client_id, 'api_key': self.api_key}
@@ -15,7 +16,8 @@ class Manager(object):
         r = requests.get("https://api.digitalocean.com/%s" % path, params=payload)
         data = r.json()
         if data['status'] != "OK":
-            return None # Raise?
+            self.call_response = data
+            raise Exception(data[u'error_message'])
         return data
 
     def get_all_regions(self):

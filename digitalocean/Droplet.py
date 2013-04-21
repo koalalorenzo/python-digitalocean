@@ -2,11 +2,10 @@ import requests
 from Event import Event
 
 class Droplet(object):
-    def __init__(self, droplet_id="", client_id="", api_key=""):
-        self.id = droplet_id
-        self.client_id = client_id
-        self.api_key = api_key
-
+    def __init__(self, *args, **kwargs):
+        self.id = ""
+        self.client_id = ""
+        self.api_key = ""
         self.name = None
         self.backup_active = None
         self.region_id = None
@@ -14,7 +13,12 @@ class Droplet(object):
         self.size_id = None
         self.status = None
         self.ip_address = None
+        self.call_reponse = None
         self.events = []
+
+        #Setting the attribute values
+        for attr in kwargs.keys():
+            setattr(self,attr,kwargs[attr])
 
     def __call_api(self, path, params=dict()):
         payload = {'client_id': self.client_id, 'api_key': self.api_key}
@@ -22,7 +26,8 @@ class Droplet(object):
         r = requests.get("https://api.digitalocean.com/droplets/%s%s" % ( self.id, path ), params=payload)
         data = r.json()
         if data['status'] != "OK":
-            return None # Raise?
+            self.call_response = data
+            raise Exception(data[u'error_message'])
         #add the event to the object's event list.
         event_id = data.get(u'event_id',None)
         if not event_id and u'event_id' in data.get(u'droplet',{}):

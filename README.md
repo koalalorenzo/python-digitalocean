@@ -28,7 +28,8 @@ python-digitalocean support all the features provided via digitalocean.com APIs,
 * Restore root password of a Droplet
 
 
-## Example: Shutdown all droplets
+## Examples
+### Shutdown all droplets
 
 This example shows how to shutdown all the droplets active:
 
@@ -38,7 +39,7 @@ This example shows how to shutdown all the droplets active:
     for droplet in my_droplets:
         droplet.shutdown()
 
-## Example: Creating a Droplet and checking it's status
+### Creating a Droplet and checking it's status
 
 This example shows how to create a droplet and how to check it's status
 
@@ -52,9 +53,9 @@ This example shows how to create a droplet and how to check it's status
 							       backup_active=False)
 	droplet.create()
 
-	#Checking the status of the droplet
+### Checking the status of the droplet
 	events = droplet.get_events()[0]
-	#Refreshing the event status
+### Refreshing the event status
     event.load()
     #Once it shows 100, droplet is up and running
     print event.percentage

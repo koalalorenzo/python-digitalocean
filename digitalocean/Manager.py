@@ -15,8 +15,8 @@ class Manager(object):
         payload.update(params)
         r = requests.get("https://api.digitalocean.com/%s" % path, params=payload)
         data = r.json()
-        if data['status'] != "OK":
-            self.call_response = data
+        self.call_response = data
+        if data['status'] != "OK":            
             raise Exception(data[u'error_message'])
         return data
 

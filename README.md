@@ -73,9 +73,9 @@ This example shows how to create a droplet and how to check it's status
 
 ## Liks
 
-  * Project Site: [http://projects.setale.me/Steroids](http://projects.setale.me/python-digitalocean)
-  * GitHub: [https://github.com/koalalorenzo/Steroids](https://github.com/koalalorenzo/python-digitalocean)
-  * PyPi page: [https://pypi.python.org/pypi/steroids/](https://pypi.python.org/pypi/python-digitalocean/)
+  * Project Site: [http://projects.setale.me/python-digitalocean](http://projects.setale.me/python-digitalocean)
+  * GitHub: [https://github.com/koalalorenzo/python-digitalocean](https://github.com/koalalorenzo/python-digitalocean)
+  * PyPi page: [https://pypi.python.org/pypi/python-digitalocean/](https://pypi.python.org/pypi/python-digitalocean/)
   * Author Website: [http://who.is.lorenzo.setale.me/?](http://setale.me/)
   * Author Blog: [http://blog.setale.me/](http://blog.setale.me/)
 

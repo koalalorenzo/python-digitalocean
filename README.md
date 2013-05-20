@@ -2,6 +2,16 @@
 
 python-digitalocean is a python package that provide easy acces to digitalocean.com APIs to manage droplets, images and more.
 
+<div align="center">
+
+<iframe src="http://ghbtns.com/github-btn.html?user=koalalorenzo&repo=python-digitalocean&type=follow&size=large&count=true"
+  allowtransparency="true" frameborder="0" scrolling="0" width="220" height="30"></iframe>
+
+<iframe src="http://ghbtns.com/github-btn.html?user=koalalorenzo&repo=python-digitalocean&type=watch&size=large&count=true"
+  allowtransparency="true" frameborder="0" scrolling="0" width="150" height="30"></iframe>
+
+</div>
+
 ## How to install
 
 You can install python-digitalocean using **pip**
@@ -60,7 +70,21 @@ This example shows how to create a droplet and how to check it's status
     #Once it shows 100, droplet is up and running
     print event.percentage
 
+## Liks
 
+  * Project Site: [http://projects.setale.me/Steroids](http://projects.setale.me/python-digitalocean)
+  * GitHub: [https://github.com/koalalorenzo/Steroids](https://github.com/koalalorenzo/python-digitalocean)
+  * PyPi page: [https://pypi.python.org/pypi/steroids/](https://pypi.python.org/pypi/python-digitalocean/)
+  * Author Website: [http://who.is.lorenzo.setale.me/?](http://setale.me/)
+  * Author Blog: [http://blog.setale.me/](http://blog.setale.me/)
 
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
+  ga('create', 'UA-10395528-24', 'setale.me');
+  ga('send', 'pageview');
 
+</script>

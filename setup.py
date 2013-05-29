@@ -20,5 +20,6 @@ setup(name='python-digitalocean',
       author_email='koalalorenzo@gmail.com',
       url='https://github.com/koalalorenzo/python-digitalocean',
       packages=['digitalocean'],
+      install_requires=['requests'],
       long_description=long_description
      )

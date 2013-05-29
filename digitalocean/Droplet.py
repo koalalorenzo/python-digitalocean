@@ -1,5 +1,5 @@
 import requests
-from Event import Event
+from .Event import Event
 
 class Droplet(object):
     def __init__(self, *args, **kwargs):

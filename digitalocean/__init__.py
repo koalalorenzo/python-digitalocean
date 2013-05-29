@@ -7,9 +7,9 @@ __author_email__ = "koalalorenzo@gmail.com"
 __license__ = "See: http://creativecommons.org/licenses/by-nd/3.0/ "
 __copyright__ = "Copyright (c) 2012, 2013, 2014 Lorenzo Setale"
 
-from digitalocean.Manager import Manager
-from digitalocean.Droplet import Droplet
-from digitalocean.Region import Region
-from digitalocean.Size import Size
-from digitalocean.Image import Image
-from digitalocean.Event import Event
+from .Manager import Manager
+from .Droplet import Droplet
+from .Region import Region
+from .Size import Size
+from .Image import Image
+from .Event import Event

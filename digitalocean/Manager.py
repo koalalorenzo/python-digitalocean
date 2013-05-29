@@ -1,8 +1,8 @@
 import requests
-from digitalocean.Droplet import Droplet
-from digitalocean.Region import Region
-from digitalocean.Size import Size
-from digitalocean.Image import Image
+from .Droplet import Droplet
+from .Region import Region
+from .Size import Size
+from .Image import Image
 
 class Manager(object):
     def __init__(self, client_id="", api_key=""):

@@ -1,7 +1,7 @@
 #python-digitalocean
 ## 
 
-python-digitalocean is a python package that provide easy acces to digitalocean.com APIs to manage droplets, images and more.
+python-digitalocean is a python package that provide easy access to digitalocean.com APIs to manage droplets, images and more.
 
 <div align="center">
 
@@ -27,13 +27,13 @@ or via sources:
 python-digitalocean support all the features provided via digitalocean.com APIs, such as:
 
 * Get user's Droplets
-* Get user's Images ( Snapshot and Backups )
-* Get pubblic Images
-* Get Droptlet's event status
+* Get user's Images (Snapshot and Backups)
+* Get public Images
+* Get Droplet's event status
 * Create and Remove a Droplet
 * Resize a Droplet
-* shutdown, restart and boot a Droplet
-* power off, power on and "power cycle" a Droplet
+* Shutdown, restart and boot a Droplet
+* Power off, power on and "power cycle" a Droplet
 * Perform Snapshot
 * Enable/Disable automatic Backups
 * Restore root password of a Droplet
@@ -42,7 +42,7 @@ python-digitalocean support all the features provided via digitalocean.com APIs,
 ## Examples
 ### Shutdown all droplets
 
-This example shows how to shutdown all the droplets active:
+This example shows how to shutdown all the active droplets:
 
     import digitalocean
     manager = digitalocean.Manager(client_id="ABC", api_key="ABC")
@@ -50,9 +50,9 @@ This example shows how to shutdown all the droplets active:
     for droplet in my_droplets:
         droplet.shutdown()
 
-### Creating a Droplet and checking it's status
+### Creating a Droplet and checking its status
 
-This example shows how to create a droplet and how to check it's status
+This example shows how to create a droplet and how to check its status
 
 	import digitalocean
 	droplet = digitalocean.Droplet(client_id=client_id,
@@ -71,7 +71,7 @@ This example shows how to create a droplet and how to check it's status
     #Once it shows 100, droplet is up and running
     print event.percentage
 
-## Liks
+## Links
 
   * Project Site: [http://projects.setale.me/python-digitalocean](http://projects.setale.me/python-digitalocean)
   * GitHub: [https://github.com/koalalorenzo/python-digitalocean](https://github.com/koalalorenzo/python-digitalocean)

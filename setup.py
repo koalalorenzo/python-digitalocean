@@ -14,15 +14,7 @@ if os.path.isfile("README.md"):
         long_description = file.read()
 
 setup(name='python-digitalocean',
-<<<<<<< HEAD
-      version='0.2.7',
-=======
-<<<<<<< HEAD
-      version='0.2.5',
-=======
-      version='0.2.6',
->>>>>>> 528237d2006ef980eb4e49ca9c669f9f627e98b4
->>>>>>> rdgreis-master
+      version='0.2.8',
       description='digitalocean.com API to manage Droplets and Images',
       author='Lorenzo Setale ( http://who.is.lorenzo.setale.me/? )',
       author_email='koalalorenzo@gmail.com',

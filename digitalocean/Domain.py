@@ -1,0 +1,56 @@
+import requests
+
+
+class Domain(object):
+    def __init__(self, *args, **kwargs):
+        self.id = ""
+        self.client_id = ""
+        self.api_key = ""
+        self.name = None
+        self.ttl = None
+        self.live_zone_file = None
+        self.error = None
+        self.zone_file_with_error = None
+        self.records = []
+
+        #Setting the attribute values
+        for attr in kwargs.keys():
+            setattr(self,attr,kwargs[attr])
+
+    def __call_api(self, path, params=dict()):
+        payload = {'client_id': self.client_id, 'api_key': self.api_key}
+        payload.update(params)
+        r = requests.get("https://api.digitalocean.com/domains/%s%s" % ( self.id, path ), params=payload)
+        data = r.json()
+        self.call_response = data
+        if data['status'] != "OK":
+            raise Exception(data[u'error_message'])
+   
+        return data
+
+    def load(self):
+        domain = self.__call_api("")['domain']
+        self.zone_file_with_error = domain['zone_file_with_error']
+        self.error = domain['error']
+        self.live_zone_file = domain['live_zone_file']
+        self.ttl = domain['ttl']
+        self.name = domain['name']
+        self.id = domain['id']
+
+    def destroy(self):
+        """
+            Destroy the droplet
+        """
+        self.__call_api("/destroy/")
+
+    def create(self):
+        """
+            Create the droplet with object properties.
+        """
+        data = {
+                "name": self.name,
+                "ip_address": self.ip_address,
+            }
+        data = self.__call_api("new", data)
+        if data:
+            self.id = data['domain']['id']

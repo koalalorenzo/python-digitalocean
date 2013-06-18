@@ -1,5 +1,5 @@
 import requests
-
+from .Record import Record
 
 class Domain(object):
     def __init__(self, *args, **kwargs):
@@ -54,3 +54,19 @@ class Domain(object):
         data = self.__call_api("new", data)
         if data:
             self.id = data['domain']['id']
+
+    def get_records(self):
+        """
+            Returns a list of Record objects
+        """
+        records = []
+        data = self.__call_api("/records/")
+        for record_data in data['records']:
+            record = Record(domain_id=record_data.pop('domain_id'),
+                            id=record_data.pop('id'))
+            for key, value in record_data.iteritems():
+                setattr(record, key, value)
+            record.client_id = self.client_id
+            record.api_key = self.api_key
+            records.append(record)
+        return records

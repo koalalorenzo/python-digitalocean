@@ -1,11 +1,11 @@
 import requests
       
 class Record(object):
-    def __init__(self, domain_id, id=""):
+    def __init__(self, domain_id, id="", client_id="", api_key=""):
         self.domain_id = domain_id
         self.id = id
-        self.client_id = None
-        self.api_key = None
+        self.client_id = client_id
+        self.api_key = api_key
         self.record_type = None
         self.name = None
         self.data = None

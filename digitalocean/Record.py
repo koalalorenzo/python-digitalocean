@@ -38,7 +38,7 @@ class Record(object):
             }
         data = self.__call_api("new", data)
         if data:
-            self.id = data['domain_record']['id']
+            self.id = data['record']['id']
 
     def destroy(self):
         """

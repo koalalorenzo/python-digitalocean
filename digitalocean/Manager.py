@@ -3,6 +3,8 @@ from .Droplet import Droplet
 from .Region import Region
 from .Size import Size
 from .Image import Image
+from .Domain import Domain
+
 
 class Manager(object):
     def __init__(self, client_id="", api_key=""):
@@ -117,3 +119,22 @@ class Manager(object):
             image.api_key = self.api_key
             images.append(image)
         return images
+
+    def get_all_domains(self):
+        """
+            This function returns a list of Domain object.
+        """
+        data = self.__call_api("/domains/")
+        domains = list()
+        for jsoned in data['domains']:
+            domain = Domain()
+            domain.zone_file_with_error = jsoned['zone_file_with_error']
+            domain.error = jsoned['error']
+            domain.live_zone_file = jsoned['live_zone_file']
+            domain.ttl = jsoned['ttl']
+            domain.name = jsoned['name']
+            domain.id = jsoned['id']
+            domain.client_id = self.client_id
+            domain.api_key = self.api_key
+            domains.append(domain)
+        return domains

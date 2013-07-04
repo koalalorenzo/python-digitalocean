@@ -4,6 +4,7 @@ from .Region import Region
 from .Size import Size
 from .Image import Image
 from .Domain import Domain
+from .SSHKey import SSHKey
 
 
 class Manager(object):
@@ -18,7 +19,7 @@ class Manager(object):
         r = requests.get("https://api.digitalocean.com/%s" % path, params=payload)
         data = r.json()
         self.call_response = data
-        if data['status'] != "OK":            
+        if data['status'] != "OK":
             raise Exception(data[u'error_message'])
         return data
 
@@ -138,3 +139,19 @@ class Manager(object):
             domain.api_key = self.api_key
             domains.append(domain)
         return domains
+
+    def get_all_sshkeys(self):
+        """
+            This function returns a list of SSHKey object.
+        """
+        data = self.__call_api("/ssh_keys/")
+        ssh_keys = list()
+        for jsoned in data['ssh_keys']:
+            ssh_key = SSHKey()
+            ssh_key.id = jsoned['id']
+            ssh_key.name = jsoned['name']
+            ssh_key.client_id = self.client_id
+            ssh_key.api_key = self.api_key
+            ssh_keys.append(ssh_key)
+        return ssh_keys
+

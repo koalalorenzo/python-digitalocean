@@ -53,6 +53,7 @@ class Manager(object):
             droplet.status = jsoned['status']
             droplet.name = jsoned['name']
             droplet.id = jsoned['id']
+            droplet.ip_address = jsoned['ip_address']
             droplet.client_id = self.client_id
             droplet.api_key = self.api_key
             droplets.append(droplet)

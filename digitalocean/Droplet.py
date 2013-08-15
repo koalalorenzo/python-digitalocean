@@ -137,10 +137,18 @@ class Droplet(object):
                 "image_id": self.image_id,
                 "region_id": self.region_id
             }
+
         if ssh_key_ids:
-            data['ssh_key_ids'] = ','.join(ssh_key_ids)
+            if type(ssh_key_ids) in [int, long, str]:
+                data['ssh_key_ids']= str(ssh_key_ids)
+            elif type(ssh_key_ids) in [set, list, tuple, dict]:
+                data['ssh_key_ids'] = ','.join(str(x) for x in ssh_key_ids)
+            else:
+                raise Exception("ssh_key_ids should be an integer or long number, a string, a set, a list/tuple or a ditionary ")
+
         if virtio:
             data['virtio'] = 1
+
         data = self.__call_api("new", data)
         if data:
             self.id = data['droplet']['id']

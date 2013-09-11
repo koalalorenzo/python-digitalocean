@@ -20,7 +20,7 @@ class Manager(object):
         data = r.json()
         self.call_response = data
         if data['status'] != "OK":
-            raise Exception(data[u'error_message'])
+            raise Exception(data[u'message'])
         return data
 
     def get_all_regions(self):

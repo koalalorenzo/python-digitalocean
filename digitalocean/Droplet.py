@@ -27,7 +27,8 @@ class Droplet(object):
         data = r.json()
         self.call_response = data
         if data['status'] != "OK":
-            raise Exception(data[u'message'])
+            msg = [data[m] for m in ("message", "error_message", "status") if m in data][0]
+            raise Exception(msg)
         #add the event to the object's event list.
         event_id = data.get(u'event_id',None)
         if not event_id and u'event_id' in data.get(u'droplet',{}):

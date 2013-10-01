@@ -22,7 +22,8 @@ class SSHKey(object):
         data = r.json()
         self.call_response = data
         if data['status'] != "OK":
-            raise Exception(data[u'message'])
+            msg = [data[m] for m in ("message", "error_message", "status") if m in data][0]
+            raise Exception(msg)
 
         return data
 

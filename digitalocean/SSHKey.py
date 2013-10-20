@@ -18,7 +18,7 @@ class SSHKey(object):
         payload = {'client_id': self.client_id, 'api_key': self.api_key}
         payload.update(params)
         r = requests.get("https://api.digitalocean.com/ssh_keys/%s%s" % ( self.id, path ), params=payload)
-        print(r.url)
+
         data = r.json()
         self.call_response = data
         if data['status'] != "OK":

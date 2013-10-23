@@ -33,7 +33,7 @@ class Droplet(object):
         #add the event to the object's event list.
         event_id = data.get(u'event_id',None)
         if not event_id and u'event_id' in data.get(u'droplet',{}):
-            event_id = data.get(u'droplet')[u'event_id']
+            event_id = data[u'droplet'][u'event_id']
 
         if event_id: self.events.append(event_id)
         return data
@@ -46,8 +46,8 @@ class Droplet(object):
         self.image_id = droplet['image_id']
         self.status = droplet['status']
         self.name = droplet['name']
-        self.ip_address = droplet.get('ip_address')
-        self.private_ip_address = droplet.get('private_ip_address')
+        self.ip_address = droplet['ip_address']
+        self.private_ip_address = droplet['private_ip_address']
         self.id = droplet['id']
 
     def power_on(self):

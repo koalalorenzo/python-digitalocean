@@ -50,7 +50,7 @@ class Record(object):
     def load(self):
         record = self.__call_api("")
         if record:
-            record = record.get(u'record')
+            record = record[u'record']
             self.id = record['id']
             self.record_type = record[u'record_type']
             self.name = record[u'name']

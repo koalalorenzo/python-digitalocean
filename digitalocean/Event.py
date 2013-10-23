@@ -25,7 +25,7 @@ class Event(object):
     def load(self):
         event = self.__call_api("")
         if event:
-            event = event.get(u'event')
+            event = event[u'event']
             self.id = event['id']
             self.event_type_id = event[u'event_type_id']
             self.percentage = event[u'percentage']

@@ -18,7 +18,7 @@ class Image(object):
         if data['status'] != "OK":
             msg = [data[m] for m in ("message", "error_message", "status") if m in data][0]
             raise Exception(msg)
-   
+
         return data
 
     def Destroy(self):

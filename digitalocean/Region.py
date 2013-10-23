@@ -1,5 +1,3 @@
-import requests
-
 class Region(object):
     def __init__(self, client_id="", api_key=""):
         self.client_id = client_id

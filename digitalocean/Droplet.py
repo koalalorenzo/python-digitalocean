@@ -13,6 +13,7 @@ class Droplet(object):
         self.size_id = None
         self.status = None
         self.ip_address = None
+        self.private_ip_address = None
         self.call_reponse = None
         self.events = []
 
@@ -32,9 +33,9 @@ class Droplet(object):
         #add the event to the object's event list.
         event_id = data.get(u'event_id',None)
         if not event_id and u'event_id' in data.get(u'droplet',{}):
-            event_id = data.get(u'droplet')[u'event_id'] 
-        
-        if event_id: self.events.append(event_id)        
+            event_id = data.get(u'droplet')[u'event_id']
+
+        if event_id: self.events.append(event_id)
         return data
 
     def load(self):
@@ -46,6 +47,7 @@ class Droplet(object):
         self.status = droplet['status']
         self.name = droplet['name']
         self.ip_address = droplet.get('ip_address')
+        self.private_ip_address = droplet.get('private_ip_address')
         self.id = droplet['id']
 
     def power_on(self):
@@ -128,7 +130,7 @@ class Droplet(object):
         """
         self.__call_api("/destroy/")
 
-    def create(self, ssh_key_ids=None, virtio=False):
+    def create(self, ssh_key_ids=None, virtio=False, private_networking=False):
         """
             Create the droplet with object properties.
         """
@@ -136,7 +138,7 @@ class Droplet(object):
                 "name": self.name,
                 "size_id": self.size_id,
                 "image_id": self.image_id,
-                "region_id": self.region_id
+                "region_id": self.region_id,
             }
 
         if ssh_key_ids:
@@ -149,6 +151,9 @@ class Droplet(object):
 
         if virtio:
             data['virtio'] = 1
+
+        if private_networking:
+            data['private_networking'] = 1
 
         data = self.__call_api("new", data)
         if data:

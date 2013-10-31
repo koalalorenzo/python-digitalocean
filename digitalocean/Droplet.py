@@ -15,6 +15,7 @@ class Droplet(object):
         self.ip_address = None
         self.private_ip_address = None
         self.call_reponse = None
+        self.ssh_key_ids = None
         self.events = []
 
         #Setting the attribute values
@@ -139,6 +140,7 @@ class Droplet(object):
                 "size_id": self.size_id,
                 "image_id": self.image_id,
                 "region_id": self.region_id,
+                "ssh_key_ids": self.ssh_key_ids
             }
 
         if ssh_key_ids:

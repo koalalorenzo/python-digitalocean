@@ -65,11 +65,11 @@ This example shows how to create a droplet and how to check its status
 	droplet.create()
 
 ### Checking the status of the droplet
-	events = droplet.get_events()[0]
-### Refreshing the event status
-    event.load()
-    #Once it shows 100, droplet is up and running
-    print event.percentage
+    events = droplet.get_events()
+    for event in events:
+      event.load()
+      #Once it shows 100, droplet is up and running
+      print event.percentage
 
 ## Links
 

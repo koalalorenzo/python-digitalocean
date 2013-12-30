@@ -125,7 +125,7 @@ class Droplet(object):
         """
         self.__call_api("/disable_backups/")
 
-    def destroy(self, scrub_data=False):
+    def destroy(self, scrub_data=True):
         """
             Destroy the droplet
         """

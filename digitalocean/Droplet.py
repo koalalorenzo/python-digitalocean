@@ -129,7 +129,7 @@ class Droplet(object):
         """
             Destroy the droplet
         """
-        self.__call_api("/destroy/", {'scrub_data': 'true' if scrub_data else 'false'})
+        self.__call_api("/destroy/", {'scrub_data': '1' if scrub_data else '0'})
 
     def create(self, ssh_key_ids=None, virtio=False, private_networking=False):
         """

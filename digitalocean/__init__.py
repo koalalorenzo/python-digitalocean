@@ -1,7 +1,7 @@
 
 """digitalocean API to manage droplets"""
 
-__version__ = "0.5.1"
+__version__ = "0.6"
 __author__ = "Lorenzo Setale ( http://who.is.koalalorenzo.com/? )"
 __author_email__ = "koalalorenzo@gmail.com"
 __license__ = "See: http://creativecommons.org/licenses/by-nd/3.0/ "

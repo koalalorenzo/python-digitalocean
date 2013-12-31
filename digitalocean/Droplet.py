@@ -125,11 +125,11 @@ class Droplet(object):
         """
         self.__call_api("/disable_backups/")
 
-    def destroy(self, scrub_data=False):
+    def destroy(self, scrub_data=True):
         """
             Destroy the droplet
         """
-        self.__call_api("/destroy/", {'scrub_data': 'true' if scrub_data else 'false'})
+        self.__call_api("/destroy/", {'scrub_data': '1' if scrub_data else '0'})
 
     def create(self, ssh_key_ids=None, virtio=False, private_networking=False):
         """

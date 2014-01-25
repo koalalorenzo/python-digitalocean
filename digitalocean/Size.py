@@ -5,3 +5,8 @@ class Size(object):
 
         self.name = None
         self.id = None
+        self.memory = None
+        self.cpu = None
+        self.disk = None
+        self.cost_per_hour = None
+        self.cost_per_month = None

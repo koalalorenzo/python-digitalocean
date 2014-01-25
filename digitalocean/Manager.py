@@ -71,6 +71,11 @@ class Manager(object):
             size = Size()
             size.id = jsoned['id']
             size.name = jsoned['name']
+            size.memory = jsoned['memory']
+            size.cpu = jsoned['cpu']
+            size.disk = jsoned['disk']
+            size.cost_per_hour = jsoned['cost_per_hour']
+            size.cost_per_month = jsoned['cost_per_month']
             size.client_id = self.client_id
             size.api_key = self.api_key
             sizes.append(size)

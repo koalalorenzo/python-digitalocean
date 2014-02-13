@@ -131,7 +131,7 @@ class Droplet(object):
         """
         self.__call_api("/destroy/", {'scrub_data': '1' if scrub_data else '0'})
 
-    def create(self, ssh_key_ids=None, virtio=False, private_networking=False):
+    def create(self, ssh_key_ids=None, virtio=False, private_networking=False, backups_enabled=False):
         """
             Create the droplet with object properties.
         """
@@ -150,6 +150,9 @@ class Droplet(object):
                 data['ssh_key_ids'] = ','.join(str(x) for x in ssh_key_ids)
             else:
                 raise Exception("ssh_key_ids should be an integer or long number, a string, a set, a list/tuple or a ditionary ")
+
+        if backups_enabled:
+            data['backups_enabled'] = 1
 
         if virtio:
             data['virtio'] = 1

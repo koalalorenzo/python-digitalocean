@@ -47,6 +47,26 @@ class Record(object):
         """
         self.__call_api("/destroy/")
 
+    def save(self):
+        """
+            Edit the SSH Key
+        """
+        data = {
+            #"domain_id": self.domain_id,
+            #"record_id": self.id,
+            "record_type": self.record_type,
+            "data": self.data,
+            "name": self.name,
+            "priority": self.priority,
+            "port": self.port,
+            "weight": self.weight,
+        }
+        data = self.__call_api("/edit/", data)
+        #print data
+        #if data:
+        #    self.id = data['ssh_key']['id']
+
+
     def load(self):
         record = self.__call_api("")
         if record:

@@ -47,6 +47,20 @@ class Record(object):
         """
         self.__call_api("/destroy/")
 
+    def save(self):
+        """
+            Save existing record
+        """
+        data = {
+            "record_type": self.record_type,
+            "data": self.data,
+            "name": self.name,
+            "priority": self.priority,
+            "port": self.port,
+            "weight": self.weight,
+        }
+        data = self.__call_api("/edit/", data)
+
     def load(self):
         record = self.__call_api("")
         if record:

@@ -49,7 +49,7 @@ class Record(object):
 
     def save(self):
         """
-            Edit the SSH Key
+            Save existing record
         """
         data = {
             "record_type": self.record_type,

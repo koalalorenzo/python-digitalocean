@@ -22,6 +22,13 @@ class Droplet(object):
         for attr in kwargs.keys():
             setattr(self,attr,kwargs[attr])
 
+    def call_api(self, path, params=dict()):
+        """
+            exposes any api entry
+            useful when working with new API calls that are not yet implemented by Droplet class
+        """
+        return self.__call_api(path, params)
+
     def __call_api(self, path, params=dict()):
         payload = {'client_id': self.client_id, 'api_key': self.api_key}
         payload.update(params)
@@ -130,6 +137,12 @@ class Droplet(object):
             Destroy the droplet
         """
         self.__call_api("/destroy/", {'scrub_data': '1' if scrub_data else '0'})
+
+    def rename(self, name):
+        """
+            Rename the droplet
+        """
+        self.__call_api("/rename/", {'name': name})
 
     def create(self, ssh_key_ids=None, virtio=False, private_networking=False, backups_enabled=False):
         """

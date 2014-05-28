@@ -16,6 +16,7 @@ class Droplet(object):
         self.private_ip_address = None
         self.call_reponse = None
         self.ssh_key_ids = None
+        self.created_at = None
         self.events = []
 
         #Setting the attribute values
@@ -56,6 +57,7 @@ class Droplet(object):
         self.name = droplet['name']
         self.ip_address = droplet['ip_address']
         self.private_ip_address = droplet['private_ip_address']
+        self.created_at = droplet['created_at']
         self.id = droplet['id']
 
     def power_on(self):

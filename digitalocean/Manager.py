@@ -17,7 +17,7 @@ class Manager(object):
         payload = {'client_id': self.client_id, 'api_key': self.api_key}
         payload.update(params)
         r = requests.get("https://api.digitalocean.com/%s" % path, params=payload)
-        data = r.json()
+        data = r.json
         self.call_response = data
         if data['status'] != "OK":
             msg = [data[m] for m in ("message", "error_message", "status") if m in data][0]

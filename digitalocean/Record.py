@@ -18,7 +18,7 @@ class Record(object):
         payload.update(params)
         r = requests.get("https://api.digitalocean.com/domains/%s/records/%s%s" % (
                          self.domain_id, self.id, path), params=payload)
-        data = r.json()
+        data = r.json
         self.call_response = data
         if data['status'] != "OK":            
             msg = [data[m] for m in ("message", "error_message", "status") if m in data][0]

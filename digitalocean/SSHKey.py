@@ -17,7 +17,7 @@ class SSHKey(object):
     def __call_api(self, path, params=dict()):
         payload = {'client_id': self.client_id, 'api_key': self.api_key}
         payload.update(params)
-        r = requests.get("https://api.digitalocean.com/ssh_keys/%s%s" % ( self.id, path ), params=payload)
+        r = requests.get("https://api.digitalocean.com/v1/ssh_keys/%s%s" % ( self.id, path ), params=payload)
 
         data = r.json
         self.call_response = data

@@ -16,7 +16,7 @@ class Record(object):
     def __call_api(self, path, params=dict()):
         payload = {'client_id': self.client_id, 'api_key': self.api_key}
         payload.update(params)
-        r = requests.get("https://api.digitalocean.com/domains/%s/records/%s%s" % (
+        r = requests.get("https://api.digitalocean.com/v1/domains/%s/records/%s%s" % (
                          self.domain_id, self.id, path), params=payload)
         data = r.json
         self.call_response = data

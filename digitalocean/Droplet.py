@@ -37,8 +37,7 @@ class Droplet(object):
     def call_api(self, type, path, params=dict()):
         """
             exposes any api entry
-            useful when working with new API calls that are not yet implemented
-            by Droplet class
+            useful when working with new API calls that are not yet implemented by Droplet class
         """
         return self.__call_api(type, path, params)
 

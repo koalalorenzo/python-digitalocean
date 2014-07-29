@@ -34,10 +34,12 @@ class Manager(object):
         regions = list()
         for jsoned in data['regions']:
             region = Region()
-            region.id = jsoned['id']
+            region.token = self.token
+            region.slug = jsoned['slug']
             region.name = jsoned['name']
-            region.client_id = self.client_id
-            region.api_key = self.api_key
+            region.sizes = jsoned['sizes']
+            region.available = jsoned['available']
+            region.features = jsoned['features']
             regions.append(region)
         return regions
 

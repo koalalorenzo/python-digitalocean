@@ -8,19 +8,21 @@ from .SSHKey import SSHKey
 
 
 class Manager(object):
-    def __init__(self, client_id="", api_key=""):
-        self.client_id = client_id
-        self.api_key = api_key
+    def __init__(self, token=""):
+        self.token = token
         self.call_response = None
 
     def __call_api(self, path, params=dict()):
-        payload = {'client_id': self.client_id, 'api_key': self.api_key}
+        payload = {}
+        headers = {'Authorization':'Bearer ' + self.token}
         payload.update(params)
-        r = requests.get("https://api.digitalocean.com/v1/%s" % path, params=payload)
+        r = requests.get("https://api.digitalocean.com/v2/%s" % path,
+                         headers=headers,
+                         params=payload)
         data = r.json()
         self.call_response = data
-        if data['status'] != "OK":
-            msg = [data[m] for m in ("message", "error_message", "status") if m in data][0]
+        if r.status_code != requests.codes.ok:
+            msg = [data[m] for m in ("id", "message") if m in data][1]
             raise Exception(msg)
         return data
 
@@ -47,18 +49,32 @@ class Manager(object):
         droplets = list()
         for jsoned in data['droplets']:
             droplet = Droplet()
-            droplet.backup_active = jsoned['backups_active']
-            droplet.region_id = jsoned['region_id']
-            droplet.size_id = jsoned['size_id']
-            droplet.image_id = jsoned['image_id']
-            droplet.status = jsoned['status']
-            droplet.name = jsoned['name']
+            droplet.token = self.token
             droplet.id = jsoned['id']
-            droplet.ip_address = jsoned['ip_address']
-            droplet.private_ip_address = jsoned['private_ip_address']
+            droplet.name = jsoned['name']
+            droplet.memory = jsoned['memory']
+            droplet.vcpus = jsoned['vcpus']
+            droplet.disk = jsoned['disk']
+            droplet.region = jsoned['region']
+            droplet.status = jsoned['status']
+            droplet.image = jsoned['image']
+            droplet.size = jsoned['size']
+            droplet.locked = jsoned['locked']
             droplet.created_at = jsoned['created_at']
-            droplet.client_id = self.client_id
-            droplet.api_key = self.api_key
+            droplet.status = jsoned['status']
+            droplet.networks = jsoned['networks']
+            droplet.kernel = jsoned['kernel']
+            droplet.backup_ids = jsoned['backup_ids']
+            droplet.snapshot_ids = jsoned['snapshot_ids']
+            droplet.action_ids = jsoned['action_ids']
+            droplet.features = jsoned['features']
+            for net in droplet.networks['v4']:
+                if net['type'] == 'private':
+                    droplet.private_ip_address = net['ip_address']
+                if net['type'] == 'public':
+                    droplet.ip_address = net['ip_address']
+            if droplet.networks['v6']:
+                droplet.ip_v6_address = droplet.networks['v6'][0]['ip_address']
             droplets.append(droplet)
         return droplets
 

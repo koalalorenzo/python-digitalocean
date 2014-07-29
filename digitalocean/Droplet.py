@@ -1,118 +1,173 @@
 import requests
-from .Event import Event
+from .Action import Action
 
 class Droplet(object):
     def __init__(self, *args, **kwargs):
-        self.id = ""
-        self.client_id = ""
-        self.api_key = ""
+        self.token = ""
+        self.id = None
         self.name = None
-        self.backup_active = None
-        self.region_id = None
-        self.image_id = None
-        self.size_id = None
+        self.memory = None
+        self.vcpus = None
+        self.disk = None
+        self.region = []
         self.status = None
+        self.image = None
+        self.size = None
+        self.locked = None
+        self.created_at = None
+        self.status = None
+        self.networks = []
+        self.kernel = None
+        self.backup_ids = []
+        self.snapshot_ids = []
+        self.action_ids = []
+        self.features = []
         self.ip_address = None
         self.private_ip_address = None
-        self.call_reponse = None
-        self.ssh_key_ids = None
-        self.created_at = None
-        self.events = []
+        self.ip_v6_address = None
+        self.ssh_keys = None
+        self.backups = None
+        self.ipv6 = None
+        self.private_networking = None
 
         #Setting the attribute values
         for attr in kwargs.keys():
             setattr(self,attr,kwargs[attr])
 
-    def call_api(self, path, params=dict()):
+    def call_api(self, type, path, params=dict()):
         """
             exposes any api entry
-            useful when working with new API calls that are not yet implemented by Droplet class
+            useful when working with new API calls that are not yet implemented
+            by Droplet class
         """
-        return self.__call_api(path, params)
+        return self.__call_api(type, path, params)
 
-    def __call_api(self, path, params=dict()):
-        payload = {'client_id': self.client_id, 'api_key': self.api_key}
+    def __call_api(self, type, path, params=dict()):
+        payload = {}
+        headers = {'Authorization': 'Bearer ' + self.token}
         payload.update(params)
-        r = requests.get("https://api.digitalocean.com/v1/droplets/%s%s" % ( self.id, path ), params=payload)
-        data = r.json()
-        self.call_response = data
-        if data['status'] != "OK":
-            msg = [data[m] for m in ("message", "error_message", "status") if m in data][0]
-            raise Exception(msg)
-        #add the event to the object's event list.
-        event_id = data.get(u'event_id',None)
-        if not event_id and u'event_id' in data.get(u'droplet',{}):
-            event_id = data[u'droplet'][u'event_id']
+        if not self.id:
+            self.id = ''
+        if type == 'PUT':
+            headers['content-type'] = 'application/json'
+            r = requests.post("https://api.digitalocean.com/v2/droplets/%s%s" %
+                             (self.id, path),
+                              headers=headers,
+                              params=payload)
+        if type == 'DELETE':
+            headers['content-type'] = 'application/x-www-form-urlencoded'
+            r = requests.delete("https://api.digitalocean.com/v2/droplets/%s" %
+                             (self.id),
+                              headers=headers,
+                              params=payload)
+        else:
+            r = requests.get("https://api.digitalocean.com/v2/droplets/%s%s" %
+                            (self.id, path),
+                             headers=headers,
+                             params=payload)
 
-        if event_id: self.events.append(event_id)
+        # A successful delete returns "204 No Content"
+        if r.status_code != 204:
+            data = r.json()
+            self.call_response = data
+            if r.status_code != requests.codes.ok:
+                msg = [data[m] for m in ("id", "message") if m in data][1]
+                raise Exception(msg)
+
+        # Add the action to the object's action list.
+        if type == 'PUT': # Actions are only returned for PUT's.
+            try: # Creates return a list of droplets
+                action_id = data['droplets'][-1]['action_ids'][0]
+            except KeyError: # Other actions return a list of action items.
+                action_id = data['actions'][0]['id']
+            print action_id
+            # Prepend the action id to the begining to be consistent with the API.
+            self.action_ids.insert(0, action_id)
+
         return data
 
     def load(self):
-        droplet = self.__call_api("")['droplet']
-        self.backup_active = droplet['backups_active']
-        self.region_id = droplet['region_id']
-        self.size_id = droplet['size_id']
-        self.image_id = droplet['image_id']
-        self.status = droplet['status']
-        self.name = droplet['name']
-        self.ip_address = droplet['ip_address']
-        self.private_ip_address = droplet['private_ip_address']
-        self.created_at = droplet['created_at']
+        droplet = self.__call_api('GET', '')['droplet']
         self.id = droplet['id']
+        self.name = droplet['name']
+        self.memory = droplet['memory']
+        self.vcpus = droplet['vcpus']
+        self.disk = droplet['disk']
+        self.region = droplet['region']
+        self.status = droplet['status']
+        self.image = droplet['image']
+        self.size = droplet['size']
+        self.locked = droplet['locked']
+        self.created_at = droplet['created_at']
+        self.status = droplet['status']
+        self.networks = droplet['networks']
+        self.kernel = droplet['kernel']
+        self.backup_ids = droplet['backup_ids']
+        self.snapshot_ids = droplet['snapshot_ids']
+        self.action_ids = droplet['action_ids']
+        self.features = droplet['features']
+        for net in self.networks['v4']:
+            if net['type'] == 'private':
+                self.private_ip_address = net['ip_address']
+            if net['type'] == 'public':
+                self.ip_address = net['ip_address']
+        if self.networks['v6']:
+            self.ip_v6_address = droplet.networks['v6'][0]['ip_address']
+        return self
 
     def power_on(self):
         """
             Boot up the droplet
         """
-        self.__call_api("/power_on/")
+        self.__call_api('PUT', '/actions/', {'type': 'power_on'})
 
     def shutdown(self):
         """
             shutdown the droplet
         """
-        self.__call_api("/shutdown/")
+        self.__call_api('PUT', '/actions/', {'type': 'shutdown'})
 
     def reboot(self):
         """
             restart the droplet
         """
-        self.__call_api("/reboot/")
+        self.__call_api('PUT', '/actions/', {'type': 'reboot'})
 
     def power_cycle(self):
         """
             restart the droplet
         """
-        self.__call_api("/power_cycle/")
+        self.__call_api('PUT', '/actions/', {'type': 'power_cycle'})
 
     def power_off(self):
         """
             restart the droplet
         """
-        self.__call_api("/power_off/")
+        self.__call_api('PUT', '/actions/', {'type': 'power_off'})
 
     def reset_root_password(self):
         """
             reset the root password
         """
-        self.__call_api("/reset_root_password/")
+        self.__call_api('PUT', '/actions/', {'type': 'password_reset'})
 
     def resize(self, new_size):
         """
             resize the droplet to a new size
         """
-        self.__call_api("/resize/", {"size_id": new_size})
+        self.__call_api("PUT", "/actions/", {"type": "resize", "size": new_size})
 
     def take_snapshot(self, snapshot_name):
         """
             Take a snapshot!
         """
-        self.__call_api("/snapshot/", {"name": snapshot_name})
+        self.__call_api("PUT", "/actions/", {"type": "snapshot", "name": snapshot_name})
 
     def restore(self, image_id):
         """
             Restore the droplet to an image ( snapshot or backup )
         """
-        self.__call_api("/restore/", {"image_id": image_id})
+        self.__call_api("PUT", "/actions/", {"type":"restore", "image": image_id})
 
     def rebuild(self, image_id=None):
         """
@@ -120,75 +175,93 @@ class Droplet(object):
         """
         if self.image_id and not image_id:
             image_id = self.image_id
-        self.__call_api("/rebuild/", {"image_id": image_id})
+        self.__call_api("PUT", "/actions/", {"type": "rebuild", "image": image_id})
 
     def enable_backups(self):
         """
-            Enable automatic backups
+            Enable automatic backups (Not yet implemented in APIv2)
         """
-        self.__call_api("/enable_backups/")
+        print("Not yet implemented in APIv2")
 
     def disable_backups(self):
         """
             Disable automatic backups
         """
-        self.__call_api("/disable_backups/")
+        self.__call_api("PUT", "/actions/", {'type': 'disable_backups'})
 
-    def destroy(self, scrub_data=True):
+    def destroy(self):
         """
             Destroy the droplet
         """
-        self.__call_api("/destroy/", {'scrub_data': '1' if scrub_data else '0'})
+        self.__call_api("DELETE", "")
 
     def rename(self, name):
         """
             Rename the droplet
         """
-        self.__call_api("/rename/", {'name': name})
+        self.__call_api("PUT", "/actions/", {'type': 'rename', 'name': name})
 
-    def create(self, ssh_key_ids=None, virtio=False, private_networking=False, backups_enabled=False):
+    def enable_private_networking(self):
+        """
+           Enable private networking on an existing Droplet where available.
+        """
+        self.__call_api("PUT", "/actions/", {'type': 'enable_private_networking'})
+
+    def enable_ipv6(self):
+        """
+            Enable IPv6 on an existing Droplet where available.
+        """
+        self.__call_api("PUT", "/actions/", {'type': 'enable_ipv6'})
+
+    def create(self, ssh_keys=None, backups=False, ipv6=False, private_networking=False):
         """
             Create the droplet with object properties.
         """
         data = {
                 "name": self.name,
-                "size_id": self.size_id,
-                "image_id": self.image_id,
-                "region_id": self.region_id,
-                "ssh_key_ids": self.ssh_key_ids
+                "size": self.size,
+                "image": self.image,
+                "region": self.region,
+                "ssh_keys": self.ssh_keys
             }
 
-        if ssh_key_ids:
-            if type(ssh_key_ids) in [int, long, str]:
-                data['ssh_key_ids']= str(ssh_key_ids)
-            elif type(ssh_key_ids) in [set, list, tuple, dict]:
-                data['ssh_key_ids'] = ','.join(str(x) for x in ssh_key_ids)
+        if ssh_keys:
+            if type(ssh_keys) in [int, long, str]:
+                data['ssh_keys']= str(ssh_keys)
+            elif type(ssh_keys) in [set, list, tuple, dict]:
+                data['ssh_keys'] = ','.join(str(x) for x in ssh_keys)
             else:
                 raise Exception("ssh_key_ids should be an integer or long number, a string, a set, a list/tuple or a ditionary ")
 
-        if backups_enabled:
-            data['backups_enabled'] = 1
+        if self.backups:
+            data['backups'] = True
 
-        if virtio:
-            data['virtio'] = 1
+        if self.ipv6:
+            data['ipv6'] = True
 
-        if private_networking:
-            data['private_networking'] = 1
+        if self.private_networking:
+            data['private_networking'] = True
 
-        data = self.__call_api("new", data)
+        data = self.__call_api("PUT", "", data)
         if data:
-            self.id = data['droplet']['id']
+            self.id = data['droplets'][-1]['id']
 
     def get_events(self):
         """
-            Returns a list of Event objects
-            This events can be used to check the droplet's status
+            A helper function for backwards compatability.
+            Calls get_actions()
         """
-        events = []
-        for event_id in self.events:
-            event = Event(event_id)
-            event.client_id = self.client_id
-            event.api_key = self.api_key
-            event.load()
-            events.append(event)
-        return events
+        return self.get_actions()
+
+    def get_actions(self):
+        """
+            Returns a list of Action objects
+            This actions can be used to check the droplet's status
+        """
+        actions = []
+        for action_id in self.action_ids:
+            action = Action(action_id)
+            action.token = self.token
+            action.load()
+            actions.append(action)
+        return actions

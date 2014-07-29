@@ -88,15 +88,15 @@ class Manager(object):
         sizes = list()
         for jsoned in data['sizes']:
             size = Size()
-            size.id = jsoned['id']
-            size.name = jsoned['name']
+            size.token = self.token
+            size.slug = jsoned['slug']
             size.memory = jsoned['memory']
-            size.cpu = jsoned['cpu']
+            size.vcpus = jsoned['vcpus']
             size.disk = jsoned['disk']
-            size.cost_per_hour = jsoned['cost_per_hour']
-            size.cost_per_month = jsoned['cost_per_month']
-            size.client_id = self.client_id
-            size.api_key = self.api_key
+            size.transfer = jsoned['transfer']
+            size.price_monthly = jsoned['price_monthly']
+            size.price_hourly = jsoned['price_hourly']
+            size.regions = jsoned['regions']
             sizes.append(size)
         return sizes
 

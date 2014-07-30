@@ -20,10 +20,29 @@ class Manager(object):
                          headers=headers,
                          params=payload)
         data = r.json()
+
         self.call_response = data
         if r.status_code != requests.codes.ok:
             msg = [data[m] for m in ("id", "message") if m in data][1]
             raise Exception(msg)
+
+        # Deal with pagination.
+        try:
+            pages = data['links']['pages']['last'].split('=')[-1]
+            key, values = data.popitem()
+            for page in range(2, int(pages) + 1):
+                payload.update({'page': page})
+                r = requests.get("https://api.digitalocean.com/v2/%s" % path,
+                                 headers=headers,
+                                 params=payload)
+                more_values = r.json().values()[0]
+                for value in more_values:
+                    values.append(value)
+            data = {}
+            data[key] = values
+        except KeyError: # No pages.
+            pass
+
         return data
 
     def get_all_regions(self):
@@ -108,11 +127,14 @@ class Manager(object):
         images = list()
         for jsoned in data['images']:
             image = Image()
+            image.token = self.token
             image.id = jsoned['id']
             image.name = jsoned['name']
             image.distribution = jsoned['distribution']
-            image.client_id = self.client_id
-            image.api_key = self.api_key
+            image.slug = jsoned['slug']
+            image.public = jsoned['public']
+            image.regions = jsoned['regions']
+            image.created_at = jsoned['created_at']
             images.append(image)
         return images
 
@@ -120,32 +142,40 @@ class Manager(object):
         """
             This function returns a list of Image object.
         """
-        data = self.__call_api("/images/",{"filter":"my_images"})
+        data = self.__call_api("/images/")
         images = list()
         for jsoned in data['images']:
-            image = Image()
-            image.id = jsoned['id']
-            image.name = jsoned['name']
-            image.distribution = jsoned['distribution']
-            image.client_id = self.client_id
-            image.api_key = self.api_key
-            images.append(image)
+            if not jsoned['public']:
+                image = Image()
+                image.token = self.token
+                image.id = jsoned['id']
+                image.name = jsoned['name']
+                image.distribution = jsoned['distribution']
+                image.slug = jsoned['slug']
+                image.public = jsoned['public']
+                image.regions = jsoned['regions']
+                image.created_at = jsoned['created_at']
+                images.append(image)
         return images
 
     def get_global_images(self):
         """
             This function returns a list of Image object.
         """
-        data = self.__call_api("/images/",{"filter":"global"})
+        data = self.__call_api("/images/")
         images = list()
         for jsoned in data['images']:
-            image = Image()
-            image.id = jsoned['id']
-            image.name = jsoned['name']
-            image.distribution = jsoned['distribution']
-            image.client_id = self.client_id
-            image.api_key = self.api_key
-            images.append(image)
+            if jsoned['public']:
+                image = Image()
+                image.token = self.token
+                image.id = jsoned['id']
+                image.name = jsoned['name']
+                image.distribution = jsoned['distribution']
+                image.slug = jsoned['slug']
+                image.public = jsoned['public']
+                image.regions = jsoned['regions']
+                image.created_at = jsoned['created_at']
+                images.append(image)
         return images
 
     def get_all_domains(self):

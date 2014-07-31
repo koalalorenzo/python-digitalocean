@@ -15,9 +15,15 @@ class Image(object):
         payload = {'token': self.token}
         headers = {'Authorization':'Bearer ' + self.token}
         payload.update(params)
-        if type == 'PUT':
+        if type == 'POST':
             headers['content-type'] = 'application/json'
             r = requests.post("https://api.digitalocean.com/v2/images/%s%s" %
+                             (self.id, path),
+                              headers=headers,
+                              params=payload)
+        if type == 'PUT':
+            headers['content-type'] = 'application/json'
+            r = requests.put("https://api.digitalocean.com/v2/images/%s%s" %
                              (self.id, path),
                               headers=headers,
                               params=payload)
@@ -27,7 +33,6 @@ class Image(object):
                              (self.id),
                               headers=headers,
                               params=payload)
-
         # A successful delete returns "204 No Content"
         if r.status_code != 204:
             data = r.json()
@@ -48,5 +53,11 @@ class Image(object):
         """
             Transfer the image
         """
-        self.__call_api("PUT", "/actions/",
+        self.__call_api("POST", "/actions/",
                        {"type": "transfer", "region": new_region_slug})
+
+    def rename(self, new_name):
+        """
+            Rename an image
+        """
+        self.__call_api("PUT", "", {"name": new_name})

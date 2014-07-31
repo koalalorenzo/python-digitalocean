@@ -47,7 +47,7 @@ class Droplet(object):
         payload.update(params)
         if not self.id:
             self.id = ''
-        if type == 'PUT':
+        if type == 'POST':
             headers['content-type'] = 'application/json'
             r = requests.post("https://api.digitalocean.com/v2/droplets/%s%s" %
                              (self.id, path),
@@ -74,12 +74,11 @@ class Droplet(object):
                 raise Exception(msg)
 
         # Add the action to the object's action list.
-        if type == 'PUT': # Actions are only returned for PUT's.
+        if type == 'POST': # Actions are only returned for POST's.
             try: # Creates return a list of droplets
                 action_id = data['droplets'][-1]['action_ids'][0]
             except KeyError: # Other actions return a list of action items.
                 action_id = data['actions'][0]['id']
-            print action_id
             # Prepend the action id to the begining to be consistent with the API.
             self.action_ids.insert(0, action_id)
 
@@ -118,55 +117,55 @@ class Droplet(object):
         """
             Boot up the droplet
         """
-        self.__call_api('PUT', '/actions/', {'type': 'power_on'})
+        self.__call_api('POST', '/actions/', {'type': 'power_on'})
 
     def shutdown(self):
         """
             shutdown the droplet
         """
-        self.__call_api('PUT', '/actions/', {'type': 'shutdown'})
+        self.__call_api('POST', '/actions/', {'type': 'shutdown'})
 
     def reboot(self):
         """
             restart the droplet
         """
-        self.__call_api('PUT', '/actions/', {'type': 'reboot'})
+        self.__call_api('POST', '/actions/', {'type': 'reboot'})
 
     def power_cycle(self):
         """
             restart the droplet
         """
-        self.__call_api('PUT', '/actions/', {'type': 'power_cycle'})
+        self.__call_api('POST', '/actions/', {'type': 'power_cycle'})
 
     def power_off(self):
         """
             restart the droplet
         """
-        self.__call_api('PUT', '/actions/', {'type': 'power_off'})
+        self.__call_api('POST', '/actions/', {'type': 'power_off'})
 
     def reset_root_password(self):
         """
             reset the root password
         """
-        self.__call_api('PUT', '/actions/', {'type': 'password_reset'})
+        self.__call_api('POST', '/actions/', {'type': 'password_reset'})
 
     def resize(self, new_size):
         """
             resize the droplet to a new size
         """
-        self.__call_api("PUT", "/actions/", {"type": "resize", "size": new_size})
+        self.__call_api("POST", "/actions/", {"type": "resize", "size": new_size})
 
     def take_snapshot(self, snapshot_name):
         """
             Take a snapshot!
         """
-        self.__call_api("PUT", "/actions/", {"type": "snapshot", "name": snapshot_name})
+        self.__call_api("POST", "/actions/", {"type": "snapshot", "name": snapshot_name})
 
     def restore(self, image_id):
         """
             Restore the droplet to an image ( snapshot or backup )
         """
-        self.__call_api("PUT", "/actions/", {"type":"restore", "image": image_id})
+        self.__call_api("POST", "/actions/", {"type":"restore", "image": image_id})
 
     def rebuild(self, image_id=None):
         """
@@ -174,7 +173,7 @@ class Droplet(object):
         """
         if self.image_id and not image_id:
             image_id = self.image_id
-        self.__call_api("PUT", "/actions/", {"type": "rebuild", "image": image_id})
+        self.__call_api("POST", "/actions/", {"type": "rebuild", "image": image_id})
 
     def enable_backups(self):
         """
@@ -186,7 +185,7 @@ class Droplet(object):
         """
             Disable automatic backups
         """
-        self.__call_api("PUT", "/actions/", {'type': 'disable_backups'})
+        self.__call_api("POST", "/actions/", {'type': 'disable_backups'})
 
     def destroy(self):
         """
@@ -198,19 +197,19 @@ class Droplet(object):
         """
             Rename the droplet
         """
-        self.__call_api("PUT", "/actions/", {'type': 'rename', 'name': name})
+        self.__call_api("POST", "/actions/", {'type': 'rename', 'name': name})
 
     def enable_private_networking(self):
         """
            Enable private networking on an existing Droplet where available.
         """
-        self.__call_api("PUT", "/actions/", {'type': 'enable_private_networking'})
+        self.__call_api("POST", "/actions/", {'type': 'enable_private_networking'})
 
     def enable_ipv6(self):
         """
             Enable IPv6 on an existing Droplet where available.
         """
-        self.__call_api("PUT", "/actions/", {'type': 'enable_ipv6'})
+        self.__call_api("POST", "/actions/", {'type': 'enable_ipv6'})
 
     def create(self, ssh_keys=None, backups=False, ipv6=False, private_networking=False):
         """
@@ -241,7 +240,7 @@ class Droplet(object):
         if self.private_networking:
             data['private_networking'] = True
 
-        data = self.__call_api("PUT", "", data)
+        data = self.__call_api("POST", "", data)
         if data:
             self.id = data['droplets'][-1]['id']
 

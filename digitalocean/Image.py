@@ -12,7 +12,7 @@ class Image(object):
         self.created_at = None
 
     def __call_api(self, type, path, params=dict()):
-        payload = {'token': self.token}
+        payload = {}
         headers = {'Authorization':'Bearer ' + self.token}
         payload.update(params)
         if type == 'POST':

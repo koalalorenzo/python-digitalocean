@@ -3,65 +3,80 @@ from .Record import Record
 
 class Domain(object):
     def __init__(self, *args, **kwargs):
-        self.id = ""
-        self.client_id = ""
-        self.api_key = ""
+        self.token = ""
         self.name = None
         self.ttl = None
-        self.live_zone_file = None
-        self.error = None
-        self.zone_file_with_error = None
-        self.records = []
+        self.zone_file = None
+        ip_address = None
 
         #Setting the attribute values
         for attr in kwargs.keys():
             setattr(self,attr,kwargs[attr])
 
-    def __call_api(self, path, params=dict()):
-        payload = {'client_id': self.client_id, 'api_key': self.api_key}
+    def __call_api(self, type, path, params=dict()):
+        payload = {}
+        headers = {'Authorization':'Bearer ' + self.token}
         payload.update(params)
-        r = requests.get("https://api.digitalocean.com/v1/domains/%s%s" % ( self.id, path ), params=payload)
-        data = r.json()
-        self.call_response = data
-        if data['status'] != "OK":
-            msg = [data[m] for m in ("message", "error_message", "status") if m in data][0]
-            raise Exception(msg)
+        if type == 'POST':
+            print "POSTing"
+            headers['content-type'] = 'application/json'
+            r = requests.post("https://api.digitalocean.com/v2/domains%s" %
+                              path,
+                              headers=headers,
+                              params=payload)
+        if type == 'DELETE':
+            headers['content-type'] = 'application/x-www-form-urlencoded'
+            r = requests.delete("https://api.digitalocean.com/v2/domains%s" %
+                              path,
+                              headers=headers,
+                              params=payload)
+        else:
+            r = requests.get("https://api.digitalocean.com/v2/domains%s" %
+                              path,
+                              headers=headers,
+                              params=payload)
+        print r.status_code, r.url
+        # A successful delete returns "204 No Content"
+        if r.status_code != 204:
+            data = r.json()
+            self.call_response = data
+            if r.status_code != requests.codes.ok:
+                msg = [data[m] for m in ("id", "message") if m in data][1]
+                raise Exception(msg)
    
-        return data
+            return data
 
     def load(self):
-        domain = self.__call_api("")['domain']
-        self.zone_file_with_error = domain['zone_file_with_error']
-        self.error = domain['error']
-        self.live_zone_file = domain['live_zone_file']
+        domain = self.__call_api("GET", "")['domain']
+        self.live_zone_file = domain['zone_file']
         self.ttl = domain['ttl']
         self.name = domain['name']
-        self.id = domain['id']
 
-    def destroy(self):
+    def delete(self):
         """
-            Destroy the droplet
+            Destroy the domain by name
         """
-        self.__call_api("/destroy/")
+        self.__call_api("DELETE", '/' + self.name)
 
     def create(self):
         """
-            Create the droplet with object properties.
+            Create new doamin
         """
         data = {
                 "name": self.name,
                 "ip_address": self.ip_address,
             }
-        data = self.__call_api("new", data)
+        data = self.__call_api("POST", "", data)
         if data:
-            self.id = data['domain']['id']
+            print data
+            self.id = data['domains']['name']
 
     def get_records(self):
         """
             Returns a list of Record objects
         """
         records = []
-        data = self.__call_api("/records/")
+        data = self.__call_api("GET", "/records/")
         for record_data in data['records']:
             record = Record(domain_id=record_data.pop('domain_id'),
                             id=record_data.pop('id'))

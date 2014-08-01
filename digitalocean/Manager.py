@@ -186,14 +186,10 @@ class Manager(object):
         domains = list()
         for jsoned in data['domains']:
             domain = Domain()
-            domain.zone_file_with_error = jsoned['zone_file_with_error']
-            domain.error = jsoned['error']
-            domain.live_zone_file = jsoned['live_zone_file']
+            domain.zone_file = jsoned['zone_file']
             domain.ttl = jsoned['ttl']
             domain.name = jsoned['name']
-            domain.id = jsoned['id']
-            domain.client_id = self.client_id
-            domain.api_key = self.api_key
+            domain.token = self.token
             domains.append(domain)
         return domains
 

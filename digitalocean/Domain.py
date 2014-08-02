@@ -24,7 +24,7 @@ class Domain(object):
                               path,
                               headers=headers,
                               params=payload)
-        if type == 'DELETE':
+        elif type == 'DELETE':
             headers['content-type'] = 'application/x-www-form-urlencoded'
             r = requests.delete("https://api.digitalocean.com/v2/domains%s" %
                               path,
@@ -37,10 +37,12 @@ class Domain(object):
                               params=payload)
         print r.status_code, r.url
         # A successful delete returns "204 No Content"
+        print r.status_code
         if r.status_code != 204:
             data = r.json()
+            print data
             self.call_response = data
-            if r.status_code != requests.codes.ok:
+            if r.status_code not in [requests.codes.ok, 202, 201]:
                 msg = [data[m] for m in ("id", "message") if m in data][1]
                 raise Exception(msg)
    
@@ -67,9 +69,6 @@ class Domain(object):
                 "ip_address": self.ip_address,
             }
         data = self.__call_api("POST", "", data)
-        if data:
-            print data
-            self.id = data['domains']['name']
 
     def get_records(self):
         """

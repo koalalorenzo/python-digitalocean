@@ -42,9 +42,7 @@ class Droplet(object):
         return self.__call_api(type, path, params)
 
     def __call_api(self, type, path, params=dict()):
-        payload = {}
         headers = {'Authorization': 'Bearer ' + self.token}
-        payload.update(params)
         if not self.id:
             self.id = ''
         if type == 'POST':
@@ -52,37 +50,37 @@ class Droplet(object):
             r = requests.post("https://api.digitalocean.com/v2/droplets/%s%s" %
                              (self.id, path),
                               headers=headers,
-                              params=payload)
-        if type == 'DELETE':
+                              params=params)
+        elif type == 'DELETE':
             headers['content-type'] = 'application/x-www-form-urlencoded'
             r = requests.delete("https://api.digitalocean.com/v2/droplets/%s" %
                              (self.id),
                               headers=headers,
-                              params=payload)
+                              params=params)
         else:
             r = requests.get("https://api.digitalocean.com/v2/droplets/%s%s" %
                             (self.id, path),
                              headers=headers,
-                             params=payload)
+                             params=params)
 
-        # A successful delete returns "204 No Content"
+        # A successful delete returns "204 No Content" so there is no data.
         if r.status_code != 204:
             data = r.json()
             self.call_response = data
-            if r.status_code != requests.codes.ok:
+            if r.status_code not in [requests.codes.ok, 202, 201]:
                 msg = [data[m] for m in ("id", "message") if m in data][1]
                 raise Exception(msg)
 
-        # Add the action to the object's action list.
-        if type == 'POST': # Actions are only returned for POST's.
-            try: # Creates return a list of droplets
-                action_id = data['droplets'][-1]['action_ids'][0]
-            except KeyError: # Other actions return a list of action items.
-                action_id = data['actions'][0]['id']
-            # Prepend the action id to the begining to be consistent with the API.
-            self.action_ids.insert(0, action_id)
+            # Add the action to the object's action list.
+            if type == 'POST': # Actions are only returned for POST's.
+                try:
+                    action_id = data['droplet']['action_ids'][0]
+                except KeyError: # Some actions return a list of action items.
+                    action_id = data['action']['id']
+                # Prepend the action id to the begining to be consistent with the API.
+                self.action_ids.insert(0, action_id)
 
-        return data
+            return data
 
     def load(self):
         droplet = self.__call_api('GET', '')['droplet']
@@ -240,9 +238,9 @@ class Droplet(object):
         if self.private_networking:
             data['private_networking'] = True
 
-        data = self.__call_api("POST", "", data)
+        data = self.__call_api("POST", '', data)
         if data:
-            self.id = data['droplets'][-1]['id']
+            self.id = data['droplet']['id']
 
     def get_events(self):
         """

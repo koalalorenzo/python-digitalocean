@@ -21,13 +21,13 @@ class Image(object):
                              (self.id, path),
                               headers=headers,
                               params=payload)
-        if type == 'PUT':
+        elif type == 'PUT':
             headers['content-type'] = 'application/json'
             r = requests.put("https://api.digitalocean.com/v2/images/%s%s" %
                              (self.id, path),
                               headers=headers,
                               params=payload)
-        if type == 'DELETE':
+        elif type == 'DELETE':
             headers['content-type'] = 'application/x-www-form-urlencoded'
             r = requests.delete("https://api.digitalocean.com/v2/images/%s" %
                              (self.id),

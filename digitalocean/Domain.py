@@ -14,33 +14,27 @@ class Domain(object):
             setattr(self,attr,kwargs[attr])
 
     def __call_api(self, type, path, params=dict()):
-        payload = {}
         headers = {'Authorization':'Bearer ' + self.token}
-        payload.update(params)
         if type == 'POST':
-            print "POSTing"
             headers['content-type'] = 'application/json'
             r = requests.post("https://api.digitalocean.com/v2/domains%s" %
                               path,
                               headers=headers,
-                              params=payload)
+                              params=params)
         elif type == 'DELETE':
             headers['content-type'] = 'application/x-www-form-urlencoded'
             r = requests.delete("https://api.digitalocean.com/v2/domains%s" %
                               path,
                               headers=headers,
-                              params=payload)
+                              params=params)
         else:
             r = requests.get("https://api.digitalocean.com/v2/domains%s" %
                               path,
                               headers=headers,
-                              params=payload)
-        print r.status_code, r.url
+                              params=params)
         # A successful delete returns "204 No Content"
-        print r.status_code
         if r.status_code != 204:
             data = r.json()
-            print data
             self.call_response = data
             if r.status_code not in [requests.codes.ok, 202, 201]:
                 msg = [data[m] for m in ("id", "message") if m in data][1]
@@ -54,7 +48,7 @@ class Domain(object):
         self.ttl = domain['ttl']
         self.name = domain['name']
 
-    def delete(self):
+    def destroy(self):
         """
             Destroy the domain by name
         """
@@ -75,13 +69,12 @@ class Domain(object):
             Returns a list of Record objects
         """
         records = []
-        data = self.__call_api("GET", "/records/")
-        for record_data in data['records']:
-            record = Record(domain_id=record_data.pop('domain_id'),
+        data = self.__call_api("GET", '/' + self.name + "/records/")
+        for record_data in data['domain_records']:
+            record = Record(domain_name=self.name,
                             id=record_data.pop('id'))
             for key, value in record_data.iteritems():
                 setattr(record, key, value)
-            record.client_id = self.client_id
-            record.api_key = self.api_key
+            record.token = self.token
             records.append(record)
         return records

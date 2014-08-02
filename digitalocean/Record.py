@@ -1,72 +1,95 @@
 import requests
       
 class Record(object):
-    def __init__(self, domain_id, id="", client_id="", api_key=""):
-        self.domain_id = domain_id
+    def __init__(self, domain_name, id="", token=""):
+        self.domain = domain_name
         self.id = id
-        self.client_id = client_id
-        self.api_key = api_key
-        self.record_type = None
+        self.token = token
+        self.type = None
         self.name = None
         self.data = None
         self.priority = None
         self.port = None
         self.weight = None
-        
-    def __call_api(self, path, params=dict()):
-        payload = {'client_id': self.client_id, 'api_key': self.api_key}
-        payload.update(params)
-        r = requests.get("https://api.digitalocean.com/v1/domains/%s/records/%s%s" % (
-                         self.domain_id, self.id, path), params=payload)
-        data = r.json()
-        self.call_response = data
-        if data['status'] != "OK":            
-            msg = [data[m] for m in ("message", "error_message", "status") if m in data][0]
-            raise Exception(msg)
-        return data
+
+    def __call_api(self, type, path, params=dict()):
+        headers = {'Authorization':'Bearer ' + self.token}
+        if type == 'POST':
+            headers['content-type'] = 'application/json'
+            r = requests.post("https://api.digitalocean.com/v2/domains/%s/records/%s%s" % (
+                              self.domain, self.id, path),
+                              headers=headers,
+                              params=params)
+        elif type == 'PUT':
+            headers['content-type'] = 'application/json'
+            r = requests.put("https://api.digitalocean.com/v2/domains/%s/records/%s%s" % (
+                              self.domain, self.id, path),
+                              headers=headers,
+                              params=params)
+        elif type == 'DELETE':
+            headers['content-type'] = 'application/x-www-form-urlencoded'
+            r = requests.delete("https://api.digitalocean.com/v2/domains/%s/records/%s%s" % (
+                              self.domain, self.id, path),
+                              headers=headers,
+                              params=params)
+        else:
+            r = requests.get("https://api.digitalocean.com/v2/domains/%s/records/%s%s" % (
+                             self.domain, self.id, path),
+                             headers=headers,
+                             params=params)
+
+        # A successful delete returns "204 No Content"
+        if r.status_code != 204:
+            data = r.json()
+            self.call_response = data
+            if r.status_code not in [requests.codes.ok, 202, 201]:
+                msg = [data[m] for m in ("id", "message") if m in data][1]
+                raise Exception(msg)
+
+            return data
 
     def create(self):
         """
             Create a record for a domain
         """
         data = {
-                "record_type": self.record_type,
+                "type": self.type,
                 "data": self.data,
                 "name": self.name,
                 "priority": self.priority,
                 "port": self.port,
                 "weight": self.weight
             }
-        data = self.__call_api("new", data)
+        data = self.__call_api("POST", "", data)
         if data:
-            self.id = data['record']['id']
+            self.id = data['domain_record']['id']
 
     def destroy(self):
         """
             Destroy the record
         """
-        self.__call_api("/destroy/")
+        self.__call_api("DELETE", "")
 
     def save(self):
         """
             Save existing record
         """
         data = {
-            "record_type": self.record_type,
+            "type": self.type,
             "data": self.data,
             "name": self.name,
             "priority": self.priority,
             "port": self.port,
             "weight": self.weight,
         }
-        data = self.__call_api("/edit/", data)
+        data = self.__call_api("PUT", "", data)
 
     def load(self):
-        record = self.__call_api("")
+        record = self.__call_api("GET", "")
         if record:
-            record = record[u'record']
+            record = record[u'domain_record']
             self.id = record['id']
-            self.record_type = record[u'record_type']
+            self.type = record[u'type']
             self.name = record[u'name']
             self.data = record[u'data']
             self.priority = record[u'priority']

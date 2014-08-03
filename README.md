@@ -46,7 +46,7 @@ This example shows how to shutdown all the active droplets:
 
 ```python
 import digitalocean
-manager = digitalocean.Manager(client_id="ABC", api_key="ABC")
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
 my_droplets = manager.get_all_droplets()
 for droplet in my_droplets:
     droplet.shutdown()
@@ -58,22 +58,22 @@ This example shows how to create a droplet and how to check its status
 
 ```python
 import digitalocean
-droplet = digitalocean.Droplet(client_id=client_id, api_key=api_key,
+droplet = digitalocean.Droplet(token="secretspecialuniquesnowflake",
                                name='Example',
-                               region_id=1,  # New York
-                               image_id=2676,  # Ubuntu 12.04 x64 Server
-                               size_id=66,  # 512MB
-                               backup_active=False)
+                               region='nyc2', # New York 2
+                               image='ubuntu-14-04-x64', # Ubuntu 14.04 x64
+                               size='512mb',  # 512MB
+                               backups=True)
 droplet.create()
 ```
 
 ### Checking the status of the droplet
 ```python
-events = droplet.get_events()
-for event in events:
-    event.load()
-    # Once it shows 100, droplet is up and running
-    print event.percentage
+actions = droplet.get_actions()
+for action in actions:
+    action.load()
+    # Once it shows complete, droplet is up and running
+    print action.status
 ```
 
 ## Links

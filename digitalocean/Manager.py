@@ -8,20 +8,41 @@ from .SSHKey import SSHKey
 
 
 class Manager(object):
-    def __init__(self, client_id="", api_key=""):
-        self.client_id = client_id
-        self.api_key = api_key
+    def __init__(self, token=""):
+        self.token = token
         self.call_response = None
 
     def __call_api(self, path, params=dict()):
-        payload = {'client_id': self.client_id, 'api_key': self.api_key}
+        payload = {}
+        headers = {'Authorization':'Bearer ' + self.token}
         payload.update(params)
-        r = requests.get("https://api.digitalocean.com/v1/%s" % path, params=payload)
+        r = requests.get("https://api.digitalocean.com/v2/%s" % path,
+                         headers=headers,
+                         params=payload)
         data = r.json()
+
         self.call_response = data
-        if data['status'] != "OK":
-            msg = [data[m] for m in ("message", "error_message", "status") if m in data][0]
+        if r.status_code != requests.codes.ok:
+            msg = [data[m] for m in ("id", "message") if m in data][1]
             raise Exception(msg)
+
+        # Deal with pagination.
+        try:
+            pages = data['links']['pages']['last'].split('=')[-1]
+            key, values = data.popitem()
+            for page in range(2, int(pages) + 1):
+                payload.update({'page': page})
+                r = requests.get("https://api.digitalocean.com/v2/%s" % path,
+                                 headers=headers,
+                                 params=payload)
+                more_values = r.json().values()[0]
+                for value in more_values:
+                    values.append(value)
+            data = {}
+            data[key] = values
+        except KeyError: # No pages.
+            pass
+
         return data
 
     def get_all_regions(self):
@@ -32,10 +53,12 @@ class Manager(object):
         regions = list()
         for jsoned in data['regions']:
             region = Region()
-            region.id = jsoned['id']
+            region.token = self.token
+            region.slug = jsoned['slug']
             region.name = jsoned['name']
-            region.client_id = self.client_id
-            region.api_key = self.api_key
+            region.sizes = jsoned['sizes']
+            region.available = jsoned['available']
+            region.features = jsoned['features']
             regions.append(region)
         return regions
 
@@ -47,18 +70,32 @@ class Manager(object):
         droplets = list()
         for jsoned in data['droplets']:
             droplet = Droplet()
-            droplet.backup_active = jsoned['backups_active']
-            droplet.region_id = jsoned['region_id']
-            droplet.size_id = jsoned['size_id']
-            droplet.image_id = jsoned['image_id']
-            droplet.status = jsoned['status']
-            droplet.name = jsoned['name']
+            droplet.token = self.token
             droplet.id = jsoned['id']
-            droplet.ip_address = jsoned['ip_address']
-            droplet.private_ip_address = jsoned['private_ip_address']
+            droplet.name = jsoned['name']
+            droplet.memory = jsoned['memory']
+            droplet.vcpus = jsoned['vcpus']
+            droplet.disk = jsoned['disk']
+            droplet.region = jsoned['region']
+            droplet.status = jsoned['status']
+            droplet.image = jsoned['image']
+            droplet.size = jsoned['size']
+            droplet.locked = jsoned['locked']
             droplet.created_at = jsoned['created_at']
-            droplet.client_id = self.client_id
-            droplet.api_key = self.api_key
+            droplet.status = jsoned['status']
+            droplet.networks = jsoned['networks']
+            droplet.kernel = jsoned['kernel']
+            droplet.backup_ids = jsoned['backup_ids']
+            droplet.snapshot_ids = jsoned['snapshot_ids']
+            droplet.action_ids = jsoned['action_ids']
+            droplet.features = jsoned['features']
+            for net in droplet.networks['v4']:
+                if net['type'] == 'private':
+                    droplet.private_ip_address = net['ip_address']
+                if net['type'] == 'public':
+                    droplet.ip_address = net['ip_address']
+            if droplet.networks['v6']:
+                droplet.ip_v6_address = droplet.networks['v6'][0]['ip_address']
             droplets.append(droplet)
         return droplets
 
@@ -70,15 +107,15 @@ class Manager(object):
         sizes = list()
         for jsoned in data['sizes']:
             size = Size()
-            size.id = jsoned['id']
-            size.name = jsoned['name']
+            size.token = self.token
+            size.slug = jsoned['slug']
             size.memory = jsoned['memory']
-            size.cpu = jsoned['cpu']
+            size.vcpus = jsoned['vcpus']
             size.disk = jsoned['disk']
-            size.cost_per_hour = jsoned['cost_per_hour']
-            size.cost_per_month = jsoned['cost_per_month']
-            size.client_id = self.client_id
-            size.api_key = self.api_key
+            size.transfer = jsoned['transfer']
+            size.price_monthly = jsoned['price_monthly']
+            size.price_hourly = jsoned['price_hourly']
+            size.regions = jsoned['regions']
             sizes.append(size)
         return sizes
 
@@ -90,11 +127,14 @@ class Manager(object):
         images = list()
         for jsoned in data['images']:
             image = Image()
+            image.token = self.token
             image.id = jsoned['id']
             image.name = jsoned['name']
             image.distribution = jsoned['distribution']
-            image.client_id = self.client_id
-            image.api_key = self.api_key
+            image.slug = jsoned['slug']
+            image.public = jsoned['public']
+            image.regions = jsoned['regions']
+            image.created_at = jsoned['created_at']
             images.append(image)
         return images
 
@@ -102,32 +142,40 @@ class Manager(object):
         """
             This function returns a list of Image object.
         """
-        data = self.__call_api("/images/",{"filter":"my_images"})
+        data = self.__call_api("/images/")
         images = list()
         for jsoned in data['images']:
-            image = Image()
-            image.id = jsoned['id']
-            image.name = jsoned['name']
-            image.distribution = jsoned['distribution']
-            image.client_id = self.client_id
-            image.api_key = self.api_key
-            images.append(image)
+            if not jsoned['public']:
+                image = Image()
+                image.token = self.token
+                image.id = jsoned['id']
+                image.name = jsoned['name']
+                image.distribution = jsoned['distribution']
+                image.slug = jsoned['slug']
+                image.public = jsoned['public']
+                image.regions = jsoned['regions']
+                image.created_at = jsoned['created_at']
+                images.append(image)
         return images
 
     def get_global_images(self):
         """
             This function returns a list of Image object.
         """
-        data = self.__call_api("/images/",{"filter":"global"})
+        data = self.__call_api("/images/")
         images = list()
         for jsoned in data['images']:
-            image = Image()
-            image.id = jsoned['id']
-            image.name = jsoned['name']
-            image.distribution = jsoned['distribution']
-            image.client_id = self.client_id
-            image.api_key = self.api_key
-            images.append(image)
+            if jsoned['public']:
+                image = Image()
+                image.token = self.token
+                image.id = jsoned['id']
+                image.name = jsoned['name']
+                image.distribution = jsoned['distribution']
+                image.slug = jsoned['slug']
+                image.public = jsoned['public']
+                image.regions = jsoned['regions']
+                image.created_at = jsoned['created_at']
+                images.append(image)
         return images
 
     def get_all_domains(self):
@@ -138,14 +186,10 @@ class Manager(object):
         domains = list()
         for jsoned in data['domains']:
             domain = Domain()
-            domain.zone_file_with_error = jsoned['zone_file_with_error']
-            domain.error = jsoned['error']
-            domain.live_zone_file = jsoned['live_zone_file']
+            domain.zone_file = jsoned['zone_file']
             domain.ttl = jsoned['ttl']
             domain.name = jsoned['name']
-            domain.id = jsoned['id']
-            domain.client_id = self.client_id
-            domain.api_key = self.api_key
+            domain.token = self.token
             domains.append(domain)
         return domains
 
@@ -153,14 +197,14 @@ class Manager(object):
         """
             This function returns a list of SSHKey object.
         """
-        data = self.__call_api("/ssh_keys/")
+        data = self.__call_api("/account/keys/")
         ssh_keys = list()
         for jsoned in data['ssh_keys']:
             ssh_key = SSHKey()
             ssh_key.id = jsoned['id']
             ssh_key.name = jsoned['name']
-            ssh_key.client_id = self.client_id
-            ssh_key.api_key = self.api_key
+            ssh_key.public_key = jsoned['public_key']
+            ssh_key.fingerprint = jsoned['fingerprint']
+            ssh_key.token = self.token
             ssh_keys.append(ssh_key)
         return ssh_keys
-

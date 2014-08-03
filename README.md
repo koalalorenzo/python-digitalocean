@@ -1,7 +1,9 @@
-#python-digitalocean
-## 
+#python-digitalocean ( API v 1. )
+##
 
 python-digitalocean is a python package that provide easy access to digitalocean.com APIs to manage droplets, images and more.
+
+*This is the branch that uses the first version of the DigitalOcean APIs!*
 
 <div align="center">
 

@@ -25,7 +25,7 @@ class Droplet(object):
         self.ip_address = None
         self.private_ip_address = None
         self.ip_v6_address = None
-        self.ssh_keys = None
+        self.ssh_key_ids = None
         self.backups = None
         self.ipv6 = None
         self.private_networking = None
@@ -209,7 +209,7 @@ class Droplet(object):
         """
         self.__call_api("POST", "/actions/", {'type': 'enable_ipv6'})
 
-    def create(self, ssh_keys=None, backups=False, ipv6=False, private_networking=False):
+    def create(self, ssh_key_ids=None, backups=False, ipv6=False, private_networking=False):
         """
             Create the droplet with object properties.
         """
@@ -218,14 +218,14 @@ class Droplet(object):
                 "size": self.size,
                 "image": self.image,
                 "region": self.region,
-                "ssh_keys": self.ssh_keys
+                "ssh_key_ids": self.ssh_key_ids
             }
 
-        if ssh_keys:
-            if type(ssh_keys) in [int, long, str]:
-                data['ssh_keys']= str(ssh_keys)
-            elif type(ssh_keys) in [set, list, tuple, dict]:
-                data['ssh_keys'] = ','.join(str(x) for x in ssh_keys)
+        if ssh_key_ids:
+            if type(ssh_key_ids) in [int, long, str]:
+                data['ssh_key_ids']= str(ssh_key_ids)
+            elif type(ssh_key_ids) in [set, list, tuple, dict]:
+                data['ssh_key_ids'] = ','.join(str(x) for x in ssh_key_ids)
             else:
                 raise Exception("ssh_key_ids should be an integer or long number, a string, a set, a list/tuple or a ditionary ")
 

@@ -1,8 +1,13 @@
-class Region(object):
+from .baseapi import BaseAPI
+
+class Region(BaseAPI):
+    name = None
+    slug = None
+    sizes = []
+    available = None
+    features = []
+
     def __init__(self, token=""):
-        self.token = token
-        self.name = None
-        self.slug = None
-        self.sizes = []
-        self.available = None
-        self.features = []
+        super(Region, self).__init__()
+        if token:
+            self.token = token

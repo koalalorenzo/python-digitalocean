@@ -45,7 +45,14 @@ class Droplet(BaseAPI):
         self.action_ids.insert(0, action_id)
 
     def get_data(*args, **kwargs):
+        """
+            Customized version of get_data to perform __check_actions_in_data
+        """
         data = super(Droplet, self).get_data(*args, **kwargs)
+        if kwargs.has_key("type"):
+            if kwargs["type"] == "POST":
+                self.__check_actions_in_data(data)
+        return data
 
     def load(self):
         droplets = self.get_data("droplets/%s" % self.id)

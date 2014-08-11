@@ -14,7 +14,7 @@ class Action(BaseAPI):
         self.region = None
 
     def load(self):
-        action = self.__get_data("https://api.digitalocean.com/v2/actions/%s" % self.id)
+        action = self.get_data("https://api.digitalocean.com/v2/actions/%s" % self.id)
         if action:
             action = action[u'action']
             self.id = action[u'id']

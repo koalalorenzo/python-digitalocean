@@ -7,7 +7,7 @@ class BaseAPI(object):
     token = ""
     call_response = None
 
-    def __init__(self, arg):
+    def __init__(self):
         super(BaseAPI, self).__init__()
 
     def __perform_get(self, url, headers=dict(), params=dict()):
@@ -43,7 +43,7 @@ class BaseAPI(object):
             r = self.__perform_get(url, headers=headers, params=params)
         return r
 
-    def __get_data(self, url, type="GET", params=dict()):
+    def get_data(self, url, type="GET", params=dict()):
         """
             This method is a basic implementation of __call_api that checks
             errors too.

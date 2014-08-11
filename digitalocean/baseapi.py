@@ -4,8 +4,8 @@ class BaseAPI(object):
     """
         Basic api class for
     """
-    self.token = ""
-    self.call_response = None
+    token = ""
+    call_response = None
 
     def __init__(self, arg):
         super(BaseAPI, self).__init__()

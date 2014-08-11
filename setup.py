@@ -21,5 +21,6 @@ setup(name='python-digitalocean',
       url='https://github.com/koalalorenzo/python-digitalocean',
       packages=['digitalocean'],
       install_requires=['requests'],
+      test_suite='digitalocean.tests',
       long_description=long_description
      )

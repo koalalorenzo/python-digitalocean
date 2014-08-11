@@ -1,89 +1,56 @@
 import requests
 from .Action import Action
+from .baseapi import BaseAPI
 
-class Droplet(object):
+class Droplet(BaseAPI):
+    id = None
+    name = None
+    memory = None
+    vcpus = None
+    disk = None
+    region = []
+    status = None
+    image = None
+    size = None
+    locked = None
+    created_at = None
+    status = None
+    networks = []
+    kernel = None
+    backup_ids = []
+    snapshot_ids = []
+    action_ids = []
+    features = []
+    ip_address = None
+    private_ip_address = None
+    ip_v6_address = None
+    ssh_keys = None
+    backups = None
+    ipv6 = None
+    private_networking = None
+
     def __init__(self, *args, **kwargs):
-        self.token = ""
-        self.id = None
-        self.name = None
-        self.memory = None
-        self.vcpus = None
-        self.disk = None
-        self.region = []
-        self.status = None
-        self.image = None
-        self.size = None
-        self.locked = None
-        self.created_at = None
-        self.status = None
-        self.networks = []
-        self.kernel = None
-        self.backup_ids = []
-        self.snapshot_ids = []
-        self.action_ids = []
-        self.features = []
-        self.ip_address = None
-        self.private_ip_address = None
-        self.ip_v6_address = None
-        self.ssh_keys = None
-        self.backups = None
-        self.ipv6 = None
-        self.private_networking = None
+        super(Droplet, self).__init__()
 
         #Setting the attribute values
         for attr in kwargs.keys():
             setattr(self,attr,kwargs[attr])
 
-    def call_api(self, type, path, params=dict()):
-        """
-            exposes any api entry
-            useful when working with new API calls that are not yet implemented by Droplet class
-        """
-        return self.__call_api(type, path, params)
+    def __check_actions_in_data(self, data):
+        try:
+            action_id = data['droplet']['action_ids'][0]
+        except KeyError: # Some actions return a list of action items.
+            action_id = data['action']['id']
+        # Prepend the action id to the begining to be consistent with the API.
+        self.action_ids.insert(0, action_id)
 
-    def __call_api(self, type, path, params=dict()):
-        headers = {'Authorization': 'Bearer ' + self.token}
-        if not self.id:
-            self.id = ''
-        if type == 'POST':
-            headers['content-type'] = 'application/json'
-            r = requests.post("https://api.digitalocean.com/v2/droplets/%s%s" %
-                             (self.id, path),
-                              headers=headers,
-                              params=params)
-        elif type == 'DELETE':
-            headers['content-type'] = 'application/x-www-form-urlencoded'
-            r = requests.delete("https://api.digitalocean.com/v2/droplets/%s" %
-                             (self.id),
-                              headers=headers,
-                              params=params)
-        else:
-            r = requests.get("https://api.digitalocean.com/v2/droplets/%s%s" %
-                            (self.id, path),
-                             headers=headers,
-                             params=params)
-
-        # A successful delete returns "204 No Content" so there is no data.
-        if r.status_code != 204:
-            data = r.json()
-            self.call_response = data
-            if r.status_code not in [requests.codes.ok, 202, 201]:
-                msg = [data[m] for m in ("id", "message") if m in data][1]
-                raise Exception(msg)
-
-            # Add the action to the object's action list.
-            if type == 'POST': # Actions are only returned for POST's.
-                try:
-                    action_id = data['droplet']['action_ids'][0]
-                except KeyError: # Some actions return a list of action items.
-                    action_id = data['action']['id']
-                # Prepend the action id to the begining to be consistent with the API.
-                self.action_ids.insert(0, action_id)
-
-            return data
+    def get_data(*args, **kwargs):
+        data = super(Droplet, self).get_data(*args, **kwargs)
 
     def load(self):
-        droplet = self.__call_api('GET', '')['droplet']
+        droplets = self.get_data("droplets/%s" % self.id)
+        droplet = droplets['droplet']
+
         self.id = droplet['id']
         self.name = droplet['name']
         self.memory = droplet['memory']
@@ -115,55 +82,92 @@ class Droplet(object):
         """
             Boot up the droplet
         """
-        self.__call_api('POST', '/actions/', {'type': 'power_on'})
+        data = self.get_data(
+            "droplets/%s/actions/" % self.id,
+            type="POST",
+            params={'type': 'power_on'}
+        )
+        return data
 
     def shutdown(self):
         """
             shutdown the droplet
         """
-        self.__call_api('POST', '/actions/', {'type': 'shutdown'})
+        return self.get_data(
+            "droplets/%s/actions/" % self.id,
+            type="POST",
+            params={'type': 'shutdown'}
+        )
 
     def reboot(self):
         """
             restart the droplet
         """
-        self.__call_api('POST', '/actions/', {'type': 'reboot'})
+        return self.get_data(
+            "droplets/%s/actions/" % self.id,
+            type="POST",
+            params={'type': 'reboot'}
+        )
 
     def power_cycle(self):
         """
             restart the droplet
         """
-        self.__call_api('POST', '/actions/', {'type': 'power_cycle'})
+        return self.get_data(
+            "droplets/%s/actions/" % self.id,
+            type="POST",
+            params={'type': 'power_cycle'}
+        )
 
     def power_off(self):
         """
             restart the droplet
         """
-        self.__call_api('POST', '/actions/', {'type': 'power_off'})
+        return self.get_data(
+            "droplets/%s/actions/" % self.id,
+            type="POST",
+            params={'type': 'power_off'}
+        )
 
     def reset_root_password(self):
         """
             reset the root password
         """
-        self.__call_api('POST', '/actions/', {'type': 'password_reset'})
+        return self.get_data(
+            "droplets/%s/actions/" % self.id,
+            type="POST",
+            params={'type': 'password_reset'}
+        )
 
     def resize(self, new_size):
         """
             resize the droplet to a new size
         """
-        self.__call_api("POST", "/actions/", {"type": "resize", "size": new_size})
+        return self.get_data(
+            "droplets/%s/actions/" % self.id,
+            type="POST",
+            params={"type": "resize", "size": new_size}
+        )
 
     def take_snapshot(self, snapshot_name):
         """
             Take a snapshot!
         """
-        self.__call_api("POST", "/actions/", {"type": "snapshot", "name": snapshot_name})
+        return self.get_data(
+            "droplets/%s/actions/" % self.id,
+            type="POST",
+            params={"type": "snapshot", "name": snapshot_name}
+        )
 
     def restore(self, image_id):
         """
             Restore the droplet to an image ( snapshot or backup )
         """
-        self.__call_api("POST", "/actions/", {"type":"restore", "image": image_id})
+        return self.get_data(
+            "droplets/%s/actions/" % self.id,
+            type="POST",
+            params={"type":"restore", "image": image_id}
+        )
 
     def rebuild(self, image_id=None):
         """
@@ -171,7 +175,12 @@ class Droplet(object):
         """
         if self.image_id and not image_id:
             image_id = self.image_id
-        self.__call_api("POST", "/actions/", {"type": "rebuild", "image": image_id})
+
+        return self.get_data(
+            "droplets/%s/actions/" % self.id,
+            type="POST",
+            params={"type": "rebuild", "image": image_id}
+        )
 
     def enable_backups(self):
         """
@@ -183,31 +192,50 @@ class Droplet(object):
         """
             Disable automatic backups
         """
-        self.__call_api("POST", "/actions/", {'type': 'disable_backups'})
+        return self.get_data(
+            "droplets/%s/actions/" % self.id,
+            type="POST",
+            params={'type': 'disable_backups'}
+        )
 
     def destroy(self):
         """
             Destroy the droplet
         """
-        self.__call_api("DELETE", "")
+        return self.get_data(
+            "droplets/%s" % self.id,
+            type="DELETE"
+        )
 
     def rename(self, name):
         """
             Rename the droplet
         """
-        self.__call_api("POST", "/actions/", {'type': 'rename', 'name': name})
+        return self.get_data(
+            "droplets/%s/actions/" % self.id,
+            type="POST",
+            params={'type': 'rename', 'name': name}
+        )
 
     def enable_private_networking(self):
         """
            Enable private networking on an existing Droplet where available.
         """
-        self.__call_api("POST", "/actions/", {'type': 'enable_private_networking'})
+        return self.get_data(
+            "droplets/%s/actions/" % self.id,
+            type="POST",
+            params={'type': 'enable_private_networking'}
+        )
 
     def enable_ipv6(self):
         """
             Enable IPv6 on an existing Droplet where available.
         """
-        self.__call_api("POST", "/actions/", {'type': 'enable_ipv6'})
+        return self.get_data(
+            "droplets/%s/actions/" % self.id,
+            type="POST",
+            params={'type': 'enable_ipv6'}
+        )
 
     def create(self, ssh_keys=None, backups=False, ipv6=False, private_networking=False):
         """
@@ -238,7 +266,12 @@ class Droplet(object):
         if self.private_networking:
             data['private_networking'] = True
 
-        data = self.__call_api("POST", '', data)
+        data = self.get_data(
+            "droplets/%s" % self.id,
+            type="POST",
+            params=data
+        )
+
         if data:
             self.id = data['droplet']['id']
 

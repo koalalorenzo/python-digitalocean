@@ -223,9 +223,9 @@ class Droplet(object):
 
         if ssh_keys:
             if type(ssh_keys) in [int, long, str]:
-                data['ssh_keys']= str(ssh_keys)
+                data['ssh_keys[]']= str(ssh_keys)
             elif type(ssh_keys) in [set, list, tuple, dict]:
-                data['ssh_keys'] = ','.join(str(x) for x in ssh_keys)
+                data['ssh_keys[]'] = ','.join(str(x) for x in ssh_keys)
             else:
                 raise Exception("ssh_key_ids should be an integer or long number, a string, a set, a list/tuple or a ditionary ")
 

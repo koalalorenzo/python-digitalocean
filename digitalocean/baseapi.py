@@ -43,14 +43,16 @@ class BaseAPI(object):
             r = self.__perform_get(url, headers=headers, params=params)
         return r
 
-    def __call_api(self, path, action, type="GET" params=dict()):
+    def __get_data(self, url, type="GET", params=dict()):
         """
-            Basic "call_api" method. It should not work.
+            This method is a basic implementation of __call_api that checks
+            errors too.
         """
-        url = "https://api.digitalocean.com/v2/%s/%s" % (path, action)
-        req = self.__perform_request(url, type)
-        self.call_response = req.json() # raise an error in case of problems.
-        return self.call_response
+        req = self.__perform_request(url, type, params)
+        if req.status_code != requests.codes.ok:
+            msg = [data[m] for m in ("id", "message") if m in data][1]
+            raise Exception(msg)
+        return req
 
     def call_api(self, *args, **kargs):
         """

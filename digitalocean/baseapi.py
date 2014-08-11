@@ -1,4 +1,5 @@
 import requests
+from urlparse import urljoin
 
 class BaseAPI(object):
     """
@@ -6,9 +7,13 @@ class BaseAPI(object):
     """
     token = ""
     call_response = None
+    end_point = "https://api.digitalocean.com/v2/"
 
     def __init__(self):
         super(BaseAPI, self).__init__()
+        self.token = ""
+        self.call_response = None
+        self.end_point = "https://api.digitalocean.com/v2/"
 
     def __perform_get(self, url, headers=dict(), params=dict()):
         return requests.get(url, headers=headers, params=params)
@@ -34,6 +39,9 @@ class BaseAPI(object):
         """
         if not self.token:
             raise Exception("No token provied. Please use a valid token")
+
+        if not "https" not in url:
+            url = urljoin(self.end_point, url)
 
         headers = {'Authorization':'Bearer ' + self.token}
         if type == 'POST':

@@ -56,16 +56,22 @@ class Domain(BaseAPI):
         # URL https://api.digitalocean.com/v2/domains/[NAME]/records/
         records = []
         data = self.get_data(
-            "domains/%s/records/" % self.name,,
+            "domains/%s/records/" % self.name,
             type="GET",
             params=data
         )
 
         for record_data in data['domain_records']:
-            record = Record(domain_name=self.name,
-                            id=record_data.pop('id'))
+
+            record = Record(
+                domain_name=self.name,
+                id=record_data.pop('id')
+            )
+
             for key, value in record_data.iteritems():
                 setattr(record, key, value)
+
             record.token = self.token
             records.append(record)
+
         return records

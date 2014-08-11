@@ -32,6 +32,9 @@ class BaseAPI(object):
             using self.__call_api method.
             This method will return the request object.
         """
+        if not self.token:
+            raise Exception("No token provied. Please use a valid token")
+
         headers = {'Authorization':'Bearer ' + self.token}
         if type == 'POST':
             r = self.__perform_request(url, headers=headers, params=params)
@@ -49,7 +52,8 @@ class BaseAPI(object):
             errors too.
         """
         req = self.__perform_request(url, type, params)
+        data = req.json()
         if req.status_code != requests.codes.ok:
             msg = [data[m] for m in ("id", "message") if m in data][1]
             raise Exception(msg)
-        return req
+        return data

@@ -1,17 +1,20 @@
 from .baseapi import BaseAPI
 
 class Action(BaseAPI):
+    id = action_id
+    token = None
+    status = None
+    type = None
+    started_at = None
+    completed_at = None
+    resource_id = None
+    resource_type = None
+    region = None
+
     def __init__(self, action_id=""):
         super(Action, self).__init__()
-        self.id = action_id
-        self.token = None
-        self.status = None
-        self.type = None
-        self.started_at = None
-        self.completed_at = None
-        self.resource_id = None
-        self.resource_type = None
-        self.region = None
+        if action_id:
+            self.id = action_id
 
     def load(self):
         action = self.get_data("actions/%s" % self.id)

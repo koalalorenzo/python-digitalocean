@@ -1,7 +1,7 @@
 from .baseapi import BaseAPI
 
 class Action(BaseAPI):
-    id = action_id
+    id = None
     token = None
     status = None
     type = None

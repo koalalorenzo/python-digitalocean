@@ -89,12 +89,11 @@ class Droplet(BaseAPI):
         """
             Boot up the droplet
         """
-        data = self.get_data(
+        return self.get_data(
             "droplets/%s/actions/" % self.id,
             type="POST",
             params={'type': 'power_on'}
         )
-        return data
 
     def shutdown(self):
         """

@@ -1,7 +1,8 @@
-import requests
+from .baseapi import BaseAPI
 
-class Action(object):
+class Action(BaseAPI):
     def __init__(self, action_id=""):
+        super(Action, self).__init__()
         self.id = action_id
         self.token = None
         self.status = None
@@ -12,22 +13,8 @@ class Action(object):
         self.resource_type = None
         self.region = None
 
-    def __call_api(self, path, params=dict()):
-        payload = {}
-        headers = {'Authorization':'Bearer ' + self.token}
-        payload.update(params)
-        r = requests.get("https://api.digitalocean.com/v2/actions/%s" % self.id,
-                         headers=headers,
-                         params=payload)
-        data = r.json()
-        self.call_response = data
-        if r.status_code != requests.codes.ok:
-            msg = [data[m] for m in ("id", "message") if m in data][1]
-            raise Exception(msg)
-        return data
-
     def load(self):
-        action = self.__call_api('')
+        action = self.__get_data("https://api.digitalocean.com/v2/actions/%s" % self.id)
         if action:
             action = action[u'action']
             self.id = action[u'id']

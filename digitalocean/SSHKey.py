@@ -1,14 +1,16 @@
+from .baseapi import BaseAPI
 import requests
 
-class SSHKey(object):
+class SSHKey(BaseAPI):
+    id = ""
+    name = None
+    public_key = None
+    fingerprint = None
+
     def __init__(self, token="", *args, **kwargs):
-
-        self.token = token
-
-        self.id = ""
-        self.name = None
-        self.public_key = None
-        self.fingerprint = None
+        super(SSHKey, self).__init__()
+        if token:
+            self.token = token
 
         #Setting the attribute values
         for attr in kwargs.keys():
@@ -46,11 +48,17 @@ class SSHKey(object):
             if r.status_code not in [requests.codes.ok, 202, 201]:
                 msg = [data[m] for m in ("id", "message") if m in data][1]
                 raise Exception(msg)
-   
+
             return data
 
     def load(self):
-        ssh_key = self.__call_api("GET")['ssh_key']
+        data = self.get_data(
+            "account/keys/%s" % self.id,
+            type="GET"
+        )
+
+        ssh_key = data['ssh_key']
+
         self.public_key = ssh_key['public_key']
         self.name = ssh_key['name']
         self.id = ssh_key['id']
@@ -60,11 +68,17 @@ class SSHKey(object):
         """
             Create the SSH Key
         """
-        data = {
+        input_params = {
                 "name": self.name,
                 "public_key": self.public_key,
             }
-        data = self.__call_api("POST", data)
+
+        data = self.get_data(
+            "account/keys/",
+            type="POST",
+            params=input_params
+        )
+
         if data:
             self.id = data['ssh_key']['id']
 
@@ -72,11 +86,17 @@ class SSHKey(object):
         """
             Edit the SSH Key
         """
-        data = {
+        input_params = {
                 "name": self.name,
                 "public_key": self.public_key,
             }
-        data = self.__call_api("PUT", data)
+
+        data = self.get_data(
+            "account/keys/%s" % self.id,
+            type="PUT",
+            params=input_params
+        )
+
         if data:
             self.id = data['ssh_key']['id']
 
@@ -84,4 +104,7 @@ class SSHKey(object):
         """
             Destroy the SSH Key
         """
-        self.__call_api("DELETE")
+        return self.get_data(
+            "account/keys/%s" % self.id,
+            type="DELETE",
+        )

@@ -1,4 +1,4 @@
-import requests
+from .baseapi import BaseAPI
 from .Droplet import Droplet
 from .Region import Region
 from .Size import Size
@@ -7,35 +7,39 @@ from .Domain import Domain
 from .SSHKey import SSHKey
 
 
-class Manager(object):
+class Manager(BaseAPI):
     def __init__(self, token=""):
-        self.token = token
-        self.call_response = None
+        super(Image, self).__init__()
+        if token:
+            self.token = token
 
-    def __call_api(self, path, params=dict()):
-        payload = {}
-        headers = {'Authorization':'Bearer ' + self.token}
-        payload.update(params)
-        r = requests.get("https://api.digitalocean.com/v2/%s" % path,
-                         headers=headers,
-                         params=payload)
-        data = r.json()
+    def get_data(*args, **kwargs):
+        """
+            Customized version of get_data to perform __check_actions_in_data
+        """
+        data = super(Droplet, self).get_data(*args, **kwargs)
 
-        self.call_response = data
-        if r.status_code != requests.codes.ok:
-            msg = [data[m] for m in ("id", "message") if m in data][1]
-            raise Exception(msg)
+        params = {}
+        if kwargs.has_key("params"):
+            params = kwargs['params']
+        unpaged_data = self.__deal_with_pagination(args[0], data, params)
 
-        # Deal with pagination.
+        return unpaged_data
+
+    def __deal_with_pagination(self, url, data, params):
+        """
+            Perform multiple calls in order to have a full list of elements
+            when the API are "paginated". (content list is divided in more
+            than one page)
+        """
         try:
             pages = data['links']['pages']['last'].split('=')[-1]
             key, values = data.popitem()
             for page in range(2, int(pages) + 1):
-                payload.update({'page': page})
-                r = requests.get("https://api.digitalocean.com/v2/%s" % path,
-                                 headers=headers,
-                                 params=payload)
-                more_values = r.json().values()[0]
+                params.update({'page': page})
+                new_data = self.get_data(url, params=params)
+
+                more_values = new_data.values()[0]
                 for value in more_values:
                     values.append(value)
             data = {}
@@ -49,7 +53,7 @@ class Manager(object):
         """
             This function returns a list of Region object.
         """
-        data = self.__call_api("/regions/")
+        data = self.get_data("/regions/")
         regions = list()
         for jsoned in data['regions']:
             region = Region()
@@ -66,7 +70,7 @@ class Manager(object):
         """
             This function returns a list of Droplet object.
         """
-        data = self.__call_api("/droplets/")
+        data = self.get_data("/droplets/")
         droplets = list()
         for jsoned in data['droplets']:
             droplet = Droplet()
@@ -103,7 +107,7 @@ class Manager(object):
         """
             This function returns a list of Size object.
         """
-        data = self.__call_api("/sizes/")
+        data = self.get_data("/sizes/")
         sizes = list()
         for jsoned in data['sizes']:
             size = Size()
@@ -123,7 +127,7 @@ class Manager(object):
         """
             This function returns a list of Image object.
         """
-        data = self.__call_api("/images/")
+        data = self.get_data("/images/")
         images = list()
         for jsoned in data['images']:
             image = Image()
@@ -142,7 +146,7 @@ class Manager(object):
         """
             This function returns a list of Image object.
         """
-        data = self.__call_api("/images/")
+        data = self.get_data("/images/")
         images = list()
         for jsoned in data['images']:
             if not jsoned['public']:
@@ -162,7 +166,7 @@ class Manager(object):
         """
             This function returns a list of Image object.
         """
-        data = self.__call_api("/images/")
+        data = self.get_data("/images/")
         images = list()
         for jsoned in data['images']:
             if jsoned['public']:
@@ -182,7 +186,7 @@ class Manager(object):
         """
             This function returns a list of Domain object.
         """
-        data = self.__call_api("/domains/")
+        data = self.get_data("/domains/")
         domains = list()
         for jsoned in data['domains']:
             domain = Domain()
@@ -197,7 +201,7 @@ class Manager(object):
         """
             This function returns a list of SSHKey object.
         """
-        data = self.__call_api("/account/keys/")
+        data = self.get_data("/account/keys/")
         ssh_keys = list()
         for jsoned in data['ssh_keys']:
             ssh_key = SSHKey()

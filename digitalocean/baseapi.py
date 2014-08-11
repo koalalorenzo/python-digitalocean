@@ -53,10 +53,3 @@ class BaseAPI(object):
             msg = [data[m] for m in ("id", "message") if m in data][1]
             raise Exception(msg)
         return req
-
-    def call_api(self, *args, **kargs):
-        """
-            exposes any api entry
-            useful when working with new API calls that are not yet implemented by Droplet class
-        """
-        return self.__call_api(*args, **kargs)

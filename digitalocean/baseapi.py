@@ -1,3 +1,5 @@
+import requests
+
 class BaseAPI(object):
     """
         Basic api class for

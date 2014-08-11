@@ -1,16 +1,23 @@
 import requests
-      
-class Record(object):
+from .baseapi import BaseAPI
+
+class Record(BaseAPI):
+    domain = ""
+    id = None
+    type = None
+    name = None
+    data = None
+    priority = None
+    port = None
+    weight = None
+
     def __init__(self, domain_name, id="", token=""):
+        super(Record, self).__init__()
         self.domain = domain_name
-        self.id = id
-        self.token = token
-        self.type = None
-        self.name = None
-        self.data = None
-        self.priority = None
-        self.port = None
-        self.weight = None
+        if id:
+            self.id = id
+        if token:
+            self.token = token
 
     def __call_api(self, type, path, params=dict()):
         headers = {'Authorization':'Bearer ' + self.token}
@@ -52,7 +59,7 @@ class Record(object):
         """
             Create a record for a domain
         """
-        data = {
+        input_params = {
                 "type": self.type,
                 "data": self.data,
                 "name": self.name,
@@ -60,7 +67,13 @@ class Record(object):
                 "port": self.port,
                 "weight": self.weight
             }
-        data = self.__call_api("POST", "", data)
+
+        data = self.get_data(
+            "domains/%s/records/%s" % (self.domain, self.id),
+            type="POST",
+            params=input_params,
+        )
+
         if data:
             self.id = data['domain_record']['id']
 
@@ -68,7 +81,10 @@ class Record(object):
         """
             Destroy the record
         """
-        self.__call_api("DELETE", "")
+        return self.get_data(
+            "domains/%s/records/%s" % (self.domain, self.id),
+            type="DELETE",
+        )
 
     def save(self):
         """
@@ -82,10 +98,15 @@ class Record(object):
             "port": self.port,
             "weight": self.weight,
         }
-        data = self.__call_api("PUT", "", data)
+        return self.get_data(
+            "domains/%s/records/%s" % (self.domain, self.id),
+            type="PUT",
+            params=data
+        )
 
     def load(self):
-        record = self.__call_api("GET", "")
+        url = "domains/%s/records/%s" % (self.domain, self.id)
+        record = self.get_data(url)
         if record:
             record = record[u'domain_record']
             self.id = record['id']

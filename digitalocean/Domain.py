@@ -15,7 +15,8 @@ class Domain(BaseAPI):
             setattr(self,attr,kwargs[attr])
 
     def load(self):
-        domains = self.get_data("https://api.digitalocean.com/v2/domains")
+        # URL https://api.digitalocean.com/v2/domains
+        domains = self.get_data("domains")
         domain = domains['domain']
         self.live_zone_file = domain['zone_file']
         self.ttl = domain['ttl']
@@ -25,8 +26,9 @@ class Domain(BaseAPI):
         """
             Destroy the domain by name
         """
+        # URL https://api.digitalocean.com/v2/domains/[NAME]
         domain = self.get_data(
-            "https://api.digitalocean.com/v2/domains/%s" % self.name,
+            "domains/%s" % self.name,
             type="DELETE"
         )
 
@@ -34,13 +36,14 @@ class Domain(BaseAPI):
         """
             Create new doamin
         """
+        # URL https://api.digitalocean.com/v2/domains
         data = {
                 "name": self.name,
                 "ip_address": self.ip_address,
             }
 
         domain = self.get_data(
-            "https://api.digitalocean.com/v2/domains",
+            "domains",
             type="POST",
             params=data
         )
@@ -50,9 +53,10 @@ class Domain(BaseAPI):
         """
             Returns a list of Record objects
         """
+        # URL https://api.digitalocean.com/v2/domains/[NAME]/records/
         records = []
         data = self.get_data(
-            "https://api.digitalocean.com/v2/domains/%s/records/" % self.name,,
+            "domains/%s/records/" % self.name,,
             type="GET",
             params=data
         )

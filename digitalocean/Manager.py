@@ -17,7 +17,7 @@ class Manager(BaseAPI):
         """
             Customized version of get_data to perform __check_actions_in_data
         """
-        data = super(Droplet, self).get_data(*args, **kwargs)
+        data = super(Manager, self).get_data(*args, **kwargs)
 
         params = {}
         if kwargs.has_key("params"):

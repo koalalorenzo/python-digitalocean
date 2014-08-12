@@ -1,5 +1,6 @@
 import requests
 from .Action import Action
+from .Image import Image
 from .baseapi import BaseAPI
 
 class Droplet(BaseAPI):
@@ -300,3 +301,14 @@ class Droplet(BaseAPI):
             action.load()
             actions.append(action)
         return actions
+
+    def get_snapshots(self):
+        """
+            This method will return the snapshots/images connected to that
+            specific droplet.
+        """
+        snapshots = list()
+        for id in droplet.snapshot_ids:
+            snapshot = Image(token=droplet.token, id=id)
+            snapshots.append(snapshot)
+        return snapshots

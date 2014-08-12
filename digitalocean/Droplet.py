@@ -59,24 +59,9 @@ class Droplet(BaseAPI):
         droplets = self.get_data("droplets/%s" % self.id)
         droplet = droplets['droplet']
 
-        self.id = droplet['id']
-        self.name = droplet['name']
-        self.memory = droplet['memory']
-        self.vcpus = droplet['vcpus']
-        self.disk = droplet['disk']
-        self.region = droplet['region']
-        self.status = droplet['status']
-        self.image = droplet['image']
-        self.size = droplet['size']
-        self.locked = droplet['locked']
-        self.created_at = droplet['created_at']
-        self.status = droplet['status']
-        self.networks = droplet['networks']
-        self.kernel = droplet['kernel']
-        self.backup_ids = droplet['backup_ids']
-        self.snapshot_ids = droplet['snapshot_ids']
-        self.action_ids = droplet['action_ids']
-        self.features = droplet['features']
+        for attr in droplet.keys():
+            setattr(self,attr,droplet[attr])
+
         for net in self.networks['v4']:
             if net['type'] == 'private':
                 self.private_ip_address = net['ip_address']

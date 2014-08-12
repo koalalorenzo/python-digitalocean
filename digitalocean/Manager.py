@@ -9,7 +9,7 @@ from .SSHKey import SSHKey
 
 class Manager(BaseAPI):
     def __init__(self, token=""):
-        super(Image, self).__init__()
+        super(Manager, self).__init__()
         if token:
             self.token = token
 

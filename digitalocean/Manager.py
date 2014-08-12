@@ -13,7 +13,7 @@ class Manager(BaseAPI):
         if token:
             self.token = token
 
-    def get_data(*args, **kwargs):
+    def get_data(self, *args, **kwargs):
         """
             Customized version of get_data to perform __check_actions_in_data
         """

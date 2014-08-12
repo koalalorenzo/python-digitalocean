@@ -309,6 +309,6 @@ class Droplet(BaseAPI):
         """
         snapshots = list()
         for id in droplet.snapshot_ids:
-            snapshot = Image(token=droplet.token, id=id)
+            snapshot = Image(token=self.token, id=id)
             snapshots.append(snapshot)
         return snapshots

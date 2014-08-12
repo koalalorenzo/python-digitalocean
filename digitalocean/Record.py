@@ -11,13 +11,13 @@ class Record(BaseAPI):
     port = None
     weight = None
 
-    def __init__(self, domain_name, id="", token=""):
+    def __init__(self, domain_name, *args, **kwargs):
         super(Record, self).__init__()
         self.domain = domain_name
-        if id:
-            self.id = id
-        if token:
-            self.token = token
+
+        #Setting the attribute values
+        for attr in kwargs.keys():
+            setattr(self,attr,kwargs[attr])
 
     def create(self):
         """

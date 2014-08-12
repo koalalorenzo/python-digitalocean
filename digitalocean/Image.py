@@ -10,10 +10,12 @@ class Image(BaseAPI):
     regions = []
     created_at = None
 
-    def __init__(self, token=""):
+    def __init__(self, *args, **kwargs):
         super(Image, self).__init__()
-        if token:
-            self.token = token
+
+        #Setting the attribute values
+        for attr in kwargs.keys():
+            setattr(self,attr,kwargs[attr])
 
     def destroy(self):
         """

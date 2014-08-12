@@ -10,6 +10,7 @@ class Domain(BaseAPI):
 
     def __init__(self, *args, **kwargs):
         super(Domain, self).__init__()
+
         #Setting the attribute values
         for attr in kwargs.keys():
             setattr(self,attr,kwargs[attr])

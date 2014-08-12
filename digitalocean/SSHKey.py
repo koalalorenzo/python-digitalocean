@@ -7,10 +7,8 @@ class SSHKey(BaseAPI):
     public_key = None
     fingerprint = None
 
-    def __init__(self, token="", *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(SSHKey, self).__init__()
-        if token:
-            self.token = token
 
         #Setting the attribute values
         for attr in kwargs.keys():

@@ -8,10 +8,13 @@ from .SSHKey import SSHKey
 
 
 class Manager(BaseAPI):
-    def __init__(self, token=""):
+    def __init__(self, token="", *args, **kwargs):
         super(Manager, self).__init__()
         if token:
             self.token = token
+
+        for attr in kwargs.keys():
+            setattr(self,attr,kwargs[attr])
 
     def get_data(self, *args, **kwargs):
         """

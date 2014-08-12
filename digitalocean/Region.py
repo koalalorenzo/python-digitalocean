@@ -7,7 +7,9 @@ class Region(BaseAPI):
     available = None
     features = []
 
-    def __init__(self, token=""):
+    def __init__(self, *args, **kwargs):
         super(Region, self).__init__()
-        if token:
-            self.token = token
+
+        #Setting the attribute values
+        for attr in kwargs.keys():
+            setattr(self,attr,kwargs[attr])

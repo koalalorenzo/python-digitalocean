@@ -9,11 +9,14 @@ class BaseAPI(object):
     call_response = None
     end_point = "https://api.digitalocean.com/v2/"
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         super(BaseAPI, self).__init__()
         self.token = ""
         self.call_response = None
         self.end_point = "https://api.digitalocean.com/v2/"
+
+        for attr in kwargs.keys():
+            setattr(self,attr,kwargs[attr])
 
     def __perform_get(self, url, headers=dict(), params=dict()):
         return requests.get(url, headers=headers, params=params)

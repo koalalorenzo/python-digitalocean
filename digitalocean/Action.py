@@ -11,10 +11,14 @@ class Action(BaseAPI):
     resource_type = None
     region = None
 
-    def __init__(self, action_id=""):
+    def __init__(self, action_id="", *args, **kwargs):
         super(Action, self).__init__()
         if action_id:
             self.id = action_id
+
+        #Setting the attribute values
+        for attr in kwargs.keys():
+            setattr(self,attr,kwargs[attr])
 
     def load(self):
         action = self.get_data("actions/%s" % self.id)

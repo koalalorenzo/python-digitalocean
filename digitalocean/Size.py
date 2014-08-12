@@ -10,7 +10,9 @@ class Size(BaseAPI):
     price_hourly = None
     regions = []
 
-    def __init__(self, token=""):
+    def __init__(self, *args, **kwargs):
         super(Size, self).__init__()
-        if token:
-            self.token = token
+
+        #Setting the attribute values
+        for attr in kwargs.keys():
+            setattr(self,attr,kwargs[attr])

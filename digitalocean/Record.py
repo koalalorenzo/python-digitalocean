@@ -2,22 +2,17 @@ import requests
 from .baseapi import BaseAPI
 
 class Record(BaseAPI):
-    domain = ""
-    id = None
-    type = None
-    name = None
-    data = None
-    priority = None
-    port = None
-    weight = None
-
     def __init__(self, domain_name, *args, **kwargs):
-        super(Record, self).__init__()
-        self.domain = domain_name
+        self.domain = domain_name if domain_name else ""
+        self.id = None
+        self.type = None
+        self.name = None
+        self.data = None
+        self.priority = None
+        self.port = None
+        self.weight = None
 
-        #Setting the attribute values
-        for attr in kwargs.keys():
-            setattr(self,attr,kwargs[attr])
+        super(Record, self).__init__(*args, **kwargs)
 
     def create(self):
         """

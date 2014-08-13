@@ -43,7 +43,7 @@ class BaseAPI(object):
         if not self.token:
             raise Exception("No token provied. Please use a valid token")
 
-        if not "https" not in url:
+        if "https" not in url:
             url = urljoin(self.end_point, url)
 
         headers = {'Authorization':'Bearer ' + self.token}

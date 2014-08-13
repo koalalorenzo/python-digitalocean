@@ -18,11 +18,6 @@ class Action(BaseAPI):
         action = self.get_data("actions/%s" % self.id)
         if action:
             action = action[u'action']
-            self.id = action[u'id']
-            self.status = action[u'status']
-            self.type = action[u'type']
-            self.started_at = action[u'started_at']
-            self.completed_at = action[u'completed_at']
-            self.resource_id = action[u'resource_id']
-            self.resource_typ = action[u'resource_type']
-            self.region = action[u'region']
+            # Loading attributes
+            for attr in action.keys():
+                setattr(self,attr,action[attr])

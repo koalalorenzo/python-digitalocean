@@ -10,6 +10,7 @@ class Image(BaseAPI):
         self.public = None
         self.regions = []
         self.created_at = None
+
         super(Image, self).__init__(*args, **kwargs)
 
     def destroy(self):

@@ -10,4 +10,5 @@ class Size(BaseAPI):
         self.price_monthly = None
         self.price_hourly = None
         self.regions = []
+
         super(Size, self).__init__(*args, **kwargs)

@@ -8,6 +8,7 @@ class Domain(BaseAPI):
         self.ttl = None
         self.zone_file = None
         self.ip_address = None
+
         super(Domain, self).__init__(*args, **kwargs)
 
     def load(self):

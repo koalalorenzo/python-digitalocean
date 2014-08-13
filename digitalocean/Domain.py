@@ -3,17 +3,12 @@ from .Record import Record
 from .baseapi import BaseAPI
 
 class Domain(BaseAPI):
-    name = None
-    ttl = None
-    zone_file = None
-    ip_address = None
-
     def __init__(self, *args, **kwargs):
-        super(Domain, self).__init__()
-
-        #Setting the attribute values
-        for attr in kwargs.keys():
-            setattr(self,attr,kwargs[attr])
+        self.name = None
+        self.ttl = None
+        self.zone_file = None
+        self.ip_address = None
+        super(Domain, self).__init__(*args, **kwargs)
 
     def load(self):
         # URL https://api.digitalocean.com/v2/domains

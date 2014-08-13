@@ -73,10 +73,7 @@ class Record(BaseAPI):
         record = self.get_data(url)
         if record:
             record = record[u'domain_record']
-            self.id = record['id']
-            self.type = record[u'type']
-            self.name = record[u'name']
-            self.data = record[u'data']
-            self.priority = record[u'priority']
-            self.port = record[u'port']
-            self.weight = record[u'weight']
+
+            #Setting the attribute values
+            for attr in record.keys():
+                setattr(self,attr,record[attr])

@@ -2,17 +2,13 @@ from .baseapi import BaseAPI
 import requests
 
 class SSHKey(BaseAPI):
-    id = ""
-    name = None
-    public_key = None
-    fingerprint = None
-
     def __init__(self, *args, **kwargs):
-        super(SSHKey, self).__init__()
+        self.id = ""
+        self.name = None
+        self.public_key = None
+        self.fingerprint = None
 
-        #Setting the attribute values
-        for attr in kwargs.keys():
-            setattr(self,attr,kwargs[attr])
+        super(SSHKey, self).__init__(*args, **kwargs)
 
     def load(self):
         data = self.get_data(

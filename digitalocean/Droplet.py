@@ -4,38 +4,36 @@ from .Image import Image
 from .baseapi import BaseAPI
 
 class Droplet(BaseAPI):
-    id = None
-    name = None
-    memory = None
-    vcpus = None
-    disk = None
-    region = []
-    status = None
-    image = None
-    size = None
-    locked = None
-    created_at = None
-    status = None
-    networks = []
-    kernel = None
-    backup_ids = []
-    snapshot_ids = []
-    action_ids = []
-    features = []
-    ip_address = None
-    private_ip_address = None
-    ip_v6_address = None
-    ssh_keys = None
-    backups = None
-    ipv6 = None
-    private_networking = None
-
     def __init__(self, *args, **kwargs):
-        super(Droplet, self).__init__()
+        # Defining default values
+        self.id = None
+        self.name = None
+        self.memory = None
+        self.vcpus = None
+        self.disk = None
+        self.region = []
+        self.status = None
+        self.image = None
+        self.size = None
+        self.locked = None
+        self.created_at = None
+        self.status = None
+        self.networks = []
+        self.kernel = None
+        self.backup_ids = []
+        self.snapshot_ids = []
+        self.action_ids = []
+        self.features = []
+        self.ip_address = None
+        self.private_ip_address = None
+        self.ip_v6_address = None
+        self.ssh_keys = None
+        self.backups = None
+        self.ipv6 = None
+        self.private_networking = None
 
-        #Setting the attribute values
-        for attr in kwargs.keys():
-            setattr(self,attr,kwargs[attr])
+        # This will load also the values passed
+        super(Droplet, self).__init__(*args, **kwargs)
 
     def __check_actions_in_data(self, data):
         try:

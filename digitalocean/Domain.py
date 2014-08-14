@@ -13,11 +13,11 @@ class Domain(BaseAPI):
 
     def load(self):
         # URL https://api.digitalocean.com/v2/domains
-        domains = self.get_data("domains")
-        domain = domains['domain']
-        self.live_zone_file = domain['zone_file']
-        self.ttl = domain['ttl']
-        self.name = domain['name']
+        domains = self.get_data("domains/%s" % self.name)
+        domain = domains[u'domain']
+        self.live_zone_file = domain[u'zone_file']
+        self.ttl = domain[u'ttl']
+        self.name = domain[u'name']
 
     def destroy(self):
         """

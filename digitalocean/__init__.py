@@ -16,3 +16,4 @@ from .Action import Action
 from .Domain import Domain
 from .Record import Record
 from .SSHKey import SSHKey
+from .Kernel import Kernel

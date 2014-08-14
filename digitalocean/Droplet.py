@@ -1,6 +1,7 @@
 import requests
 from .Action import Action
 from .Image import Image
+from .Kernel import Kernel
 from .baseapi import BaseAPI
 
 class Droplet(BaseAPI):
@@ -226,14 +227,17 @@ class Droplet(BaseAPI):
             params={'type': 'enable_ipv6'}
         )
 
-    def change_kernel(self, kernel_id):
+    def change_kernel(self, kernel):
         """
             Change the kernel to a new one
         """
+        if type(kernel) != Kernel:
+            raise Exception("Use Kernel object")
+
         return self.get_data(
             "droplets/%s/actions/" % self.id,
             type="POST",
-            params={'type': 'change_kernel'}
+            params={'kernel': kernel.id}
         )
 
     def create(self, ssh_keys=None, backups=False, ipv6=False, private_networking=False):
@@ -314,4 +318,11 @@ class Droplet(BaseAPI):
             Get a list of kernels available
         """
         data = self.get_data("droplets/%s/kernels/" % self.id)
-        return data[u'kernels']
+
+        kernels = list()
+        for jsond in data[u'kernels']:
+            kernel = Kernel(jsond)
+            kernel.token = self.token
+            kernels.append(kernel)
+
+        return kernels

@@ -308,3 +308,10 @@ class Droplet(BaseAPI):
             snapshot.token = self.token
             snapshots.append(snapshot)
         return snapshots
+
+    def get_kernel_available(self):
+        """
+            Get a list of kernels available
+        """
+        data = self.get_data("droplets/%s/kernels/" % self.id)
+        return data[u'kernels']

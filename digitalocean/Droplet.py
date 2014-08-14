@@ -36,14 +36,13 @@ class Droplet(BaseAPI):
         super(Droplet, self).__init__(*args, **kwargs)
 
     def __check_actions_in_data(self, data):
-        try:
-            action_id = data['droplet']['action_ids'][0]
-        except KeyError: # Some actions return a list of action items.
-            action_id = data['action']['id']
-        # Prepend the action id to the begining to be consistent with the API.
-        self.action_ids.insert(0, action_id)
+        # reloading actions if actions is provided.
+        if data.has_key(u"actions"):
+            self.action_ids = []
+            for action in data[u'actions']:
+                self.action_ids.append(action[u'id'])
 
-    def get_data(*args, **kwargs):
+    def get_data(self, *args, **kwargs):
         """
             Customized version of get_data to perform __check_actions_in_data
         """
@@ -293,7 +292,7 @@ class Droplet(BaseAPI):
             specific droplet.
         """
         snapshots = list()
-        for id in droplet.snapshot_ids:
+        for id in self.snapshot_ids:
             snapshot = Image()
             snapshot.id = id
             snapshot.token = self.token

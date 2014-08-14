@@ -32,7 +32,7 @@ class BaseAPI(object):
         headers['content-type'] = 'application/x-www-form-urlencoded'
         return requests.delete(url, headers=headers, params=params)
 
-    def __perform_request(self, url, type='GET', params=dict()):
+    def __perform_request(self, url, type='GET', params=dict(), headers=dict()):
         """
             This method will perform the real request,
             in this way we can customize only the "output" of the API call by
@@ -45,7 +45,7 @@ class BaseAPI(object):
         if "https" not in url:
             url = urljoin(self.end_point, url)
 
-        headers = {'Authorization':'Bearer ' + self.token}
+        headers.update({'Authorization':'Bearer ' + self.token})
         if type == 'POST':
             r = self.__perform_request(url, headers=headers, params=params)
         elif type == 'PUT':

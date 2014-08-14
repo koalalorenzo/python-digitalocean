@@ -226,6 +226,16 @@ class Droplet(BaseAPI):
             params={'type': 'enable_ipv6'}
         )
 
+    def change_kernel(self, kernel_id):
+        """
+            Change the kernel to a new one
+        """
+        return self.get_data(
+            "droplets/%s/actions/" % self.id,
+            type="POST",
+            params={'type': 'change_kernel'}
+        )
+
     def create(self, ssh_keys=None, backups=False, ipv6=False, private_networking=False):
         """
             Create the droplet with object properties.

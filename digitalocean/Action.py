@@ -11,11 +11,18 @@ class Action(BaseAPI):
         self.resource_id = None
         self.resource_type = None
         self.region = None
+        # Custom, not provided by the json object.
+        self.droplet_id = None
 
         super(Action, self).__init__(*args, **kwargs)
 
     def load(self):
-        action = self.get_data("actions/%s" % self.id)
+        action = self.get_data(
+            "droplets/%s/actions/%s" % (
+                self.droplet_id,
+                self.id
+            )
+        )
         if action:
             action = action[u'action']
             # Loading attributes

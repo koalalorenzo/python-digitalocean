@@ -279,8 +279,10 @@ class Droplet(BaseAPI):
         """
         actions = []
         for action_id in self.action_ids:
-            action = Action(action_id)
+            action = Action()
+            action.id = action_id
             action.token = self.token
+            action.droplet_id = self.id
             action.load()
             actions.append(action)
         return actions

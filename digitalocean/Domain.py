@@ -60,14 +60,7 @@ class Domain(BaseAPI):
 
         for record_data in data['domain_records']:
 
-            record = Record(
-                domain_name=self.name,
-                id=record_data.pop('id')
-            )
-
-            for key, value in record_data.iteritems():
-                setattr(record, key, value)
-
+            record = Record(**record_data)
             record.token = self.token
             records.append(record)
 

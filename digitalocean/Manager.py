@@ -54,7 +54,7 @@ class Manager(BaseAPI):
         data = self.get_data("regions/")
         regions = list()
         for jsoned in data['regions']:
-            region = Region(jsoned)
+            region = Region(**jsoned)
             region.token = self.token
             regions.append(region)
         return regions
@@ -66,7 +66,7 @@ class Manager(BaseAPI):
         data = self.get_data("droplets/")
         droplets = list()
         for jsoned in data['droplets']:
-            droplet = Droplet(jsoned)
+            droplet = Droplet(**jsoned)
             droplet.token = self.token
 
             for net in droplet.networks['v4']:
@@ -86,7 +86,7 @@ class Manager(BaseAPI):
         data = self.get_data("sizes/")
         sizes = list()
         for jsoned in data['sizes']:
-            size = Size(jsoned)
+            size = Size(**jsoned)
             size.token = self.token
             sizes.append(size)
         return sizes
@@ -98,7 +98,7 @@ class Manager(BaseAPI):
         data = self.get_data("images/")
         images = list()
         for jsoned in data['images']:
-            image = Image(jsoned)
+            image = Image(**jsoned)
             image.token = self.token
             images.append(image)
         return images
@@ -111,7 +111,7 @@ class Manager(BaseAPI):
         images = list()
         for jsoned in data['images']:
             if not jsoned['public']:
-                image = Image(jsoned)
+                image = Image(**jsoned)
                 image.token = self.token
                 images.append(image)
         return images
@@ -124,7 +124,7 @@ class Manager(BaseAPI):
         images = list()
         for jsoned in data['images']:
             if jsoned['public']:
-                image = Image(jsoned)
+                image = Image(**jsoned)
                 image.token = self.token
                 images.append(image)
         return images
@@ -136,7 +136,7 @@ class Manager(BaseAPI):
         data = self.get_data("domains/")
         domains = list()
         for jsoned in data['domains']:
-            domain = Domain(jsoned)
+            domain = Domain(**jsoned)
             domain.token = self.token
             domains.append(domain)
         return domains
@@ -148,7 +148,7 @@ class Manager(BaseAPI):
         data = self.get_data("account/keys/")
         ssh_keys = list()
         for jsoned in data['ssh_keys']:
-            ssh_key = SSHKey(jsoned)
+            ssh_key = SSHKey(**jsoned)
             ssh_key.token = self.token
             ssh_keys.append(ssh_key)
         return ssh_keys

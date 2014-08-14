@@ -10,7 +10,6 @@ class BaseAPI(object):
     end_point = "https://api.digitalocean.com/v2/"
 
     def __init__(self, *args, **kwargs):
-        super(BaseAPI, self).__init__(*args, **kwargs)
         self.token = ""
         self.call_response = None
         self.end_point = "https://api.digitalocean.com/v2/"

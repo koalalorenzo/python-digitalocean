@@ -317,12 +317,17 @@ class Droplet(BaseAPI):
         """
             Get a list of kernels available
         """
-        data = self.get_data("droplets/%s/kernels/" % self.id)
 
         kernels = list()
-        for jsond in data[u'kernels']:
-            kernel = Kernel(**jsond)
-            kernel.token = self.token
-            kernels.append(kernel)
+        data = self.get_data("droplets/%s/kernels/" % self.id)
+        while True:
+                for jsond in data[u'kernels']:
+                    kernel = Kernel(**jsond)
+                    kernel.token = self.token
+                    kernels.append(kernel)
+                url = data[u'links'][u'pages'].get(u'next')
+                if not url:
+                        break
+                data = self.get_data(data[u'links'][u'pages'].get(u'next'))
 
         return kernels

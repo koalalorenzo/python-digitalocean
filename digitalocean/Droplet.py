@@ -321,7 +321,7 @@ class Droplet(BaseAPI):
 
         kernels = list()
         for jsond in data[u'kernels']:
-            kernel = Kernel(jsond)
+            kernel = Kernel(**jsond)
             kernel.token = self.token
             kernels.append(kernel)
 

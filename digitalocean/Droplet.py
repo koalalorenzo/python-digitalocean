@@ -237,7 +237,7 @@ class Droplet(BaseAPI):
         return self.get_data(
             "droplets/%s/actions/" % self.id,
             type="POST",
-            params={'kernel': kernel.id}
+            params={'type' : 'change_kernel', 'kernel': kernel.id}
         )
 
     def create(self, ssh_keys=None, backups=False, ipv6=False, private_networking=False):

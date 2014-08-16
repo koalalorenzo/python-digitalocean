@@ -28,3 +28,6 @@ class Action(BaseAPI):
             # Loading attributes
             for attr in action.keys():
                 setattr(self,attr,action[attr])
+
+    def __str__(self):
+        return "%s %s [%s]" % (self.id, self.type, self.status)

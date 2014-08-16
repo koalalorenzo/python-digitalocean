@@ -237,7 +237,7 @@ class Droplet(BaseAPI):
         return self.get_data(
             "droplets/%s/actions/" % self.id,
             type="POST",
-            params={'kernel': kernel.id}
+            params={'type' : 'change_kernel', 'kernel': kernel.id}
         )
 
     def create(self, ssh_keys=None, backups=False, ipv6=False, private_networking=False):
@@ -317,12 +317,17 @@ class Droplet(BaseAPI):
         """
             Get a list of kernels available
         """
-        data = self.get_data("droplets/%s/kernels/" % self.id)
 
         kernels = list()
-        for jsond in data[u'kernels']:
-            kernel = Kernel(jsond)
-            kernel.token = self.token
-            kernels.append(kernel)
+        data = self.get_data("droplets/%s/kernels/" % self.id)
+        while True:
+                for jsond in data[u'kernels']:
+                    kernel = Kernel(**jsond)
+                    kernel.token = self.token
+                    kernels.append(kernel)
+                url = data[u'links'][u'pages'].get(u'next')
+                if not url:
+                        break
+                data = self.get_data(data[u'links'][u'pages'].get(u'next'))
 
         return kernels

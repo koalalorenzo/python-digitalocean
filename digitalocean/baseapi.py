@@ -47,7 +47,7 @@ class BaseAPI(object):
 
         headers.update({'Authorization':'Bearer ' + self.token})
         if type == 'POST':
-            r = self.__perform_request(url, headers=headers, params=params)
+            r = self.__perform_post(url, headers=headers, params=params)
         elif type == 'PUT':
             r = self.__perform_put(url, headers=headers, params=params)
         elif type == 'DELETE':
@@ -63,7 +63,7 @@ class BaseAPI(object):
         """
         req = self.__perform_request(url, type, params)
         data = req.json()
-        if req.status_code != requests.codes.ok:
+        if not req.ok:
             msg = [data[m] for m in ("id", "message") if m in data][1]
             raise Exception(msg)
         return data

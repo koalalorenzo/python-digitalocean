@@ -331,3 +331,6 @@ class Droplet(BaseAPI):
                 data = self.get_data(data[u'links'][u'pages'].get(u'next'))
 
         return kernels
+
+    def __str__(self):
+        return "%s %s" % (self.id, self.name)

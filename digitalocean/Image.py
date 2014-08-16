@@ -41,3 +41,6 @@ class Image(BaseAPI):
             type="PUT",
             params={"name": new_name}
         )
+
+    def __str__(self):
+        return "%s %s %s" % (self.id, self.name, self.distribution)

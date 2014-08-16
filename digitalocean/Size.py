@@ -12,3 +12,6 @@ class Size(BaseAPI):
         self.regions = []
 
         super(Size, self).__init__(*args, **kwargs)
+
+    def __str__(self):
+        return "%s" % (self.slug)

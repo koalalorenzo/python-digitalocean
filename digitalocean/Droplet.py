@@ -249,7 +249,7 @@ class Droplet(BaseAPI):
                 "size": self.size,
                 "image": self.image,
                 "region": self.region,
-                "ssh_keys": self.ssh_keys
+                "ssh_keys[]": self.ssh_keys
             }
 
         if ssh_keys:
@@ -270,13 +270,17 @@ class Droplet(BaseAPI):
             data['private_networking'] = True
 
         data = self.get_data(
-            "droplets/%s" % self.id,
+            "droplets",
             type="POST",
             params=data
         )
 
         if data:
             self.id = data['droplet']['id']
+
+        self.action_ids = []
+        for id in data[u'droplet'][u'action_ids']:
+            self.action_ids.append(id)
 
     def get_events(self):
         """

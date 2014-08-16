@@ -15,7 +15,7 @@ class Domain(BaseAPI):
         # URL https://api.digitalocean.com/v2/domains
         domains = self.get_data("domains/%s" % self.name)
         domain = domains[u'domain']
-        self.live_zone_file = domain[u'zone_file']
+        self.zone_file = domain[u'zone_file']
         self.ttl = domain[u'ttl']
         self.name = domain[u'name']
 

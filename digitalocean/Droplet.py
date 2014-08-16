@@ -249,7 +249,7 @@ class Droplet(BaseAPI):
                 "size": self.size,
                 "image": self.image,
                 "region": self.region,
-                "ssh_keys": self.ssh_keys
+                "ssh_keys[]": self.ssh_keys
             }
 
         if ssh_keys:

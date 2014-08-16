@@ -63,7 +63,7 @@ class BaseAPI(object):
         """
         req = self.__perform_request(url, type, params)
         data = req.json()
-        if req.status_code != requests.codes.ok:
+        if not req.ok:
             msg = [data[m] for m in ("id", "message") if m in data][1]
             raise Exception(msg)
         return data

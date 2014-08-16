@@ -270,7 +270,7 @@ class Droplet(BaseAPI):
             data['private_networking'] = True
 
         data = self.get_data(
-            "droplets/%s" % self.id,
+            "droplets",
             type="POST",
             params=data
         )

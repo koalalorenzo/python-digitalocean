@@ -65,3 +65,6 @@ class Domain(BaseAPI):
             records.append(record)
 
         return records
+
+    def __str__(self):
+        return "%s" % self.name

@@ -8,3 +8,6 @@ class Region(BaseAPI):
         self.available = None
         self.features = []
         super(Region, self).__init__(*args, **kwargs)
+
+    def __str__(self):
+        return "%s" % self.name

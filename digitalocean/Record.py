@@ -72,3 +72,6 @@ class Record(BaseAPI):
             #Setting the attribute values
             for attr in record.keys():
                 setattr(self,attr,record[attr])
+
+    def __str__(self):
+        return "%s %s" % (self.id, self.domain)

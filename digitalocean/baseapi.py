@@ -67,3 +67,9 @@ class BaseAPI(object):
             msg = [data[m] for m in ("id", "message") if m in data][1]
             raise Exception(msg)
         return data
+
+    def __str__(self):
+        return "%s" % self.token
+
+    def __unicode__(self):
+        return u"%s" % self.__str__()

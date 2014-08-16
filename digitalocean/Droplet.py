@@ -278,6 +278,10 @@ class Droplet(BaseAPI):
         if data:
             self.id = data['droplet']['id']
 
+        self.action_ids = []
+        for id in data[u'droplet'][u'action_ids']:
+            self.action_ids.append(id)
+
     def get_events(self):
         """
             A helper function for backwards compatability.

@@ -152,3 +152,6 @@ class Manager(BaseAPI):
             ssh_key.token = self.token
             ssh_keys.append(ssh_key)
         return ssh_keys
+
+    def __str__(self):
+        return "%s" % (self.token)

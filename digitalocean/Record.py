@@ -2,7 +2,7 @@ import requests
 from .baseapi import BaseAPI
 
 class Record(BaseAPI):
-    def __init__(self, domain_name, *args, **kwargs):
+    def __init__(self, domain_name=None, *args, **kwargs):
         self.domain = domain_name if domain_name else ""
         self.id = None
         self.type = None

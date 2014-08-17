@@ -35,7 +35,7 @@ class Manager(BaseAPI):
             key, values = data.popitem()
             for page in range(2, int(pages) + 1):
                 params.update({'page': page})
-                new_data = self.get_data(url, params=params)
+                new_data = super(Manager, self).get_data(url, params=params)
 
                 more_values = new_data.values()[0]
                 for value in more_values:

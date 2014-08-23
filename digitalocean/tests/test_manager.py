@@ -74,7 +74,7 @@ class TestManager(unittest.TestCase):
         for image in global_images:
             if image.slug == 'ubuntu-14-04-x64': 
                 ubuntu_trusty_64 = image
-                break
+            self.assertTrue(image.public)
         self.assertEqual(ubuntu_trusty_64.token, self.token)
         self.assertEqual(ubuntu_trusty_64.name, 'Ubuntu 14.04 x64')
         self.assertTrue(ubuntu_trusty_64.public)
@@ -87,6 +87,9 @@ class TestManager(unittest.TestCase):
 
     def test_get_my_images(self):
         my_images = self.manager.get_my_images()
+
+        for image in my_images:
+            self.assertFalse(image.public)
 
         # Test the few things we can assume about a private image
         first_image = my_images[0]

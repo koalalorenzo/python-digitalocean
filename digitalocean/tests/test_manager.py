@@ -20,7 +20,7 @@ class TestManager(unittest.TestCase):
 
     def test_get_all_regions(self):
         all_regions = self.manager.get_all_regions()
-        self.assertEqual(len(all_regions), 7)
+        self.assertEqual(len(all_regions), 8)
 
         first_region = all_regions[0]
         self.assertEqual(first_region.token, self.token)
@@ -45,7 +45,8 @@ class TestManager(unittest.TestCase):
         self.assertEqual(first_size.transfer, 1)
         self.assertEqual(first_size.transfer, 1)
         self.assertItemsEqual(first_size.regions,
-            [u'nyc1', u'sgp1', u'ams1', u'ams2', u'sfo1', u'nyc2', u'lon1'])
+            [u'nyc1', u'sgp1', u'ams1', u'ams2',
+            u'sfo1', u'nyc2', u'lon1', u'nyc3'])
 
     def test_get_all_images(self):
         all_images = self.manager.get_all_images()
@@ -60,7 +61,8 @@ class TestManager(unittest.TestCase):
         self.assertTrue(ubuntu_trusty_64.public)
         self.assertEqual(ubuntu_trusty_64.distribution, 'Ubuntu')
         self.assertItemsEqual(ubuntu_trusty_64.regions,
-            [u'nyc1', u'sgp1', u'ams1', u'ams2', u'sfo1', u'nyc2', u'lon1'])
+            [u'nyc1', u'sgp1', u'ams1', u'ams2',
+            u'sfo1', u'nyc2', u'lon1', u'nyc3'])
         self.assertIsInstance(ubuntu_trusty_64.id, int)
         self.assertIsNotNone(ubuntu_trusty_64.created_at)
 
@@ -78,7 +80,8 @@ class TestManager(unittest.TestCase):
         self.assertTrue(ubuntu_trusty_64.public)
         self.assertEqual(ubuntu_trusty_64.distribution, 'Ubuntu')
         self.assertItemsEqual(ubuntu_trusty_64.regions,
-            [u'nyc1', u'sgp1', u'ams1', u'ams2', u'sfo1', u'nyc2', u'lon1'])
+            [u'nyc1', u'sgp1', u'ams1', u'ams2',
+            u'sfo1', u'nyc2', u'lon1', u'nyc3'])
         self.assertIsInstance(ubuntu_trusty_64.id, int)
         self.assertIsNotNone(ubuntu_trusty_64.created_at)
 

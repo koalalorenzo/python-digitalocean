@@ -20,7 +20,7 @@ class TestManager(unittest.TestCase):
 
     def test_get_all_regions(self):
         all_regions = self.manager.get_all_regions()
-        self.assertEqual(len(all_regions), 7)
+        self.assertEqual(len(all_regions), 8)
 
         first_region = all_regions[0]
         self.assertEqual(first_region.token, self.token)
@@ -45,7 +45,8 @@ class TestManager(unittest.TestCase):
         self.assertEqual(first_size.transfer, 1)
         self.assertEqual(first_size.transfer, 1)
         self.assertItemsEqual(first_size.regions,
-            [u'nyc1', u'sgp1', u'ams1', u'ams2', u'sfo1', u'nyc2', u'lon1'])
+            [u'nyc1', u'sgp1', u'ams1', u'ams2',
+            u'sfo1', u'nyc2', u'lon1', u'nyc3'])
 
     def test_get_all_images(self):
         all_images = self.manager.get_all_images()
@@ -60,7 +61,8 @@ class TestManager(unittest.TestCase):
         self.assertTrue(ubuntu_trusty_64.public)
         self.assertEqual(ubuntu_trusty_64.distribution, 'Ubuntu')
         self.assertItemsEqual(ubuntu_trusty_64.regions,
-            [u'nyc1', u'sgp1', u'ams1', u'ams2', u'sfo1', u'nyc2', u'lon1'])
+            [u'nyc1', u'sgp1', u'ams1', u'ams2',
+            u'sfo1', u'nyc2', u'lon1', u'nyc3'])
         self.assertIsInstance(ubuntu_trusty_64.id, int)
         self.assertIsNotNone(ubuntu_trusty_64.created_at)
 
@@ -72,18 +74,22 @@ class TestManager(unittest.TestCase):
         for image in global_images:
             if image.slug == 'ubuntu-14-04-x64': 
                 ubuntu_trusty_64 = image
-                break
+            self.assertTrue(image.public)
         self.assertEqual(ubuntu_trusty_64.token, self.token)
         self.assertEqual(ubuntu_trusty_64.name, 'Ubuntu 14.04 x64')
         self.assertTrue(ubuntu_trusty_64.public)
         self.assertEqual(ubuntu_trusty_64.distribution, 'Ubuntu')
         self.assertItemsEqual(ubuntu_trusty_64.regions,
-            [u'nyc1', u'sgp1', u'ams1', u'ams2', u'sfo1', u'nyc2', u'lon1'])
+            [u'nyc1', u'sgp1', u'ams1', u'ams2',
+            u'sfo1', u'nyc2', u'lon1', u'nyc3'])
         self.assertIsInstance(ubuntu_trusty_64.id, int)
         self.assertIsNotNone(ubuntu_trusty_64.created_at)
 
     def test_get_my_images(self):
         my_images = self.manager.get_my_images()
+
+        for image in my_images:
+            self.assertFalse(image.public)
 
         # Test the few things we can assume about a private image
         first_image = my_images[0]

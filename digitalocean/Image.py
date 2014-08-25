@@ -13,6 +13,16 @@ class Image(BaseAPI):
 
         super(Image, self).__init__(*args, **kwargs)
 
+    def load(self):
+        data = self.get_data("images/%s" % self.id)
+        image_dict = data['image']
+
+        #Setting the attribute values
+        for attr in image_dict.keys():
+            setattr(self,attr,image_dict[attr])
+
+        return self
+
     def destroy(self):
         """
             Destroy the image

@@ -38,9 +38,10 @@ class Droplet(BaseAPI):
 
     def __check_actions_in_data(self, data):
         # reloading actions if actions is provided.
-        if data.has_key(u"actions"):
+        actions = data.get(u'links', {}).get(u'actions', [])
+        if actions:
             self.action_ids = []
-            for action in data[u'actions']:
+            for action in actions:
                 self.action_ids.append(action[u'id'])
 
     def get_data(self, *args, **kwargs):
@@ -277,10 +278,6 @@ class Droplet(BaseAPI):
 
         if data:
             self.id = data['droplet']['id']
-
-        self.action_ids = []
-        for id in data[u'droplet'][u'action_ids']:
-            self.action_ids.append(id)
 
     def get_events(self):
         """

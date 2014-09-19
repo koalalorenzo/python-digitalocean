@@ -62,8 +62,11 @@ class BaseAPI(object):
             errors too.
         """
         req = self.__perform_request(url, type, params)
-        data = req.json()
-        if not req.ok:
+        try:
+            data = req.json()
+        except: # No content (e.g. 204 on DELETE droplet/image/key, etc.).
+            data = None
+        if not req.ok and data:
             msg = [data[m] for m in ("id", "message") if m in data][1]
             raise Exception(msg)
         return data

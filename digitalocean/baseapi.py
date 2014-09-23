@@ -56,6 +56,13 @@ class BaseAPI(object):
             r = self.__perform_get(url, headers=headers, params=params)
         return r
 
+    def get_respones(self, url, type="GET", params=dict()):
+        """
+            This method will get a response from a request
+        """
+        req = self.__perform_request(url, type, params)
+        return req
+
     def get_data(self, url, type="GET", params=dict()):
         """
             This method is a basic implementation of __call_api that checks

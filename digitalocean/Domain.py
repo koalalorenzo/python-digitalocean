@@ -24,7 +24,7 @@ class Domain(BaseAPI):
             Destroy the domain by name
         """
         # URL https://api.digitalocean.com/v2/domains/[NAME]
-        domain = self.get_data(
+        return self.get_data(
             "domains/%s" % self.name,
             type="DELETE"
         )

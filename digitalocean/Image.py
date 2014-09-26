@@ -28,7 +28,7 @@ class Image(BaseAPI):
             Destroy the image
         """
         return self.get_data(
-            "images/%s/destroy/" % self.id,
+            "images/%s/" % self.id,
             type="DELETE",
         )
 

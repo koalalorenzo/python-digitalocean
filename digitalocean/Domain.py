@@ -47,9 +47,9 @@ class Domain(BaseAPI):
             @weight The weight of records with the same priority
         """
         data = {
-            "type": kwargs.get("type" None),
-            "name": kwargs.get("name" None),
-            "data": kwargs.get("data" None)
+            "type": kwargs.get("type", None),
+            "name": kwargs.get("name", None),
+            "data": kwargs.get("data", None)
         }
 
         # Optional Args

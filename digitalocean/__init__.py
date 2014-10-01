@@ -1,4 +1,4 @@
-
+# -*- coding: utf-8 -*-
 """digitalocean API to manage droplets"""
 
 __version__ = "1.0.3"

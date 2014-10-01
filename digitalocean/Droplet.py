@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import requests
 from .Action import Action
 from .Image import Image

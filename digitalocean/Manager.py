@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from .baseapi import BaseAPI
 from .Droplet import Droplet
 from .Region import Region

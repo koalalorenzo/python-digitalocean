@@ -30,6 +30,22 @@ class Domain(BaseAPI):
         )
 
     def create_new_domain_record(self, *args, **kwargs):
+        """
+            Create new domain record.
+            https://developers.digitalocean.com/#create-a-new-domain-record
+
+            Args:
+
+            @type  The record type (A, MX, CNAME, etc).
+            @name  The host name, alias, or service being defined by the record
+            @data  Variable data depending on record type.
+
+            Optional Args:
+
+            @priority The priority of the host
+            @port The port that the service is accessible on
+            @weight The weight of records with the same priority
+        """
         data = {
             "type": kwargs.get("type" None),
             "name": kwargs.get("name" None),

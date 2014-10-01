@@ -94,7 +94,6 @@ class Domain(BaseAPI):
         data = self.get_data(
             "domains/%s/records/" % self.name,
             type="GET",
-            params=data
         )
 
         for record_data in data['domain_records']:

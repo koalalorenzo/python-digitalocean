@@ -29,6 +29,29 @@ class Domain(BaseAPI):
             type="DELETE"
         )
 
+    def create_new_domain_record(self, *args, **kwargs):
+        data = {
+            "type": kwargs.get("type" None),
+            "name": kwargs.get("name" None),
+            "data": kwargs.get("data" None)
+        }
+
+        # Optional Args
+        if kwargs.get("priority", None):
+            data['priority'] = kwargs.get("priority", None)
+
+        if kwargs.get("port", None):
+            data['port'] = kwargs.get("port", None)
+
+        if kwargs.get("weight", None):
+            data['weight'] = kwargs.get("weight", None)
+
+        return self.get_data(
+            "domains/%s/records" % self.name,
+            type="POST",
+            params=data
+        )
+
     def create(self):
         """
             Create new doamin

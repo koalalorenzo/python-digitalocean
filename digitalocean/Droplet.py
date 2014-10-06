@@ -241,7 +241,7 @@ class Droplet(BaseAPI):
             params={'type' : 'change_kernel', 'kernel': kernel.id}
         )
 
-    def create(self, ssh_keys=None, backups=False, ipv6=False, private_networking=False):
+    def create(self, ssh_keys=None, backups=False, ipv6=False, private_networking=False, user_data=None):
         """
             Create the droplet with object properties.
         """
@@ -252,6 +252,9 @@ class Droplet(BaseAPI):
                 "region": self.region,
                 "ssh_keys[]": self.ssh_keys
             }
+
+        if user_data:
+            data["user_data"] = user_data
 
         if ssh_keys:
             if type(ssh_keys) in [int, long, str]:
@@ -269,6 +272,9 @@ class Droplet(BaseAPI):
 
         if self.private_networking:
             data['private_networking'] = True
+
+        if self.user_data:
+            data["user_data"] = self.user_data
 
         data = self.get_data(
             "droplets",

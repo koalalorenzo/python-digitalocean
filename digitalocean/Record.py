@@ -15,6 +15,15 @@ class Record(BaseAPI):
 
         super(Record, self).__init__(*args, **kwargs)
 
+    @classmethod
+    def get_object(cls, api_token, domain, record_id):
+        """
+            Class method that will return a Record object by ID and the domain.
+        """
+        Record = cls(token=api_token, domain=domain, id=record_id)
+        Record.load()
+        return Record
+
     def create(self):
         """
             Create a record for a domain

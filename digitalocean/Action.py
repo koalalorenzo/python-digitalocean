@@ -18,12 +18,12 @@ class Action(BaseAPI):
         super(Action, self).__init__(*args, **kwargs)
 
     @classmethod
-    def get_object(cls, api_token, droplet_id, action_id):
+    def get_object(cls, api_token, action_id):
         """
-            Class method that will return a Action object by ID and Droplet ID.
+            Class method that will return a Action object by ID.
         """
-        action = cls(token=api_token, droplet_id=droplet_id, id=action_id)
-        action.load()
+        action = cls(token=api_token, id=action_id)
+        action.load_directly()
         return action
 
     def load_directly(self):

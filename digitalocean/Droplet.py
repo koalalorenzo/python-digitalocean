@@ -325,6 +325,16 @@ class Droplet(BaseAPI):
             actions.append(action)
         return actions
 
+    def get_action(self, action_id):
+        """
+            Returns a specific Action by its ID.
+        """
+        return Action.get_object(
+            api_token=self.token,
+            droplet_id=self.id,
+            action_id=action_id
+        )
+
     def get_snapshots(self):
         """
             This method will return the snapshots/images connected to that

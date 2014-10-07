@@ -26,6 +26,14 @@ class Action(BaseAPI):
         action.load()
         return action
 
+    def load_directly(self):
+        action = self.get_data("actions/%s" % self.id)
+        if action:
+            action = action[u'action']
+            # Loading attributes
+            for attr in action.keys():
+                setattr(self,attr,action[attr])
+
     def load(self):
         action = self.get_data(
             "droplets/%s/actions/%s" % (

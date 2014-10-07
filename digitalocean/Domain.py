@@ -15,10 +15,9 @@ class Domain(BaseAPI):
     def load(self):
         # URL https://api.digitalocean.com/v2/domains
         domains = self.get_data("domains/%s" % self.name)
-        domain = domains[u'domain']
-        self.zone_file = domain[u'zone_file']
-        self.ttl = domain[u'ttl']
-        self.name = domain[u'name']
+
+        for attr in domains.keys():
+            setattr(self,attr,droplet[attr])
 
     def destroy(self):
         """

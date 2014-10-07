@@ -17,6 +17,16 @@ class Action(BaseAPI):
 
         super(Action, self).__init__(*args, **kwargs)
 
+    @classmethod
+    def get_object(cls, api_token, droplet_id, action_id):
+        """
+            Class method that will return a Action object by ID and Droplet ID.
+        """
+        action = cls(token=api_token, droplet_id=droplet_id, id=action_id)
+        action.load()
+        return action
+
+
     def load(self):
         action = self.get_data(
             "droplets/%s/actions/%s" % (

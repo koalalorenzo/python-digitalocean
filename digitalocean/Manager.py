@@ -154,6 +154,12 @@ class Manager(BaseAPI):
             domains.append(domain)
         return domains
 
+    def get_domain(self, domain_name):
+        """
+            Return a Domain by its domain_name
+        """
+        return Domain.get_object(api_token=self.token, domain_name=domain_name)
+
     def get_all_sshkeys(self):
         """
             This function returns a list of SSHKey object.

@@ -33,6 +33,7 @@ class Droplet(BaseAPI):
         self.backups = None
         self.ipv6 = None
         self.private_networking = None
+        self.user_data = None
 
         # This will load also the values passed
         super(Droplet, self).__init__(*args, **kwargs)

@@ -26,7 +26,6 @@ class Action(BaseAPI):
         action.load()
         return action
 
-
     def load(self):
         action = self.get_data(
             "droplets/%s/actions/%s" % (

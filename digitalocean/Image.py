@@ -14,6 +14,15 @@ class Image(BaseAPI):
 
         super(Image, self).__init__(*args, **kwargs)
 
+    @classmethod
+    def get_object(cls, api_token, image_id):
+        """
+            Class method that will return an Image object by ID.
+        """
+        image = cls(token=api_token, id=image_id)
+        image.load()
+        return image
+
     def load(self):
         data = self.get_data("images/%s" % self.id)
         image_dict = data['image']

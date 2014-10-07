@@ -110,6 +110,12 @@ class Manager(BaseAPI):
             images.append(image)
         return images
 
+    def get_image(self, image_id):
+        """
+            Return a Image by its ID.
+        """
+        return Image.get_object(api_token=self.token, image_id=image_id)
+
     def get_my_images(self):
         """
             This function returns a list of Image object.

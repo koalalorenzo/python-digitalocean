@@ -37,6 +37,15 @@ class Droplet(BaseAPI):
         # This will load also the values passed
         super(Droplet, self).__init__(*args, **kwargs)
 
+    @classmethod
+    def get_object(cls, api_token, droplet_id):
+        """
+            Class method that will return a Droplet object by ID.
+        """
+        droplet = cls(token=api_token, id=droplet_id)
+        droplet.load()
+        return droplet
+
     def __check_actions_in_data(self, data):
         # reloading actions if actions is provided.
         if data.has_key(u"actions"):

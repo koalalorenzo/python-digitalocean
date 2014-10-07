@@ -178,5 +178,11 @@ class Manager(BaseAPI):
         """
         return SSHKey.get_object(api_token=self.token, ssh_key_id=ssh_key_id)
 
+    def get_action(self, action_id):
+        """
+            Return an Action object by a specific ID.
+        """
+        return Action.get_object(api_token=self.token, action_id=action_id)
+
     def __str__(self):
         return "%s" % (self.token)

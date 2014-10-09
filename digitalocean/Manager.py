@@ -6,6 +6,7 @@ from .Size import Size
 from .Image import Image
 from .Domain import Domain
 from .SSHKey import SSHKey
+from .Action import Action
 
 
 class Manager(BaseAPI):

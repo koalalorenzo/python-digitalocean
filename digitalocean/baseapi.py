@@ -10,12 +10,10 @@ class BaseAPI(object):
         Basic api class for
     """
     token = ""
-    call_response = None
     end_point = "https://api.digitalocean.com/v2/"
 
     def __init__(self, *args, **kwargs):
         self.token = ""
-        self.call_response = None
         self.end_point = "https://api.digitalocean.com/v2/"
 
         for attr in kwargs.keys():

@@ -19,7 +19,7 @@ class Metadata(BaseAPI):
         super(Metadata, self).__init__(*args, **kwargs)
         self.end_point = "http://169.254.169.254/metadata/v1"
 
-    def get_data(self, url, headers=dict(), params=dict()):
+    def get_data(self, url, headers=dict(), params=dict(), render_json=True):
         """
             Customized version of get_data to directly get the data without
             using the authentication method.
@@ -28,6 +28,9 @@ class Metadata(BaseAPI):
             url = urljoin(self.end_point, url)
 
         response = requests.get(url, headers=headers, params=params)
+
+        if render_json:
+            return response.json()
         return response.content
 
     def load(self):

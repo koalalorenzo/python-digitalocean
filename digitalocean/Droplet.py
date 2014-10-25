@@ -269,9 +269,14 @@ class Droplet(BaseAPI):
             elif type(ssh_key) in [str, unicode]:
                 key = SSHKey()
                 key.token = self.token
-                key.public_key = ssh_key
-                key.name = "SSH Key %s" % self.name
-                key.create()
+                results = key.load_by_pub_key(ssh_key)
+
+                if results == None:
+                    key.public_key = ssh_key
+                    key.name = "SSH Key %s" % self.name
+                    key.create()
+                else:
+                    key = results
 
                 ssh_keys_id.append(key.id)
             else:

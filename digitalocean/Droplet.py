@@ -4,6 +4,7 @@ from .Action import Action
 from .Image import Image
 from .Kernel import Kernel
 from .baseapi import BaseAPI
+from .SSHKey import SSHKey
 
 class Droplet(BaseAPI):
     def __init__(self, *args, **kwargs):
@@ -250,6 +251,33 @@ class Droplet(BaseAPI):
             type="POST",
             params={'type' : 'change_kernel', 'kernel': kernel.id}
         )
+
+    def __get_ssh_keys_id(self):
+        """
+            Check and return a list of SSH key IDs according to DigitalOcean's
+            API. This method is usde to check and create a droplet with the
+            correct SSH keys.
+        """
+        ssh_keys_id = list()
+        for ssh_key in self.ssh_keys:
+            if type(ssh_key) in [int, long]:
+                ssh_keys_id.append( int(ssh_key) )
+
+            elif type(ssh_key) == SSHKey:
+                ssh_keys_id.append(ssh_key.id)
+
+            elif type(ssh_key) in [str, unicode]:
+                key = SSHKey()
+                key.token = self.token
+                key.public_key = ssh_key
+                key.name = "SSH Key %s" % self.name
+                key.create()
+
+                ssh_keys_id.append(key.id)
+            else:
+                raise Exception("Droplet.ssh_keys should be a list of IDs or public keys")
+
+        return ssh_keys_id
 
     def create(self, *args, **kwargs):
         """

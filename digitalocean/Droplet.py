@@ -286,16 +286,16 @@ class Droplet(BaseAPI):
             Note: Every argument and parameter given to this method will be
             assigned to the object.
         """
+        for attr in kwargs.keys():
+            setattr(self,attr,kwargs[attr])
+
         data = {
                 "name": self.name,
                 "size": self.size,
                 "image": self.image,
                 "region": self.region,
-                "ssh_keys[]": self.ssh_keys
+                "ssh_keys[]": self.__get_ssh_keys_id(),
             }
-
-        for attr in kwargs.keys():
-            setattr(self,attr,kwargs[attr])
 
         if self.backups:
             data['backups'] = True

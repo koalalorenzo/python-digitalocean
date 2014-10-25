@@ -254,6 +254,9 @@ class Droplet(BaseAPI):
     def create(self, *args, **kwargs):
         """
             Create the droplet with object properties.
+
+            Note: Every argument and parameter given to this method will be
+            assigned to the object.
         """
         data = {
                 "name": self.name,

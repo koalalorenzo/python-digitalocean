@@ -251,7 +251,7 @@ class Droplet(BaseAPI):
             params={'type' : 'change_kernel', 'kernel': kernel.id}
         )
 
-    def create(self, ssh_keys=None, backups=False, ipv6=False, private_networking=False, user_data=None):
+    def create(self, *args, **kwargs):
         """
             Create the droplet with object properties.
         """
@@ -263,16 +263,8 @@ class Droplet(BaseAPI):
                 "ssh_keys[]": self.ssh_keys
             }
 
-        if user_data:
-            data["user_data"] = user_data
-
-        if ssh_keys:
-            if type(ssh_keys) in [int, long, str]:
-                data['ssh_keys[]']= str(ssh_keys)
-            elif type(ssh_keys) in [set, list, tuple, dict]:
-                data['ssh_keys[]'] = ','.join(str(x) for x in ssh_keys)
-            else:
-                raise Exception("ssh_key_ids should be an integer or long number, a string, a set, a list/tuple or a ditionary ")
+        for attr in kwargs.keys():
+            setattr(self,attr,kwargs[attr])
 
         if self.backups:
             data['backups'] = True

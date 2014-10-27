@@ -38,7 +38,7 @@ class Record(BaseAPI):
             }
 
         data = self.get_data(
-            "domains/%s/records/%s" % (self.domain, self.id),
+            "domains/%s/records" % (self.domain),
             type="POST",
             params=input_params,
         )

@@ -17,7 +17,7 @@ class Droplet(BaseAPI):
         self.region = []
         self.status = None
         self.image = None
-        self.size = None
+        self.size_slug = None
         self.locked = None
         self.created_at = None
         self.status = None
@@ -148,7 +148,7 @@ class Droplet(BaseAPI):
         return self.get_data(
             "droplets/%s/actions/" % self.id,
             type="POST",
-            params={"type": "resize", "size": new_size}
+            params={"type": "resize", "size_slug": new_size}
         )
 
     def take_snapshot(self, snapshot_name):
@@ -296,7 +296,7 @@ class Droplet(BaseAPI):
 
         data = {
                 "name": self.name,
-                "size": self.size,
+                "size_slug": self.size_slug,
                 "image": self.image,
                 "region": self.region,
                 "ssh_keys[]": self.__get_ssh_keys_id(),

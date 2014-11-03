@@ -64,7 +64,7 @@ droplet = digitalocean.Droplet(token="secretspecialuniquesnowflake",
                                name='Example',
                                region='nyc2', # New York 2
                                image='ubuntu-14-04-x64', # Ubuntu 14.04 x64
-                               size='512mb',  # 512MB
+                               size_slug='512mb',  # 512MB
                                backups=True)
 droplet.create()
 ```

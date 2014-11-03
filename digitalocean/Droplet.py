@@ -30,7 +30,7 @@ class Droplet(BaseAPI):
         self.ip_address = None
         self.private_ip_address = None
         self.ip_v6_address = None
-        self.ssh_keys = None
+        self.ssh_keys = []
         self.backups = None
         self.ipv6 = None
         self.private_networking = None
@@ -296,7 +296,7 @@ class Droplet(BaseAPI):
 
         data = {
                 "name": self.name,
-                "size_slug": self.size_slug,
+                "size": self.size_slug,
                 "image": self.image,
                 "region": self.region,
                 "ssh_keys[]": self.__get_ssh_keys_id(),

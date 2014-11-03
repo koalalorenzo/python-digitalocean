@@ -8,6 +8,7 @@ class Image(BaseAPI):
         self.name = None
         self.distribution = None
         self.slug = None
+        self.min_size = None
         self.public = None
         self.regions = []
         self.created_at = None

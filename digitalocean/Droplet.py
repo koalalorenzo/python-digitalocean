@@ -141,14 +141,14 @@ class Droplet(BaseAPI):
             params={'type': 'password_reset'}
         )
 
-    def resize(self, new_size):
+    def resize(self, new_size_slug):
         """
-            resize the droplet to a new size
+            resize the droplet to a new size slug.
         """
         return self.get_data(
             "droplets/%s/actions/" % self.id,
             type="POST",
-            params={"type": "resize", "size_slug": new_size}
+            params={"type": "resize", "size": new_size_slug}
         )
 
     def take_snapshot(self, snapshot_name):

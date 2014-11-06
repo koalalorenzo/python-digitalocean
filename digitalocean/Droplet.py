@@ -9,33 +9,40 @@ from .SSHKey import SSHKey
 class Droplet(BaseAPI):
     """"Droplet managment
 
-    Attributes:
-        id: int - droplet id
+    Attributes accepted at creation time:
         name: str - name
-        memory: str - memory size
-        vcpus: int - number of vcpus
-        disk: str - disk size
-        region: str - region
-        status: str - status
-        image: str - image name to use to create droplet
         size_slug: str - droplet size
-        locked: bool - True if locked
-        created_at:
-        status: str - status
-        networks:
-        kernel: str - kernel
-        backup_ids: [int] - list of ids of backups of this droplet
-        snapshot_ids: [int] - list of ids of snapshots of this droplet
-        action_ids: [int] - list of ids of actions
-        features:
-        ip_address: [str] - list of public ip addresses assigned
-        private_ip_address: [str] - list of private ip addresses assigned
-        ip_v6_address: [str] - list of ipv6 addresses assigned
+        image: str - image name to use to create droplet
+        region: str - region
         ssh_keys: [str] - list of ssh keys
         backups: bool - True if backups enabled
         ipv6: bool - True if ipv6 enabled
         private_networking: bool - True if private networking enabled
         user_data: str - arbitrary data to pass to droplet
+
+    Attributes returned by API:
+        id: int - droplet id
+        memory: str - memory size
+        vcpus: int - number of vcpus
+        disk: int - disk size in GB
+        status: str - status
+        locked: bool - True if locked
+        created_at: str - creation date in format u'2014-11-06T10:42:09Z'
+        status: str - status, e.g. 'new', 'active', etc
+        networks: dict - details of connected networks
+        kernel: dict - details of kernel
+        backup_ids: [int] - list of ids of backups of this droplet
+        snapshot_ids: [int] - list of ids of snapshots of this droplet
+        action_ids: [int] - list of ids of actions
+        features: [str] - list of enabled features. e.g.
+                  [u'private_networking', u'virtio']
+        min_size: str - minumum size of droplet that can bew created from a
+                   snapshot of this droplet
+        image: dict - details of image used to create this droplet
+        ip_address: str - public ip addresses
+        private_ip_address: str - private ip address
+        ip_v6_address: [str] - list of ipv6 addresses assigned
+        end_point: str - url of api endpoint used
     """
 
     def __init__(self, *args, **kwargs):
@@ -72,8 +79,11 @@ class Droplet(BaseAPI):
 
     @classmethod
     def get_object(cls, api_token, droplet_id):
-        """
-            Class method that will return a Droplet object by ID.
+        """Class method that will return a Droplet object by ID.
+
+        Args:
+            api_token: str - token
+            droplet_id: int - droplet id
         """
         droplet = cls(token=api_token, id=droplet_id)
         droplet.load()
@@ -97,6 +107,9 @@ class Droplet(BaseAPI):
         return data
 
     def load(self):
+        """
+           Fetch data about droplet - use this instead of get_data()
+        """
         droplets = self.get_data("droplets/%s" % self.id)
         droplet = droplets['droplet']
 
@@ -173,8 +186,7 @@ class Droplet(BaseAPI):
         )
 
     def resize(self, new_size_slug):
-        """
-            resize the droplet to a new size slug.
+        """Resize the droplet to a new size slug.
 
         Args:
             new_size_slug: str - name of new size
@@ -186,8 +198,10 @@ class Droplet(BaseAPI):
         )
 
     def take_snapshot(self, snapshot_name):
-        """
-            Take a snapshot!
+        """Take a snapshot!
+
+        Args:
+            snapshot_name: str - name of snapshot
         """
         return self.get_data(
             "droplets/%s/actions/" % self.id,
@@ -196,8 +210,10 @@ class Droplet(BaseAPI):
         )
 
     def restore(self, image_id):
-        """
-            Restore the droplet to an image ( snapshot or backup )
+        """Restore the droplet to an image ( snapshot or backup )
+
+        Args:
+            image_id : int - id of image
         """
         return self.get_data(
             "droplets/%s/actions/" % self.id,
@@ -206,8 +222,10 @@ class Droplet(BaseAPI):
         )
 
     def rebuild(self, image_id=None):
-        """
-            Restore the droplet to an image ( snapshot or backup )
+        """Restore the droplet to an image ( snapshot or backup )
+
+        Args:
+            image_id : int - id of image
         """
         if self.image_id and not image_id:
             image_id = self.image_id
@@ -244,8 +262,10 @@ class Droplet(BaseAPI):
         )
 
     def rename(self, name):
-        """
-            Rename the droplet
+        """Rename the droplet
+
+        Args:
+            name : str - new name
         """
         return self.get_data(
             "droplets/%s/actions/" % self.id,
@@ -274,8 +294,10 @@ class Droplet(BaseAPI):
         )
 
     def change_kernel(self, kernel):
-        """
-            Change the kernel to a new one
+        """Change the kernel to a new one
+
+        Args:
+            kernel : instance of digitalocean.Kernel.Kernel
         """
         if type(kernel) != Kernel:
             raise Exception("Use Kernel object")
@@ -389,8 +411,10 @@ class Droplet(BaseAPI):
         return actions
 
     def get_action(self, action_id):
-        """
-            Returns a specific Action by its ID.
+        """Returns a specific Action by its ID.
+
+        Args:
+            action_id: int - id of action
         """
         return Action.get_object(
             api_token=self.token,

@@ -3,8 +3,18 @@ import requests
 from .Action import Action
 from .Image import Image
 from .Kernel import Kernel
-from .baseapi import BaseAPI
+from .baseapi import BaseAPI, Error
 from .SSHKey import SSHKey
+
+class DropletError(Error):
+    """Base exception class for this module"""
+    pass
+
+class BadKernelObject(DropletError):
+    pass
+
+class BadSSHKeyFormat(DropletError):
+    pass
 
 class Droplet(BaseAPI):
     """"Droplet managment
@@ -300,7 +310,7 @@ class Droplet(BaseAPI):
             kernel : instance of digitalocean.Kernel.Kernel
         """
         if type(kernel) != Kernel:
-            raise Exception("Use Kernel object")
+            raise BadKernelObject("Use Kernel object")
 
         return self.get_data(
             "droplets/%s/actions/" % self.id,
@@ -336,7 +346,7 @@ class Droplet(BaseAPI):
 
                 ssh_keys_id.append(key.id)
             else:
-                raise Exception("Droplet.ssh_keys should be a list of IDs or public keys")
+                raise BadSSHKeyFormat("Droplet.ssh_keys should be a list of IDs or public keys")
 
         return ssh_keys_id
 

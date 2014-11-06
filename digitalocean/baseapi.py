@@ -5,6 +5,16 @@ try:
 except:
     from urllib.parse import urljoin
 
+class Error(Exception):
+    """Base exception class for this module"""
+    pass
+
+class TokenError(Error):
+    pass
+
+class DataReadError(Error):
+    pass
+
 class BaseAPI(object):
     """
         Basic api class for
@@ -42,7 +52,7 @@ class BaseAPI(object):
             This method will return the request object.
         """
         if not self.token:
-            raise Exception("No token provied. Please use a valid token")
+            raise TokenError("No token provied. Please use a valid token")
 
         if "https" not in url:
             url = urljoin(self.end_point, url)
@@ -71,7 +81,7 @@ class BaseAPI(object):
         data = req.json()
         if not req.ok:
             msg = [data[m] for m in ("id", "message") if m in data][1]
-            raise Exception(msg)
+            raise DataReadError(msg)
         return data
 
     def __str__(self):

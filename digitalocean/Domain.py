@@ -26,7 +26,7 @@ class Domain(BaseAPI):
         domains = self.get_data("domains/%s" % self.name)
 
         for attr in domains.keys():
-            setattr(self,attr,droplet[attr])
+            setattr(self,attr,domains[attr])
 
     def destroy(self):
         """

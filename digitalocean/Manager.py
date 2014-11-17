@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from .baseapi import BaseAPI
 from .Droplet import Droplet
 from .Region import Region
@@ -5,6 +6,7 @@ from .Size import Size
 from .Image import Image
 from .Domain import Domain
 from .SSHKey import SSHKey
+from .Action import Action
 
 
 class Manager(BaseAPI):
@@ -79,6 +81,12 @@ class Manager(BaseAPI):
             droplets.append(droplet)
         return droplets
 
+    def get_droplet(self, droplet_id):
+        """
+            Return a Droplet by its ID.
+        """
+        return Droplet.get_object(api_token=self.token, droplet_id=droplet_id)
+
     def get_all_sizes(self):
         """
             This function returns a list of Size object.
@@ -102,6 +110,12 @@ class Manager(BaseAPI):
             image.token = self.token
             images.append(image)
         return images
+
+    def get_image(self, image_id):
+        """
+            Return a Image by its ID.
+        """
+        return Image.get_object(api_token=self.token, image_id=image_id)
 
     def get_my_images(self):
         """
@@ -141,6 +155,12 @@ class Manager(BaseAPI):
             domains.append(domain)
         return domains
 
+    def get_domain(self, domain_name):
+        """
+            Return a Domain by its domain_name
+        """
+        return Domain.get_object(api_token=self.token, domain_name=domain_name)
+
     def get_all_sshkeys(self):
         """
             This function returns a list of SSHKey object.
@@ -152,6 +172,18 @@ class Manager(BaseAPI):
             ssh_key.token = self.token
             ssh_keys.append(ssh_key)
         return ssh_keys
+
+    def get_ssh_key(self, ssh_key_id):
+        """
+            Return a SSHKey object by its ID.
+        """
+        return SSHKey.get_object(api_token=self.token, ssh_key_id=ssh_key_id)
+
+    def get_action(self, action_id):
+        """
+            Return an Action object by a specific ID.
+        """
+        return Action.get_object(api_token=self.token, action_id=action_id)
 
     def __str__(self):
         return "%s" % (self.token)

@@ -1,10 +1,60 @@
+# -*- coding: utf-8 -*-
 import requests
 from .Action import Action
 from .Image import Image
 from .Kernel import Kernel
-from .baseapi import BaseAPI
+from .baseapi import BaseAPI, Error
+from .SSHKey import SSHKey
+
+class DropletError(Error):
+    """Base exception class for this module"""
+    pass
+
+class BadKernelObject(DropletError):
+    pass
+
+class BadSSHKeyFormat(DropletError):
+    pass
 
 class Droplet(BaseAPI):
+    """"Droplet managment
+
+    Attributes accepted at creation time:
+        name: str - name
+        size_slug: str - droplet size
+        image: str - image name to use to create droplet
+        region: str - region
+        ssh_keys: [str] - list of ssh keys
+        backups: bool - True if backups enabled
+        ipv6: bool - True if ipv6 enabled
+        private_networking: bool - True if private networking enabled
+        user_data: str - arbitrary data to pass to droplet
+
+    Attributes returned by API:
+        id: int - droplet id
+        memory: str - memory size
+        vcpus: int - number of vcpus
+        disk: int - disk size in GB
+        status: str - status
+        locked: bool - True if locked
+        created_at: str - creation date in format u'2014-11-06T10:42:09Z'
+        status: str - status, e.g. 'new', 'active', etc
+        networks: dict - details of connected networks
+        kernel: dict - details of kernel
+        backup_ids: [int] - list of ids of backups of this droplet
+        snapshot_ids: [int] - list of ids of snapshots of this droplet
+        action_ids: [int] - list of ids of actions
+        features: [str] - list of enabled features. e.g.
+                  [u'private_networking', u'virtio']
+        min_size: str - minumum size of droplet that can bew created from a
+                   snapshot of this droplet
+        image: dict - details of image used to create this droplet
+        ip_address: str - public ip addresses
+        private_ip_address: str - private ip address
+        ip_v6_address: [str] - list of ipv6 addresses assigned
+        end_point: str - url of api endpoint used
+    """
+
     def __init__(self, *args, **kwargs):
         # Defining default values
         self.id = None
@@ -15,7 +65,7 @@ class Droplet(BaseAPI):
         self.region = []
         self.status = None
         self.image = None
-        self.size = None
+        self.size_slug = None
         self.locked = None
         self.created_at = None
         self.status = None
@@ -28,13 +78,26 @@ class Droplet(BaseAPI):
         self.ip_address = None
         self.private_ip_address = None
         self.ip_v6_address = None
-        self.ssh_keys = None
+        self.ssh_keys = []
         self.backups = None
         self.ipv6 = None
         self.private_networking = None
+        self.user_data = None
 
         # This will load also the values passed
         super(Droplet, self).__init__(*args, **kwargs)
+
+    @classmethod
+    def get_object(cls, api_token, droplet_id):
+        """Class method that will return a Droplet object by ID.
+
+        Args:
+            api_token: str - token
+            droplet_id: int - droplet id
+        """
+        droplet = cls(token=api_token, id=droplet_id)
+        droplet.load()
+        return droplet
 
     def __check_actions_in_data(self, data):
         # reloading actions if actions is provided.
@@ -54,6 +117,9 @@ class Droplet(BaseAPI):
         return data
 
     def load(self):
+        """
+           Fetch data about droplet - use this instead of get_data()
+        """
         droplets = self.get_data("droplets/%s" % self.id)
         droplet = droplets['droplet']
 
@@ -129,19 +195,23 @@ class Droplet(BaseAPI):
             params={'type': 'password_reset'}
         )
 
-    def resize(self, new_size):
-        """
-            resize the droplet to a new size
+    def resize(self, new_size_slug):
+        """Resize the droplet to a new size slug.
+
+        Args:
+            new_size_slug: str - name of new size
         """
         return self.get_data(
             "droplets/%s/actions/" % self.id,
             type="POST",
-            params={"type": "resize", "size": new_size}
+            params={"type": "resize", "size": new_size_slug}
         )
 
     def take_snapshot(self, snapshot_name):
-        """
-            Take a snapshot!
+        """Take a snapshot!
+
+        Args:
+            snapshot_name: str - name of snapshot
         """
         return self.get_data(
             "droplets/%s/actions/" % self.id,
@@ -150,8 +220,10 @@ class Droplet(BaseAPI):
         )
 
     def restore(self, image_id):
-        """
-            Restore the droplet to an image ( snapshot or backup )
+        """Restore the droplet to an image ( snapshot or backup )
+
+        Args:
+            image_id : int - id of image
         """
         return self.get_data(
             "droplets/%s/actions/" % self.id,
@@ -160,8 +232,10 @@ class Droplet(BaseAPI):
         )
 
     def rebuild(self, image_id=None):
-        """
-            Restore the droplet to an image ( snapshot or backup )
+        """Restore the droplet to an image ( snapshot or backup )
+
+        Args:
+            image_id : int - id of image
         """
         if self.image_id and not image_id:
             image_id = self.image_id
@@ -198,8 +272,10 @@ class Droplet(BaseAPI):
         )
 
     def rename(self, name):
-        """
-            Rename the droplet
+        """Rename the droplet
+
+        Args:
+            name : str - new name
         """
         return self.get_data(
             "droplets/%s/actions/" % self.id,
@@ -228,11 +304,13 @@ class Droplet(BaseAPI):
         )
 
     def change_kernel(self, kernel):
-        """
-            Change the kernel to a new one
+        """Change the kernel to a new one
+
+        Args:
+            kernel : instance of digitalocean.Kernel.Kernel
         """
         if type(kernel) != Kernel:
-            raise Exception("Use Kernel object")
+            raise BadKernelObject("Use Kernel object")
 
         return self.get_data(
             "droplets/%s/actions/" % self.id,
@@ -240,25 +318,55 @@ class Droplet(BaseAPI):
             params={'type' : 'change_kernel', 'kernel': kernel.id}
         )
 
-    def create(self, ssh_keys=None, backups=False, ipv6=False, private_networking=False):
+    def __get_ssh_keys_id(self):
+        """
+            Check and return a list of SSH key IDs according to DigitalOcean's
+            API. This method is usde to check and create a droplet with the
+            correct SSH keys.
+        """
+        ssh_keys_id = list()
+        for ssh_key in self.ssh_keys:
+            if type(ssh_key) in [int, long]:
+                ssh_keys_id.append( int(ssh_key) )
+
+            elif type(ssh_key) == SSHKey:
+                ssh_keys_id.append(ssh_key.id)
+
+            elif type(ssh_key) in [str, unicode]:
+                key = SSHKey()
+                key.token = self.token
+                results = key.load_by_pub_key(ssh_key)
+
+                if results == None:
+                    key.public_key = ssh_key
+                    key.name = "SSH Key %s" % self.name
+                    key.create()
+                else:
+                    key = results
+
+                ssh_keys_id.append(key.id)
+            else:
+                raise BadSSHKeyFormat("Droplet.ssh_keys should be a list of IDs or public keys")
+
+        return ssh_keys_id
+
+    def create(self, *args, **kwargs):
         """
             Create the droplet with object properties.
+
+            Note: Every argument and parameter given to this method will be
+            assigned to the object.
         """
+        for attr in kwargs.keys():
+            setattr(self,attr,kwargs[attr])
+
         data = {
                 "name": self.name,
-                "size": self.size,
+                "size": self.size_slug,
                 "image": self.image,
                 "region": self.region,
-                "ssh_keys[]": self.ssh_keys
+                "ssh_keys[]": self.__get_ssh_keys_id(),
             }
-
-        if ssh_keys:
-            if type(ssh_keys) in [int, long, str]:
-                data['ssh_keys[]']= str(ssh_keys)
-            elif type(ssh_keys) in [set, list, tuple, dict]:
-                data['ssh_keys[]'] = ','.join(str(x) for x in ssh_keys)
-            else:
-                raise Exception("ssh_key_ids should be an integer or long number, a string, a set, a list/tuple or a ditionary ")
 
         if self.backups:
             data['backups'] = True
@@ -268,6 +376,9 @@ class Droplet(BaseAPI):
 
         if self.private_networking:
             data['private_networking'] = True
+
+        if self.user_data:
+            data["user_data"] = self.user_data
 
         data = self.get_data(
             "droplets",
@@ -308,6 +419,17 @@ class Droplet(BaseAPI):
             action.load()
             actions.append(action)
         return actions
+
+    def get_action(self, action_id):
+        """Returns a specific Action by its ID.
+
+        Args:
+            action_id: int - id of action
+        """
+        return Action.get_object(
+            api_token=self.token,
+            action_id=action_id
+        )
 
     def get_snapshots(self):
         """

@@ -1,17 +1,29 @@
+# -*- coding: utf-8 -*-
 import requests
-from urlparse import urljoin
+try:
+    from urlparse import urljoin
+except:
+    from urllib.parse import urljoin
+
+class Error(Exception):
+    """Base exception class for this module"""
+    pass
+
+class TokenError(Error):
+    pass
+
+class DataReadError(Error):
+    pass
 
 class BaseAPI(object):
     """
         Basic api class for
     """
     token = ""
-    call_response = None
     end_point = "https://api.digitalocean.com/v2/"
 
     def __init__(self, *args, **kwargs):
         self.token = ""
-        self.call_response = None
         self.end_point = "https://api.digitalocean.com/v2/"
 
         for attr in kwargs.keys():
@@ -40,7 +52,7 @@ class BaseAPI(object):
             This method will return the request object.
         """
         if not self.token:
-            raise Exception("No token provied. Please use a valid token")
+            raise TokenError("No token provied. Please use a valid token")
 
         if "https" not in url:
             url = urljoin(self.end_point, url)
@@ -69,7 +81,7 @@ class BaseAPI(object):
         data = req.json()
         if not req.ok:
             msg = [data[m] for m in ("id", "message") if m in data][1]
-            raise Exception(msg)
+            raise DataReadError(msg)
         return data
 
     def __str__(self):

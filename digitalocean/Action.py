@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from .baseapi import BaseAPI
 
 class Action(BaseAPI):
@@ -15,6 +16,23 @@ class Action(BaseAPI):
         self.droplet_id = None
 
         super(Action, self).__init__(*args, **kwargs)
+
+    @classmethod
+    def get_object(cls, api_token, action_id):
+        """
+            Class method that will return a Action object by ID.
+        """
+        action = cls(token=api_token, id=action_id)
+        action.load_directly()
+        return action
+
+    def load_directly(self):
+        action = self.get_data("actions/%s" % self.id)
+        if action:
+            action = action[u'action']
+            # Loading attributes
+            for attr in action.keys():
+                setattr(self,attr,action[attr])
 
     def load(self):
         action = self.get_data(

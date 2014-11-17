@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import requests
 from .baseapi import BaseAPI
 
@@ -7,11 +8,21 @@ class Image(BaseAPI):
         self.name = None
         self.distribution = None
         self.slug = None
+        self.min_size = None
         self.public = None
         self.regions = []
         self.created_at = None
 
         super(Image, self).__init__(*args, **kwargs)
+
+    @classmethod
+    def get_object(cls, api_token, image_id):
+        """
+            Class method that will return an Image object by ID.
+        """
+        image = cls(token=api_token, id=image_id)
+        image.load()
+        return image
 
     def load(self):
         data = self.get_data("images/%s" % self.id)

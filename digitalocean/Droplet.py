@@ -101,7 +101,7 @@ class Droplet(BaseAPI):
 
     def __check_actions_in_data(self, data):
         # reloading actions if actions is provided.
-        if data.has_key(u"actions"):
+        if u"actions" in data:
             self.action_ids = []
             for action in data[u'actions']:
                 self.action_ids.append(action[u'id'])
@@ -111,7 +111,7 @@ class Droplet(BaseAPI):
             Customized version of get_data to perform __check_actions_in_data
         """
         data = super(Droplet, self).get_data(*args, **kwargs)
-        if kwargs.has_key("type"):
+        if "type" in kwargs:
             if kwargs["type"] == "POST":
                 self.__check_actions_in_data(data)
         return data
@@ -389,7 +389,7 @@ class Droplet(BaseAPI):
         if data:
             self.id = data['droplet']['id']
 
-        if data[u'droplet'].has_key(u"action_ids"):
+        if u"action_ids" in data[u'droplet']:
             self.action_ids = []
             for id in data[u'droplet'][u'action_ids']:
                 self.action_ids.append(id)

@@ -20,7 +20,7 @@ class Manager(BaseAPI):
         data = super(Manager, self).get_data(*args, **kwargs)
 
         params = {}
-        if kwargs.has_key("params"):
+        if "params" in kwargs:
             params = kwargs['params']
         unpaged_data = self.__deal_with_pagination(args[0], data, params)
 

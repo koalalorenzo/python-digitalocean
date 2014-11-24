@@ -16,9 +16,17 @@ class TestManager(unittest.TestCase):
         self.token = "afaketokenthatwillworksincewemockthings"
         self.manager = digitalocean.Manager(token=self.token)
 
+    @responses.activate
     def test_auth_fail(self):
-        bad_token = digitalocean.Manager(token=self.token)
+        data = self.load_from_file('errors/unauthorized.json')
 
+        url = self.base_url + 'regions/'
+        responses.add(responses.GET, url,
+                      body=data,
+                      status=401,
+                      content_type='application/json')
+
+        bad_token = digitalocean.Manager(token='thisisnotagoodtoken')
         with self.assertRaises(Exception) as error:
             bad_token.get_all_regions()
 

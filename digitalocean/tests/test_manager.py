@@ -75,11 +75,11 @@ class TestManager(unittest.TestCase):
         self.assertEqual(region.token, self.token)
         self.assertEqual(region.name, 'New York')
         self.assertEqual(region.slug, 'nyc1')
-        self.assertItemsEqual(region.sizes,["1gb", "512mb"])
-        self.assertItemsEqual(region.features, ['virtio',
-                                                'backups',
-                                                'private_networking',
-                                                'ipv6'])
+        self.assertEqual(region.sizes,["1gb", "512mb"])
+        self.assertEqual(region.features, ['virtio',
+                                           'private_networking',
+                                           'backups',
+                                           'ipv6'])
 
     @responses.activate
     def test_get_all_sizes(self):
@@ -102,7 +102,7 @@ class TestManager(unittest.TestCase):
         self.assertEqual(size.price_hourly, 0.00744)
         self.assertEqual(size.price_monthly, 5.0)
         self.assertEqual(size.transfer, 1)
-        self.assertItemsEqual(size.regions, ["nyc1", "ams1", "sfo1"])
+        self.assertEqual(size.regions, ["nyc1", "ams1", "sfo1"])
 
     @responses.activate
     def test_get_all_images(self):
@@ -124,7 +124,7 @@ class TestManager(unittest.TestCase):
         self.assertTrue(image.public)
         self.assertEqual(image.slug, "ubuntu-14-04-x64")
         self.assertEqual(image.distribution, 'Ubuntu')
-        self.assertItemsEqual(image.regions, ['nyc1'])
+        self.assertEqual(image.regions, ['nyc1'])
         self.assertEqual(image.created_at, "2014-07-29T14:35:40Z")
 
     @responses.activate
@@ -147,7 +147,7 @@ class TestManager(unittest.TestCase):
         self.assertTrue(image.public)
         self.assertEqual(image.slug, "ubuntu-14-04-x64")
         self.assertEqual(image.distribution, 'Ubuntu')
-        self.assertItemsEqual(image.regions, ['nyc1'])
+        self.assertEqual(image.regions, ['nyc1'])
         self.assertEqual(image.created_at, "2014-07-29T14:35:40Z")
 
     @responses.activate
@@ -170,7 +170,7 @@ class TestManager(unittest.TestCase):
         self.assertFalse(image.public)
         self.assertEqual(image.slug, "")
         self.assertEqual(image.distribution, 'Ubuntu')
-        self.assertItemsEqual(image.regions, ['nyc1', 'nyc3'])
+        self.assertEqual(image.regions, ['nyc1', 'nyc3'])
         self.assertEqual(image.created_at, "2014-08-18T16:35:40Z")
 
     @responses.activate

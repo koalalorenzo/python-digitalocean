@@ -1,16 +1,23 @@
-import unittest
 import os
+import unittest
+import responses
 
 import digitalocean
 
 class TestManager(unittest.TestCase):
 
+    def load_from_file(self, json_file):
+        cwd = os.path.dirname(__file__)
+        with open(os.path.join(cwd, 'data/%s' % json_file), 'r') as f:
+            return f.read()
+
     def setUp(self):
-        self.token = os.environ.get('DO_TOKEN', None)
+        self.base_url = "https://api.digitalocean.com/v2/"
+        self.token = "afaketokenthatwillworksincewemockthings"
         self.manager = digitalocean.Manager(token=self.token)
 
     def test_auth_fail(self):
-        bad_token = digitalocean.Manager(token='afaketokenthatwillnotwork')
+        bad_token = digitalocean.Manager(token=self.token)
 
         with self.assertRaises(Exception) as error:
             bad_token.get_all_regions()
@@ -18,131 +25,196 @@ class TestManager(unittest.TestCase):
         exception = error.exception
         self.assertEqual(exception.message, 'Unable to authenticate you.')
 
-    def test_get_all_regions(self):
-        all_regions = self.manager.get_all_regions()
-        self.assertEqual(len(all_regions), 8)
+    @responses.activate
+    def test_droplets(self):
+        data = self.load_from_file('droplets/all.json')
 
-        first_region = all_regions[0]
-        self.assertEqual(first_region.token, self.token)
-        self.assertEqual(first_region.name, 'New York 1')
-        self.assertEqual(first_region.slug, 'nyc1')
-        self.assertItemsEqual(first_region.sizes,
-            [u'512mb', u'1gb', u'2gb', u'4gb', u'8gb',
-             u'16gb', u'32gb', u'48gb', u'64gb'])
-        self.assertItemsEqual(first_region.features, [u'virtio', u'backups'])
+        url = self.base_url + 'droplets/'
+        responses.add(responses.GET, url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
 
-    def test_get_all_sizes(self):
-        all_sizes = self.manager.get_all_sizes()
-        self.assertEqual(len(all_sizes), 9)
-
-        first_size = all_sizes[0]
-        self.assertEqual(first_size.token, self.token)
-        self.assertEqual(first_size.slug, '512mb')
-        self.assertEqual(first_size.memory, 512)
-        self.assertEqual(first_size.disk, 20)
-        self.assertEqual(first_size.price_hourly, 0.00744)
-        self.assertEqual(first_size.price_monthly, 5.0)
-        self.assertEqual(first_size.transfer, 1)
-        self.assertEqual(first_size.transfer, 1)
-        self.assertItemsEqual(first_size.regions,
-            [u'nyc1', u'sgp1', u'ams1', u'ams2',
-            u'sfo1', u'nyc2', u'lon1', u'nyc3'])
-
-    def test_get_all_images(self):
-        all_images = self.manager.get_all_images()
-
-        # The order of images is not predictable. So find a certain one.
-        for image in all_images:
-            if image.slug == 'ubuntu-14-04-x64': 
-                ubuntu_trusty_64 = image
-                break
-        self.assertEqual(ubuntu_trusty_64.token, self.token)
-        self.assertEqual(ubuntu_trusty_64.name, 'Ubuntu 14.04 x64')
-        self.assertTrue(ubuntu_trusty_64.public)
-        self.assertEqual(ubuntu_trusty_64.distribution, 'Ubuntu')
-        self.assertItemsEqual(ubuntu_trusty_64.regions,
-            [u'nyc1', u'sgp1', u'ams1', u'ams2',
-            u'sfo1', u'nyc2', u'lon1', u'nyc3'])
-        self.assertIsInstance(ubuntu_trusty_64.id, int)
-        self.assertIsNotNone(ubuntu_trusty_64.created_at)
-
-    def test_get_global_images(self):
-        global_images = self.manager.get_global_images()
-        self.assertEqual(len(global_images), 33)
-
-        # The order of images is not predictable. So find a certain one.
-        for image in global_images:
-            if image.slug == 'ubuntu-14-04-x64': 
-                ubuntu_trusty_64 = image
-            self.assertTrue(image.public)
-        self.assertEqual(ubuntu_trusty_64.token, self.token)
-        self.assertEqual(ubuntu_trusty_64.name, 'Ubuntu 14.04 x64')
-        self.assertTrue(ubuntu_trusty_64.public)
-        self.assertEqual(ubuntu_trusty_64.distribution, 'Ubuntu')
-        self.assertItemsEqual(ubuntu_trusty_64.regions,
-            [u'nyc1', u'sgp1', u'ams1', u'ams2',
-            u'sfo1', u'nyc2', u'lon1', u'nyc3'])
-        self.assertIsInstance(ubuntu_trusty_64.id, int)
-        self.assertIsNotNone(ubuntu_trusty_64.created_at)
-
-    def test_get_my_images(self):
-        my_images = self.manager.get_my_images()
-
-        for image in my_images:
-            self.assertFalse(image.public)
-
-        # Test the few things we can assume about a private image
-        first_image = my_images[0]
-        self.assertEqual(first_image.token, self.token)
-        self.assertFalse(first_image.public)
-        self.assertIsNone(first_image.slug)
-        self.assertIsInstance(first_image.name, unicode)
-        self.assertIsInstance(first_image.id, int)
-        self.assertIsInstance(first_image.distribution, unicode)
-        self.assertIsNotNone(first_image.created_at)
-
-    def test_get_all_droplets(self):
         droplets = self.manager.get_all_droplets()
 
-        # Test the few things we can assume a random droplet.
-        first_droplet = droplets[0]
-        self.assertEqual(first_droplet.token, self.token)
-        self.assertIsInstance(first_droplet.id, int)
-        self.assertIsInstance(first_droplet.name, unicode)
-        self.assertIsInstance(first_droplet.memory, int)
-        self.assertIsInstance(first_droplet.vcpus, int)
-        self.assertIsInstance(first_droplet.disk, int)
-        self.assertIsInstance(first_droplet.region, dict)
-        self.assertIsInstance(first_droplet.status, unicode)
-        self.assertIsInstance(first_droplet.image, dict)
-        self.assertIsInstance(first_droplet.size, dict)
-        self.assertIsNotNone(first_droplet.locked)
-        self.assertIsNotNone(first_droplet.created_at)
-        self.assertIsInstance(first_droplet.networks, dict)
-        self.assertIsInstance(first_droplet.kernel, dict)
-        self.assertIsInstance(first_droplet.action_ids, list)
-        self.assertIsInstance(first_droplet.features, list)
+        droplet = droplets[0]
+        self.assertEqual(droplet.token, self.token)
+        self.assertEqual(droplet.id, 3164444)
+        self.assertEqual(droplet.name, "example.com")
+        self.assertEqual(droplet.memory, 512)
+        self.assertEqual(droplet.vcpus, 1)
+        self.assertEqual(droplet.disk, 20)
+        self.assertEqual(droplet.region['slug'], "nyc3")
+        self.assertEqual(droplet.status, "active")
+        self.assertEqual(droplet.image['slug'], "ubuntu-14-04-x64")
+        self.assertEqual(droplet.size_slug, '512mb')
+        self.assertEqual(droplet.created_at, "2014-11-14T16:29:21Z")
+        self.assertEqual(droplet.ip_address, "104.236.32.182")
+        self.assertEqual(droplet.ip_v6_address,
+                "2604:A880:0800:0010:0000:0000:02DD:4001")
+        self.assertEqual(droplet.kernel['id'], 2233)
+        self.assertEqual(droplet.backup_ids, [7938002])
+        self.assertEqual(droplet.features, ["backups",
+                                            "ipv6",
+                                            "virtio"])
 
+    @responses.activate
+    def test_get_all_regions(self):
+        data = self.load_from_file('regions/all.json')
+
+        url = self.base_url + 'regions/'
+        responses.add(responses.GET, url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        all_regions = self.manager.get_all_regions()
+        self.assertEqual(len(all_regions), 3)
+
+        region = all_regions[0]
+        self.assertEqual(region.token, self.token)
+        self.assertEqual(region.name, 'New York')
+        self.assertEqual(region.slug, 'nyc1')
+        self.assertItemsEqual(region.sizes,["1gb", "512mb"])
+        self.assertItemsEqual(region.features, ['virtio',
+                                                'backups',
+                                                'private_networking',
+                                                'ipv6'])
+
+    @responses.activate
+    def test_get_all_sizes(self):
+        data = self.load_from_file('sizes/all.json')
+
+        url = self.base_url + 'sizes/'
+        responses.add(responses.GET, url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        all_sizes = self.manager.get_all_sizes()
+        self.assertEqual(len(all_sizes), 2)
+
+        size = all_sizes[0]
+        self.assertEqual(size.token, self.token)
+        self.assertEqual(size.slug, '512mb')
+        self.assertEqual(size.memory, 512)
+        self.assertEqual(size.disk, 20)
+        self.assertEqual(size.price_hourly, 0.00744)
+        self.assertEqual(size.price_monthly, 5.0)
+        self.assertEqual(size.transfer, 1)
+        self.assertItemsEqual(size.regions, ["nyc1", "ams1", "sfo1"])
+
+    @responses.activate
+    def test_get_all_images(self):
+        data = self.load_from_file('images/all.json')
+
+        url = self.base_url + 'images/'
+        responses.add(responses.GET, url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        all_images = self.manager.get_all_images()
+        self.assertEqual(len(all_images), 3)
+
+        image = all_images[0]
+        self.assertEqual(image.token, self.token)
+        self.assertEqual(image.id, 119192817) 
+        self.assertEqual(image.name, '14.04 x64')
+        self.assertTrue(image.public)
+        self.assertEqual(image.slug, "ubuntu-14-04-x64")
+        self.assertEqual(image.distribution, 'Ubuntu')
+        self.assertItemsEqual(image.regions, ['nyc1'])
+        self.assertEqual(image.created_at, "2014-07-29T14:35:40Z")
+
+    @responses.activate
+    def test_get_global_images(self):
+        data = self.load_from_file('images/all.json')
+
+        url = self.base_url + 'images/'
+        responses.add(responses.GET, url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        global_images = self.manager.get_global_images()
+        self.assertEqual(len(global_images), 2)
+
+        image = global_images[0]
+        self.assertEqual(image.token, self.token)
+        self.assertEqual(image.id, 119192817) 
+        self.assertEqual(image.name, '14.04 x64')
+        self.assertTrue(image.public)
+        self.assertEqual(image.slug, "ubuntu-14-04-x64")
+        self.assertEqual(image.distribution, 'Ubuntu')
+        self.assertItemsEqual(image.regions, ['nyc1'])
+        self.assertEqual(image.created_at, "2014-07-29T14:35:40Z")
+
+    @responses.activate
+    def test_get_my_images(self):
+        data = self.load_from_file('images/all.json')
+
+        url = self.base_url + 'images/'
+        responses.add(responses.GET, url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        my_images = self.manager.get_my_images()
+        self.assertEqual(len(my_images), 1)
+
+        image = my_images[0]
+        self.assertEqual(image.token, self.token)
+        self.assertEqual(image.id, 449676856) 
+        self.assertEqual(image.name, 'My Snapshot')
+        self.assertFalse(image.public)
+        self.assertEqual(image.slug, "")
+        self.assertEqual(image.distribution, 'Ubuntu')
+        self.assertItemsEqual(image.regions, ['nyc1', 'nyc3'])
+        self.assertEqual(image.created_at, "2014-08-18T16:35:40Z")
+
+    @responses.activate
     def test_get_all_sshkeys(self):
+        data = self.load_from_file('keys/all.json')
+
+        url = self.base_url + 'account/keys/'
+        responses.add(responses.GET, url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
         ssh_keys = self.manager.get_all_sshkeys()
+        self.assertEqual(len(ssh_keys), 1)
 
         # Test the few things we can assume about a random ssh key.
-        first_key = ssh_keys[0]
-        self.assertEqual(first_key.token, self.token)
-        self.assertIsInstance(first_key.name, unicode)
-        self.assertIsInstance(first_key.id, int)
-        self.assertIsInstance(first_key.public_key, unicode)
-        self.assertIsInstance(first_key.fingerprint, unicode)
+        key = ssh_keys[0]
+        self.assertEqual(key.token, self.token)
+        self.assertEqual(key.name, "Example Key")
+        self.assertEqual(key.id, 1)
+        self.assertEqual(key.public_key,
+            "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAQQDGk5V68BJ4P3Ereh779Vi/Ft2qs/rbXrcjKLGo6zsyeyFUE0svJUpRDEJvFSf8RlezKx1/1ulJu9+kZsxRiUKn example")
+        self.assertEqual(key.fingerprint,
+            "f5:d1:78:ed:28:72:5f:e1:ac:94:fd:1f:e0:a3:48:6d")
 
+    @responses.activate
     def test_get_all_domains(self):
+        data = self.load_from_file('domains/all.json')
+
+        url = self.base_url + 'domains/'
+        responses.add(responses.GET, url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
         domains = self.manager.get_all_domains()
+        self.assertEqual(len(domains), 1)
 
         # Test the few things we can assume about a random domain.
-        first_domain = domains[0]
-        self.assertEqual(first_domain.token, self.token)
-        self.assertIsInstance(first_domain.name, unicode)
-        self.assertIsInstance(first_domain.zone_file, unicode)
-        self.assertIsInstance(first_domain.ttl, int)
+        domain = domains[0]
+        self.assertEqual(domain.token, self.token)
+        self.assertEqual(domain.name, "example.com")
+        self.assertEqual(domain.zone_file, "Example zone file text...")
+        self.assertEqual(domain.ttl, 1800)
 
 
 if __name__ == '__main__':

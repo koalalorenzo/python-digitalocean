@@ -1,0 +1,12 @@
+{
+  "domains": [
+    {
+      "name": "example.com",
+      "ttl": 1800,
+      "zone_file": "Example zone file text..."
+    }
+  ],
+  "meta": {
+    "total": 1
+  }
+}

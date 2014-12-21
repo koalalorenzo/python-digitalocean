@@ -360,6 +360,10 @@ class Droplet(BaseAPI):
         for attr in kwargs.keys():
             setattr(self,attr,kwargs[attr])
 
+        # Provide backwards compatibility
+        if not self.size_slug and self.size:
+            self.size_slug = self.size
+
         data = {
                 "name": self.name,
                 "size": self.size_slug,

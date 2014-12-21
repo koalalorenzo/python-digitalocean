@@ -409,7 +409,7 @@ class Droplet(BaseAPI):
             This actions can be used to check the droplet's status
         """
         answer = self.get_data(
-            "droplets/%s/actions" % self.id,
+            "droplets/%s/actions/" % self.id,
             type="GET"
         )
 

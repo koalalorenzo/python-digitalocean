@@ -1,0 +1,29 @@
+{
+  "actions":
+    [
+      {
+        "id":39388122,
+        "status":"completed",
+        "type":"enable_ipv6",
+        "started_at":"2014-12-21T04:15:29Z",
+        "completed_at":"2014-12-21T04:15:31Z",
+        "resource_id":12345,
+        "resource_type":"droplet",
+        "region":"nyc3"
+      },
+      {
+        "id":39290099,
+        "status":"completed",
+        "type":"create",
+        "started_at":"2014-12-19T19:14:36Z",
+        "completed_at":"2014-12-19T19:15:23Z",
+        "resource_id":12345,
+        "resource_type":"droplet",
+        "region":"nyc3"
+      }
+    ],
+  "links":
+    {},
+  "meta":
+    {"total":2}
+}

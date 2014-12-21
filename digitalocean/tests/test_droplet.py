@@ -384,3 +384,29 @@ class TestDroplet(unittest.TestCase):
         self.assertEqual(response['action']['type'], "change_kernel")
         self.assertEqual(response['action']['resource_id'], 12345)
         self.assertEqual(response['action']['resource_type'], "droplet")
+
+    @responses.activate
+    def test_create_no_keys(self):
+        data = self.load_from_file('droplet_actions/create.json')
+
+        responses.add(responses.POST, self.base_url + "droplets",
+                      body=data,
+                      status=202,
+                      content_type='application/json')
+
+        droplet = digitalocean.Droplet(name="example.com",
+                                       size_slug="512mb",
+                                       image="ubuntu-14-04-x64",
+                                       region="nyc3",
+                                       backups=True,
+                                       ipv6=True,
+                                       private_networking=True,
+                                       user_data="Some user data.",
+                                       token=self.token)
+        response = droplet.create()
+
+        self.assertEqual(responses.calls[0].request.url,
+                         self.base_url + \
+                         "droplets?name=example.com&region=nyc3&user_data=Some+user+data.&ipv6=True&private_networking=True&backups=True&image=ubuntu-14-04-x64&size=512mb")
+        self.assertEqual(droplet.id, 3164494)
+        self.assertEqual(droplet.action_ids, [36805096])

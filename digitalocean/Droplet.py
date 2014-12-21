@@ -237,7 +237,7 @@ class Droplet(BaseAPI):
         Args:
             image_id : int - id of image
         """
-        if self.image['id'] and not image_id:
+        if not image_id:
             image_id = self.image['id']
 
         return self.get_data(

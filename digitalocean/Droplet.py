@@ -132,7 +132,7 @@ class Droplet(BaseAPI):
             if net['type'] == 'public':
                 self.ip_address = net['ip_address']
         if self.networks['v6']:
-            self.ip_v6_address = droplet.networks['v6'][0]['ip_address']
+            self.ip_v6_address = self.networks['v6'][0]['ip_address']
         return self
 
     def power_on(self):

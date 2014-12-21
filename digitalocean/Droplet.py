@@ -388,11 +388,9 @@ class Droplet(BaseAPI):
 
         if data:
             self.id = data['droplet']['id']
-
-        if u"action_ids" in data[u'droplet']:
+            action_id = data['links']['actions'][0]['id']
             self.action_ids = []
-            for id in data[u'droplet'][u'action_ids']:
-                self.action_ids.append(id)
+            self.action_ids.append(action_id)
 
     def get_events(self):
         """

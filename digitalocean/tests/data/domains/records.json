@@ -1,0 +1,52 @@
+{
+  "domain_records": [
+    {
+      "id": 1,
+      "type": "A",
+      "name": "@",
+      "data": "8.8.8.8",
+      "priority": null,
+      "port": null,
+      "weight": null
+    },
+    {
+      "id": 2,
+      "type": "NS",
+      "name": null,
+      "data": "NS1.DIGITALOCEAN.COM.",
+      "priority": null,
+      "port": null,
+      "weight": null
+    },
+    {
+      "id": 3,
+      "type": "NS",
+      "name": null,
+      "data": "NS2.DIGITALOCEAN.COM.",
+      "priority": null,
+      "port": null,
+      "weight": null
+    },
+    {
+      "id": 4,
+      "type": "NS",
+      "name": null,
+      "data": "NS3.DIGITALOCEAN.COM.",
+      "priority": null,
+      "port": null,
+      "weight": null
+    },
+    {
+      "id": 5,
+      "type": "CNAME",
+      "name": "example",
+      "data": "@",
+      "priority": null,
+      "port": null,
+      "weight": null
+    }
+  ],
+  "meta": {
+    "total": 5
+  }
+}

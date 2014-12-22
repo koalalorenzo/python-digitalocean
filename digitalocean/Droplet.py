@@ -132,7 +132,7 @@ class Droplet(BaseAPI):
             if net['type'] == 'public':
                 self.ip_address = net['ip_address']
         if self.networks['v6']:
-            self.ip_v6_address = droplet.networks['v6'][0]['ip_address']
+            self.ip_v6_address = self.networks['v6'][0]['ip_address']
         return self
 
     def power_on(self):
@@ -237,7 +237,7 @@ class Droplet(BaseAPI):
         Args:
             image_id : int - id of image
         """
-        if self.image['id'] and not image_id:
+        if not image_id:
             image_id = self.image['id']
 
         return self.get_data(
@@ -360,6 +360,10 @@ class Droplet(BaseAPI):
         for attr in kwargs.keys():
             setattr(self,attr,kwargs[attr])
 
+        # Provide backwards compatibility
+        if not self.size_slug and self.size:
+            self.size_slug = self.size
+
         data = {
                 "name": self.name,
                 "size": self.size_slug,
@@ -388,11 +392,9 @@ class Droplet(BaseAPI):
 
         if data:
             self.id = data['droplet']['id']
-
-        if u"action_ids" in data[u'droplet']:
+            action_id = data['links']['actions'][0]['id']
             self.action_ids = []
-            for id in data[u'droplet'][u'action_ids']:
-                self.action_ids.append(id)
+            self.action_ids.append(action_id)
 
     def get_events(self):
         """
@@ -407,7 +409,7 @@ class Droplet(BaseAPI):
             This actions can be used to check the droplet's status
         """
         answer = self.get_data(
-            "droplets/%s/actions" % self.id,
+            "droplets/%s/actions/" % self.id,
             type="GET"
         )
 
@@ -456,10 +458,13 @@ class Droplet(BaseAPI):
                     kernel = Kernel(**jsond)
                     kernel.token = self.token
                     kernels.append(kernel)
-                url = data[u'links'][u'pages'].get(u'next')
-                if not url:
-                        break
-                data = self.get_data(data[u'links'][u'pages'].get(u'next'))
+                try:
+                    url = data[u'links'][u'pages'].get(u'next')
+                    if not url:
+                            break
+                    data = self.get_data(url)
+                except KeyError: # No links.
+                    break
 
         return kernels
 

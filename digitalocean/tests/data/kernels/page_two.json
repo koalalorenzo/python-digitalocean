@@ -1,0 +1,17 @@
+{
+  "kernels": [
+    {
+      "id": 231,
+      "name": "Ubuntu 14.04 x64 vmlinuz-3.13.0-32-generic",
+      "version": "3.13.0-32-generic"
+    }
+  ],
+  "links": {
+    "pages": {
+      "last": "https://api.digitalocean.com/v2/droplets/12345/kernels?page=2"
+    }
+  },
+  "meta": {
+    "total": 3
+  }
+}

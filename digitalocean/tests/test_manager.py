@@ -17,6 +17,25 @@ class TestManager(unittest.TestCase):
         self.manager = digitalocean.Manager(token=self.token)
 
     @responses.activate
+    def test_get_account(self):
+        data = self.load_from_file('account/account.json')
+
+        url = self.base_url + 'account/'
+        responses.add(responses.GET, url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        acct = self.manager.get_account()
+
+        self.assertEqual(responses.calls[0].request.url,
+                         self.base_url + "account/")
+        self.assertEqual(acct.token, self.token)
+        self.assertEqual(acct.email, 'web@digitalocean.com')
+        self.assertEqual(acct.droplet_limit, 25)
+        self.assertEqual(acct.email_verified, True)
+
+    @responses.activate
     def test_auth_fail(self):
         data = self.load_from_file('errors/unauthorized.json')
 

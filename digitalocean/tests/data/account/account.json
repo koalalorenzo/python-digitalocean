@@ -1,0 +1,8 @@
+{
+  "account": {
+    "droplet_limit": 25,
+    "email": "web@digitalocean.com",
+    "uuid": "b6fc48dbf6d9906cace5f3c78dc9851e757381ef",
+    "email_verified": true
+  }
+}

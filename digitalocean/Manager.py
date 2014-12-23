@@ -7,6 +7,7 @@ from .Image import Image
 from .Domain import Domain
 from .SSHKey import SSHKey
 from .Action import Action
+from .Account import Account
 
 
 class Manager(BaseAPI):
@@ -48,6 +49,12 @@ class Manager(BaseAPI):
             pass
 
         return data
+
+    def get_account(self):
+        """
+            Returns an Account object.
+        """
+        return Account.get_object(api_token=self.token)
 
     def get_all_regions(self):
         """

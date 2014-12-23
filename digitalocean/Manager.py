@@ -45,7 +45,7 @@ class Manager(BaseAPI):
                     values.append(value)
             data = {}
             data[key] = values
-        except KeyError: # No pages.
+        except KeyError:  # No pages.
             pass
 
         return data

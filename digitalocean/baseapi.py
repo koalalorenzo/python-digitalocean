@@ -5,15 +5,19 @@ try:
 except:
     from urllib.parse import urljoin
 
+
 class Error(Exception):
     """Base exception class for this module"""
     pass
 
+
 class TokenError(Error):
     pass
 
+
 class DataReadError(Error):
     pass
+
 
 class BaseAPI(object):
     """
@@ -27,7 +31,7 @@ class BaseAPI(object):
         self.end_point = "https://api.digitalocean.com/v2/"
 
         for attr in kwargs.keys():
-            setattr(self,attr,kwargs[attr])
+            setattr(self, attr, kwargs[attr])
 
     def __perform_get(self, url, headers=dict(), params=dict()):
         return requests.get(url, headers=headers, params=params)
@@ -57,7 +61,7 @@ class BaseAPI(object):
         if "https" not in url:
             url = urljoin(self.end_point, url)
 
-        headers.update({'Authorization':'Bearer ' + self.token})
+        headers.update({'Authorization': 'Bearer ' + self.token})
         if type == 'POST':
             r = self.__perform_post(url, headers=headers, params=params)
         elif type == 'PUT':

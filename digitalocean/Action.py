@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from .baseapi import BaseAPI
 
+
 class Action(BaseAPI):
     def __init__(self, *args, **kwargs):
         self.id = None
@@ -32,7 +33,7 @@ class Action(BaseAPI):
             action = action[u'action']
             # Loading attributes
             for attr in action.keys():
-                setattr(self,attr,action[attr])
+                setattr(self, attr, action[attr])
 
     def load(self):
         action = self.get_data(
@@ -45,7 +46,7 @@ class Action(BaseAPI):
             action = action[u'action']
             # Loading attributes
             for attr in action.keys():
-                setattr(self,attr,action[attr])
+                setattr(self, attr, action[attr])
 
     def __str__(self):
         return "%s %s [%s]" % (self.id, self.type, self.status)

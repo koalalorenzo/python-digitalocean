@@ -13,14 +13,15 @@ if os.path.isfile("README.md"):
     with open('README.md') as file:
         long_description = file.read()
 
-setup(name='python-digitalocean',
-      version='1.0.8',
-      description='digitalocean.com API to manage Droplets and Images',
-      author='Lorenzo Setale ( http://who.is.lorenzo.setale.me/? )',
-      author_email='koalalorenzo@gmail.com',
-      url='https://github.com/koalalorenzo/python-digitalocean',
-      packages=['digitalocean'],
-      install_requires=['requests'],
-      test_suite='digitalocean.tests',
-      long_description=long_description
-     )
+setup(
+    name='python-digitalocean',
+    version='1.1',
+    description='digitalocean.com API to manage Droplets and Images',
+    author='Lorenzo Setale ( http://who.is.lorenzo.setale.me/? )',
+    author_email='koalalorenzo@gmail.com',
+    url='https://github.com/koalalorenzo/python-digitalocean',
+    packages=['digitalocean'],
+    install_requires=['requests'],
+    test_suite='digitalocean.tests',
+    long_description=long_description
+)

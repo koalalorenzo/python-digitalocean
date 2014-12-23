@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-import requests
 from .baseapi import BaseAPI
+
 
 class Image(BaseAPI):
     def __init__(self, *args, **kwargs):
@@ -28,9 +28,9 @@ class Image(BaseAPI):
         data = self.get_data("images/%s" % self.id)
         image_dict = data['image']
 
-        #Setting the attribute values
+        # Setting the attribute values
         for attr in image_dict.keys():
-            setattr(self,attr,image_dict[attr])
+            setattr(self, attr, image_dict[attr])
 
         return self
 

@@ -7,6 +7,7 @@ except:
 
 from .baseapi import BaseAPI
 
+
 class Metadata(BaseAPI):
     """
         Metadata API: Provide useful information about the current Droplet.
@@ -37,7 +38,7 @@ class Metadata(BaseAPI):
         metadata = self.get_data("v1.json")
 
         for attr in metadata.keys():
-            setattr(self,attr,metadata[attr])
+            setattr(self, attr, metadata[attr])
 
         return self
 

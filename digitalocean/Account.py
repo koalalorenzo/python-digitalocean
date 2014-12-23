@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from .baseapi import BaseAPI
 
+
 class Account(BaseAPI):
     def __init__(self, *args, **kwargs):
         self.droplet_limit = None
@@ -25,7 +26,7 @@ class Account(BaseAPI):
         account = data['account']
 
         for attr in account.keys():
-            setattr(self,attr,account[attr])
+            setattr(self, attr, account[attr])
 
     def __str__(self):
         return "%s" % self.email

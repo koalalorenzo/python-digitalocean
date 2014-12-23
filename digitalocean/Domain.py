@@ -3,6 +3,7 @@ import requests
 from .Record import Record
 from .baseapi import BaseAPI
 
+
 class Domain(BaseAPI):
     def __init__(self, *args, **kwargs):
         self.name = None
@@ -27,7 +28,7 @@ class Domain(BaseAPI):
         domain = domains['domain']
 
         for attr in domain.keys():
-            setattr(self,attr,domain[attr])
+            setattr(self, attr, domain[attr])
 
     def destroy(self):
         """
@@ -62,7 +63,7 @@ class Domain(BaseAPI):
             "data": kwargs.get("data", None)
         }
 
-        # Optional Args
+        #  Optional Args
         if kwargs.get("priority", None):
             data['priority'] = kwargs.get("priority", None)
 
@@ -84,9 +85,9 @@ class Domain(BaseAPI):
         """
         # URL https://api.digitalocean.com/v2/domains
         data = {
-                "name": self.name,
-                "ip_address": self.ip_address,
-            }
+            "name": self.name,
+            "ip_address": self.ip_address,
+        }
 
         domain = self.get_data(
             "domains",

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from .baseapi import BaseAPI
 
+
 class Region(BaseAPI):
     def __init__(self, *args, **kwargs):
         self.name = None

@@ -1,20 +1,23 @@
 # -*- coding: utf-8 -*-
-import requests
 from .Action import Action
 from .Image import Image
 from .Kernel import Kernel
 from .baseapi import BaseAPI, Error
 from .SSHKey import SSHKey
 
+
 class DropletError(Error):
     """Base exception class for this module"""
     pass
 
+
 class BadKernelObject(DropletError):
     pass
 
+
 class BadSSHKeyFormat(DropletError):
     pass
+
 
 class Droplet(BaseAPI):
     """"Droplet managment
@@ -124,7 +127,7 @@ class Droplet(BaseAPI):
         droplet = droplets['droplet']
 
         for attr in droplet.keys():
-            setattr(self,attr,droplet[attr])
+            setattr(self, attr, droplet[attr])
 
         for net in self.networks['v4']:
             if net['type'] == 'private':
@@ -228,7 +231,7 @@ class Droplet(BaseAPI):
         return self.get_data(
             "droplets/%s/actions/" % self.id,
             type="POST",
-            params={"type":"restore", "image": image_id}
+            params={"type": "restore", "image": image_id}
         )
 
     def rebuild(self, image_id=None):
@@ -315,7 +318,7 @@ class Droplet(BaseAPI):
         return self.get_data(
             "droplets/%s/actions/" % self.id,
             type="POST",
-            params={'type' : 'change_kernel', 'kernel': kernel.id}
+            params={'type': 'change_kernel', 'kernel': kernel.id}
         )
 
     def __get_ssh_keys_id(self):
@@ -327,7 +330,7 @@ class Droplet(BaseAPI):
         ssh_keys_id = list()
         for ssh_key in self.ssh_keys:
             if type(ssh_key) in [int, long]:
-                ssh_keys_id.append( int(ssh_key) )
+                ssh_keys_id.append(int(ssh_key))
 
             elif type(ssh_key) == SSHKey:
                 ssh_keys_id.append(ssh_key.id)
@@ -337,7 +340,7 @@ class Droplet(BaseAPI):
                 key.token = self.token
                 results = key.load_by_pub_key(ssh_key)
 
-                if results == None:
+                if results is None:
                     key.public_key = ssh_key
                     key.name = "SSH Key %s" % self.name
                     key.create()
@@ -346,7 +349,9 @@ class Droplet(BaseAPI):
 
                 ssh_keys_id.append(key.id)
             else:
-                raise BadSSHKeyFormat("Droplet.ssh_keys should be a list of IDs or public keys")
+                raise BadSSHKeyFormat(
+                    "Droplet.ssh_keys should be a list of IDs or public keys"
+                )
 
         return ssh_keys_id
 
@@ -358,19 +363,19 @@ class Droplet(BaseAPI):
             assigned to the object.
         """
         for attr in kwargs.keys():
-            setattr(self,attr,kwargs[attr])
+            setattr(self, attr, kwargs[attr])
 
         # Provide backwards compatibility
         if not self.size_slug and self.size:
             self.size_slug = self.size
 
         data = {
-                "name": self.name,
-                "size": self.size_slug,
-                "image": self.image,
-                "region": self.region,
-                "ssh_keys[]": self.__get_ssh_keys_id(),
-            }
+            "name": self.name,
+            "size": self.size_slug,
+            "image": self.image,
+            "region": self.region,
+            "ssh_keys[]": self.__get_ssh_keys_id(),
+        }
 
         if self.backups:
             data['backups'] = True
@@ -463,7 +468,7 @@ class Droplet(BaseAPI):
                     if not url:
                             break
                     data = self.get_data(url)
-                except KeyError: # No links.
+                except KeyError:  # No links.
                     break
 
         return kernels

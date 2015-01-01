@@ -403,11 +403,11 @@ class Droplet(BaseAPI):
             return_dict
         )
 
-    def __get_ssh_keys_id(self):
+    def __get_ssh_keys_id_or_fingerprint(self):
         """
-            Check and return a list of SSH key IDs according to DigitalOcean's
-            API. This method is usde to check and create a droplet with the
-            correct SSH keys.
+            Check and return a list of SSH key IDs or fingerprints according
+            to DigitalOcean's API. This method is used to check and create a
+            droplet with the correct SSH keys.
         """
         ssh_keys_id = list()
         for ssh_key in self.ssh_keys:
@@ -418,21 +418,30 @@ class Droplet(BaseAPI):
                 ssh_keys_id.append(ssh_key.id)
 
             elif type(ssh_key) in [str, unicode]:
-                key = SSHKey()
-                key.token = self.token
-                results = key.load_by_pub_key(ssh_key)
+                # ssh_key could either be a fingerprint or a public key
+                regexp_of_fingerprint = '([0-9a-fA-F]{2}:){15}[0-9a-fA-F]'
+                match = re.match(regexp_of_fingerprint, ssh_key)
 
-                if results is None:
-                    key.public_key = ssh_key
-                    key.name = "SSH Key %s" % self.name
-                    key.create()
+                if match is not None and match.end() == len(ssh_key) - 1:
+                    ssh_keys_id.append(ssh_key)
+
                 else:
-                    key = results
+                    key = SSHKey()
+                    key.token = self.token
+                    results = key.load_by_pub_key(ssh_key)
 
-                ssh_keys_id.append(key.id)
+                    if results is None:
+                        key.public_key = ssh_key
+                        key.name = "SSH Key %s" % self.name
+                        key.create()
+                    else:
+                        key = results
+
+                    ssh_keys_id.append(key.id)
             else:
                 raise BadSSHKeyFormat(
-                    "Droplet.ssh_keys should be a list of IDs or public keys"
+                    "Droplet.ssh_keys should be a list of IDs, public keys"
+                     + " or fingerprints."
                 )
 
         return ssh_keys_id
@@ -456,7 +465,7 @@ class Droplet(BaseAPI):
             "size": self.size_slug,
             "image": self.image,
             "region": self.region,
-            "ssh_keys[]": self.__get_ssh_keys_id(),
+            "ssh_keys[]": self.__get_ssh_keys_id_or_fingerprint(),
         }
 
         if self.backups:

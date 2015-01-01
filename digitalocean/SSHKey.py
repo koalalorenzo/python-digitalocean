@@ -21,8 +21,19 @@ class SSHKey(BaseAPI):
         return ssh_key
 
     def load(self):
+        """
+            Load the SSHKey object from DigitalOcean.
+
+            Requires either self.id or self.fingerprint to be set.
+        """
+        identifier = None
+        if self.id is not None:
+            identifier = self.id
+        elif self.fingerprint is not None:
+            identifier = self.fingerprint
+
         data = self.get_data(
-            "account/keys/%s" % self.id,
+            "account/keys/%s" % identifier,
             type="GET"
         )
 

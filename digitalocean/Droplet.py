@@ -423,7 +423,7 @@ class Droplet(BaseAPI):
                 match = re.match(regexp_of_fingerprint, ssh_key)
 
                 if match is not None and match.end() == len(ssh_key) - 1:
-                    ssh_keys_id.append(ssh_keys)
+                    ssh_keys_id.append(ssh_key)
 
                 else:
                     key = SSHKey()

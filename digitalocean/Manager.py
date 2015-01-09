@@ -18,11 +18,13 @@ class Manager(BaseAPI):
         """
             Customized version of get_data to perform __check_actions_in_data
         """
-        data = super(Manager, self).get_data(*args, **kwargs)
-
-        params = {}
         if "params" in kwargs:
             params = kwargs['params']
+        else:
+            params = {}
+            kwargs['params'] = params
+        params.update({'per_page': 200})
+        data = super(Manager, self).get_data(*args, **kwargs)
         unpaged_data = self.__deal_with_pagination(args[0], data, params)
 
         return unpaged_data

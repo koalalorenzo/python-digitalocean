@@ -4,6 +4,7 @@ from .Image import Image
 from .Kernel import Kernel
 from .baseapi import BaseAPI, Error
 from .SSHKey import SSHKey
+import re
 
 
 class DropletError(Error):
@@ -411,13 +412,23 @@ class Droplet(BaseAPI):
         """
         ssh_keys_id = list()
         for ssh_key in self.ssh_keys:
-            if type(ssh_key) in [int, long]:
+
+            # Ignore long and unicode if they do not exist; for compatibility
+            # with Python 3.
+            try:
+                int_type = [int, long]
+                str_type = [str, unicode]
+            except NameError:
+                int_type = [int]
+                str_type = [str]
+
+            if type(ssh_key) in int_type:
                 ssh_keys_id.append(int(ssh_key))
 
             elif type(ssh_key) == SSHKey:
                 ssh_keys_id.append(ssh_key.id)
 
-            elif type(ssh_key) in [str, unicode]:
+            elif type(ssh_key) in str_type:
                 # ssh_key could either be a fingerprint or a public key
                 regexp_of_fingerprint = '([0-9a-fA-F]{2}:){15}[0-9a-fA-F]'
                 match = re.match(regexp_of_fingerprint, ssh_key)

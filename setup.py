@@ -15,7 +15,7 @@ if os.path.isfile("README.md"):
 
 setup(
     name='python-digitalocean',
-    version='1.1',
+    version='1.2',
     description='digitalocean.com API to manage Droplets and Images',
     author='Lorenzo Setale ( http://who.is.lorenzo.setale.me/? )',
     author_email='koalalorenzo@gmail.com',

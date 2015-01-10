@@ -413,7 +413,7 @@ class Droplet(BaseAPI):
         """
         ssh_keys_id = list()
         for ssh_key in self.ssh_keys:
-            if type(ssh_key) in [int, long]:
+            if type(ssh_key) in [int, type(2**64)]:
                 ssh_keys_id.append(int(ssh_key))
 
             elif type(ssh_key) == SSHKey:

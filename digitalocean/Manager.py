@@ -16,14 +16,19 @@ class Manager(BaseAPI):
 
     def get_data(self, *args, **kwargs):
         """
-            Customized version of get_data to perform __check_actions_in_data
+            Customized version of get_data to perform __check_actions_in_data.
+
+            The default amount of elements per page defined is 200 as explained
+            here: https://github.com/koalalorenzo/python-digitalocean/pull/78
         """
+        params = {}
         if "params" in kwargs:
-            params = kwargs['params']
-        else:
-            params = {}
-            kwargs['params'] = params
-        params.update({'per_page': 200})
+            params = kwargs["params"]
+
+        if "per_page" not in params:
+            params["per_page"] = 200
+
+        kwargs["params"] = params
         data = super(Manager, self).get_data(*args, **kwargs)
         unpaged_data = self.__deal_with_pagination(args[0], data, params)
 

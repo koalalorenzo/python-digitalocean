@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import re
+
 from .Action import Action
 from .Image import Image
 from .Kernel import Kernel
@@ -417,8 +419,12 @@ class Droplet(BaseAPI):
             elif type(ssh_key) == SSHKey:
                 ssh_keys_id.append(ssh_key.id)
 
-            elif type(ssh_key) in [str, unicode]:
+            elif type(ssh_key) in [type(u''), type('')]:
                 # ssh_key could either be a fingerprint or a public key
+                #
+                # type(u'') and type('') is the same in python 3 but
+                # different in 2. See:
+                # https://github.com/koalalorenzo/python-digitalocean/issues/80
                 regexp_of_fingerprint = '([0-9a-fA-F]{2}:){15}[0-9a-fA-F]'
                 match = re.match(regexp_of_fingerprint, ssh_key)
 
@@ -441,7 +447,7 @@ class Droplet(BaseAPI):
             else:
                 raise BadSSHKeyFormat(
                     "Droplet.ssh_keys should be a list of IDs, public keys"
-                     + " or fingerprints."
+                    + " or fingerprints."
                 )
 
         return ssh_keys_id

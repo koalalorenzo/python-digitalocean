@@ -50,7 +50,7 @@ class TestManager(unittest.TestCase):
             bad_token.get_all_regions()
 
         exception = error.exception
-        self.assertEqual(exception.message, 'Unable to authenticate you.')
+        self.assertEqual(str(exception), 'Unable to authenticate you.')
 
     @responses.activate
     def test_droplets(self):

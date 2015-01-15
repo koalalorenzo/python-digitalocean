@@ -655,7 +655,7 @@ class TestDroplet(unittest.TestCase):
             self.droplet.change_kernel(kernel=123)
 
         exception = error.exception
-        self.assertEqual(exception.message, 'Use Kernel object')
+        self.assertEqual(str(exception), 'Use Kernel object')
 
     @responses.activate
     def test_change_kernel(self):

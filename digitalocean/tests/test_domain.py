@@ -18,6 +18,23 @@ class TestDroplet(unittest.TestCase):
         self.domain = digitalocean.Domain(name='example.com',
                                           token=self.token)
 
+    def assert_url_query_equal(self, url1, url2):
+        """ Test if two URL queries are equal
+
+        The key=value pairs after the ? in a URL can occur in any order
+        (especially since dicts in python 3 are not deterministic across runs).
+        The method sorts the key=value pairs and then compares the URLs.
+        """
+        base1, query1 = url1.split('?')
+        base2, query2 = url2.split('?')
+        qlist1 = query1.split('&')
+        qlist2 = query2.split('&')
+        qlist1.sort()
+        qlist2.sort()
+        new_url1 = base1 + '?' + '&'.join(qlist1)
+        new_url2 = base2 + '?' + '&'.join(qlist2)
+        self.assertEqual(new_url1, new_url2)
+
     @responses.activate
     def test_load(self):
         data = self.load_from_file('domains/single.json')
@@ -60,7 +77,7 @@ class TestDroplet(unittest.TestCase):
                                                         name = "www",
                                                         data = "@")
 
-        self.assertEqual(responses.calls[0].request.url,
+        self.assert_url_query_equal(responses.calls[0].request.url,
                          self.base_url + \
                          "domains/example.com/records?type=CNAME&data=%40&name=www")
         self.assertEqual(response['domain_record']['type'], "CNAME")
@@ -81,7 +98,7 @@ class TestDroplet(unittest.TestCase):
                                      ip_address="1.1.1.1",
                                      token=self.token).create()
 
-        self.assertEqual(responses.calls[0].request.url,
+        self.assert_url_query_equal(responses.calls[0].request.url,
                          self.base_url + \
                          "domains?ip_address=1.1.1.1&name=example.com")
         self.assertEqual(domain['domain']['name'], "example.com")

@@ -12,6 +12,23 @@ class TestDroplet(unittest.TestCase):
         with open(os.path.join(cwd, 'data/%s' % json_file), 'r') as f:
             return f.read()
 
+    def assert_url_query_equal(self, url1, url2):
+        """ Test if two URL queries are equal
+
+        The key=value pairs after the ? in a URL can occur in any order
+        (especially since dicts in python 3 are not deterministic across runs).
+        The method sorts the key=value pairs and then compares the URLs.
+        """
+        base1, query1 = url1.split('?')
+        base2, query2 = url2.split('?')
+        qlist1 = query1.split('&')
+        qlist2 = query2.split('&')
+        qlist1.sort()
+        qlist2.sort()
+        new_url1 = base1 + '?' + '&'.join(qlist1)
+        new_url2 = base2 + '?' + '&'.join(qlist2)
+        self.assertEqual(new_url1, new_url2)
+
     @responses.activate
     def setUp(self):
         self.base_url = "https://api.digitalocean.com/v2/"
@@ -295,7 +312,7 @@ class TestDroplet(unittest.TestCase):
 
         response = self.droplet.take_snapshot("New Snapshot")
 
-        self.assertEqual(responses.calls[0].request.url,
+        self.assert_url_query_equal(responses.calls[0].request.url,
                          self.actions_url + "?type=snapshot&name=New+Snapshot")
         self.assertEqual(response['action']['id'], 54321)
         self.assertEqual(response['action']['status'], "in-progress")
@@ -314,7 +331,7 @@ class TestDroplet(unittest.TestCase):
 
         response = self.droplet.take_snapshot("New Snapshot", return_dict=False)
 
-        self.assertEqual(responses.calls[0].request.url,
+        self.assert_url_query_equal(responses.calls[0].request.url,
                          self.actions_url + "?type=snapshot&name=New+Snapshot")
         self.assertEqual(response.id, 54321)
         self.assertEqual(response.status, "in-progress")
@@ -333,7 +350,7 @@ class TestDroplet(unittest.TestCase):
 
         response = self.droplet.resize("64gb")
 
-        self.assertEqual(responses.calls[0].request.url,
+        self.assert_url_query_equal(responses.calls[0].request.url,
                          self.actions_url + "?type=resize&size=64gb")
         self.assertEqual(response['action']['id'], 54321)
         self.assertEqual(response['action']['status'], "in-progress")
@@ -352,7 +369,7 @@ class TestDroplet(unittest.TestCase):
 
         response = self.droplet.resize("64gb", False)
 
-        self.assertEqual(responses.calls[0].request.url,
+        self.assert_url_query_equal(responses.calls[0].request.url,
                          self.actions_url + "?type=resize&size=64gb")
         self.assertEqual(response.id, 54321)
         self.assertEqual(response.status, "in-progress")
@@ -371,7 +388,7 @@ class TestDroplet(unittest.TestCase):
 
         response = self.droplet.restore(image_id=78945)
 
-        self.assertEqual(responses.calls[0].request.url,
+        self.assert_url_query_equal(responses.calls[0].request.url,
                          self.actions_url + "?image=78945&type=restore")
         self.assertEqual(response['action']['id'], 54321)
         self.assertEqual(response['action']['status'], "in-progress")
@@ -390,7 +407,7 @@ class TestDroplet(unittest.TestCase):
 
         response = self.droplet.restore(image_id=78945, return_dict = False)
 
-        self.assertEqual(responses.calls[0].request.url,
+        self.assert_url_query_equal(responses.calls[0].request.url,
                          self.actions_url + "?image=78945&type=restore")
         self.assertEqual(response.id, 54321)
         self.assertEqual(response.status, "in-progress")
@@ -412,7 +429,7 @@ class TestDroplet(unittest.TestCase):
 
         response = self.droplet.rebuild(image_id=78945)
 
-        self.assertEqual(responses.calls[0].request.url,
+        self.assert_url_query_equal(responses.calls[0].request.url,
                          self.actions_url + "?image=78945&type=rebuild")
         self.assertEqual(response['action']['id'], 54321)
         self.assertEqual(response['action']['status'], "in-progress")
@@ -434,7 +451,7 @@ class TestDroplet(unittest.TestCase):
 
         response = self.droplet.rebuild(image_id=78945, return_dict = False)
 
-        self.assertEqual(responses.calls[0].request.url,
+        self.assert_url_query_equal(responses.calls[0].request.url,
                          self.actions_url + "?image=78945&type=rebuild")
         self.assertEqual(response.id, 54321)
         self.assertEqual(response.status, "in-progress")
@@ -456,7 +473,7 @@ class TestDroplet(unittest.TestCase):
 
         response = self.droplet.rebuild()
 
-        self.assertEqual(responses.calls[0].request.url,
+        self.assert_url_query_equal(responses.calls[0].request.url,
                          self.actions_url + "?image=6918990&type=rebuild")
         self.assertEqual(response['action']['id'], 54321)
         self.assertEqual(response['action']['status'], "in-progress")
@@ -478,7 +495,7 @@ class TestDroplet(unittest.TestCase):
 
         response = self.droplet.rebuild(return_dict = False)
 
-        self.assertEqual(responses.calls[0].request.url,
+        self.assert_url_query_equal(responses.calls[0].request.url,
                          self.actions_url + "?image=6918990&type=rebuild")
         self.assertEqual(response.id, 54321)
         self.assertEqual(response.status, "in-progress")
@@ -546,7 +563,7 @@ class TestDroplet(unittest.TestCase):
 
         response = self.droplet.rename(name="New Name")
 
-        self.assertEqual(responses.calls[0].request.url,
+        self.assert_url_query_equal(responses.calls[0].request.url,
                          self.actions_url + "?type=rename&name=New+Name")
         self.assertEqual(response['action']['id'], 54321)
         self.assertEqual(response['action']['status'], "in-progress")
@@ -565,7 +582,7 @@ class TestDroplet(unittest.TestCase):
 
         response = self.droplet.rename(name="New Name", return_dict=False)
 
-        self.assertEqual(responses.calls[0].request.url,
+        self.assert_url_query_equal(responses.calls[0].request.url,
                          self.actions_url + "?type=rename&name=New+Name")
         self.assertEqual(response.id, 54321)
         self.assertEqual(response.status, "in-progress")
@@ -668,7 +685,7 @@ class TestDroplet(unittest.TestCase):
 
         response = self.droplet.change_kernel(digitalocean.Kernel(id=123))
 
-        self.assertEqual(responses.calls[0].request.url,
+        self.assert_url_query_equal(responses.calls[0].request.url,
                          self.actions_url + "?kernel=123&type=change_kernel")
         self.assertEqual(response['action']['id'], 54321)
         self.assertEqual(response['action']['status'], "in-progress")
@@ -688,7 +705,7 @@ class TestDroplet(unittest.TestCase):
         response = self.droplet.change_kernel(digitalocean.Kernel(id=123),
                 return_dict=False)
 
-        self.assertEqual(responses.calls[0].request.url,
+        self.assert_url_query_equal(responses.calls[0].request.url,
                          self.actions_url + "?kernel=123&type=change_kernel")
         self.assertEqual(response.id, 54321)
         self.assertEqual(response.status, "in-progress")
@@ -716,7 +733,7 @@ class TestDroplet(unittest.TestCase):
                                        token=self.token)
         response = droplet.create()
 
-        self.assertEqual(responses.calls[0].request.url,
+        self.assert_url_query_equal(responses.calls[0].request.url,
                          self.base_url + \
                          "droplets?name=example.com&region=nyc3&user_data=Some+user+data.&ipv6=True&private_networking=True&backups=True&image=ubuntu-14-04-x64&size=512mb")
         self.assertEqual(droplet.id, 3164494)

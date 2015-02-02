@@ -33,28 +33,36 @@ class BaseAPI(object):
         for attr in kwargs.keys():
             setattr(self, attr, kwargs[attr])
 
-    def __perform_get(self, url, headers=dict(), params=dict()):
+    def __perform_get(self, url, headers=None, params=None):
+        if headers is None: headers = {}
+        if params is None: params = {}
         return requests.get(url, headers=headers, params=params)
 
-    def __perform_post(self, url, headers=dict(), params=dict()):
-        headers['content-type'] = 'application/json'
-        return requests.post(url, headers=headers, params=params)
+    def __perform_post(self, url, headers=None, params=None):
+        if headers is None: headers = {}
+        if params is None: params = {}
+        return requests.post(url, headers=headers, json=params)
 
-    def __perform_put(self, url, headers=dict(), params=dict()):
-        headers['content-type'] = 'application/json'
-        return requests.put(url, headers=headers, params=params)
+    def __perform_put(self, url, headers=None, params=None):
+        if headers is None: headers = {}
+        if params is None: params = {}
+        return requests.put(url, headers=headers, json=params)
 
-    def __perform_delete(self, url, headers=dict(), params=dict()):
+    def __perform_delete(self, url, headers=None, params=None):
+        if headers is None: headers = {}
+        if params is None: params = {}
         headers['content-type'] = 'application/x-www-form-urlencoded'
         return requests.delete(url, headers=headers, params=params)
 
-    def __perform_request(self, url, type='GET', params=dict(), headers=dict()):
+    def __perform_request(self, url, type='GET', params=None, headers=None):
         """
             This method will perform the real request,
             in this way we can customize only the "output" of the API call by
             using self.__call_api method.
             This method will return the request object.
         """
+        if headers is None: headers = {}
+        if params is None: params = {}
         if not self.token:
             raise TokenError("No token provied. Please use a valid token")
 

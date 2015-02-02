@@ -41,14 +41,12 @@ class BaseAPI(object):
     def __perform_post(self, url, headers=None, params=None):
         if headers is None: headers = {}
         if params is None: params = {}
-        headers['content-type'] = 'application/json'
-        return requests.post(url, headers=headers, params=params)
+        return requests.post(url, headers=headers, json=params)
 
     def __perform_put(self, url, headers=None, params=None):
         if headers is None: headers = {}
         if params is None: params = {}
-        headers['content-type'] = 'application/json'
-        return requests.put(url, headers=headers, params=params)
+        return requests.put(url, headers=headers, json=params)
 
     def __perform_delete(self, url, headers=None, params=None):
         if headers is None: headers = {}

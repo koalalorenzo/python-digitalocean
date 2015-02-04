@@ -5,6 +5,7 @@ import digitalocean
 
 from BaseTest import BaseTest
 
+
 class TestManager(BaseTest):
 
     def setUp(self):

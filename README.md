@@ -78,6 +78,17 @@ for action in actions:
     print action.status
 ```
 
+### Test using Docker
+To test this python-digitalocean you can use docker. First you can build the container by running in your shell:
+
+    docker build -t "pdo-tests" .
+
+Then you can run all the tests (for both python 2 and python 3)
+
+    docker build -t "pdo-tests" .
+
+This will use Ubuntu 14.04 as base and use your repository to run tests. So every time you edit some files, please run these commands to perform tests on your changes.
+
 ## Links
 
   * Project Site: [http://projects.setale.me/python-digitalocean](http://projects.setale.me/python-digitalocean)

@@ -1,4 +1,4 @@
-requests>=2.0.0
+requests>=2.4.2
 
 # Testing requirements
 pytest

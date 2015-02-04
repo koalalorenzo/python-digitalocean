@@ -3,7 +3,7 @@ import responses
 import json
 import digitalocean
 
-from BaseTest import BaseTest
+from .BaseTest import BaseTest
 
 
 class TestDroplet(BaseTest):

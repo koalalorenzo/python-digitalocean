@@ -3,7 +3,7 @@ import responses
 
 import digitalocean
 
-from BaseTest import BaseTest
+from .BaseTest import BaseTest
 
 
 class TestManager(BaseTest):

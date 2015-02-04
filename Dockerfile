@@ -14,4 +14,4 @@ RUN git clone https://github.com/koalalorenzo/python-digitalocean.git
 
 WORKDIR /root/python-digitalocean
 RUN pip install -U -r requirements.txt
-RUN py.test
+ENTRYPOINT git fetch && git pull && py.test

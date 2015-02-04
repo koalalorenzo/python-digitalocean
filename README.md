@@ -78,6 +78,17 @@ for action in actions:
     print action.status
 ```
 
+### Test using Docker
+To test this python-digitalocean you can use docker. First you can build the container by running in your shell:
+
+    docker build -t "pdo-tests" .
+
+Then you can run all the tests (for both python 2 and python 3)
+
+    docker run pdo-tests 
+
+This will use Ubuntu 14.04 as base and use your repository to run tests. So every time you edit some files, please run these commands to perform tests on your changes.
+
 ## Links
 
   * Project Site: [http://projects.setale.me/python-digitalocean](http://projects.setale.me/python-digitalocean)
@@ -86,13 +97,3 @@ for action in actions:
   * Author Website: [http://who.is.lorenzo.setale.me/?](http://setale.me/)
   * Author Blog: [http://blog.setale.me/](http://blog.setale.me/)
 
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-10395528-24', 'setale.me');
-  ga('send', 'pageview');
-
-</script>

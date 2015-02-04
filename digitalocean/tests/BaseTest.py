@@ -1,6 +1,7 @@
 import os
 import unittest
 
+
 class BaseTest(unittest.TestCase):
 
     def setUp(self):
@@ -14,7 +15,8 @@ class BaseTest(unittest.TestCase):
 
     def split_url(self, url):
         bits = url.split('?')
-        if len(bits) == 1: return url, []
+        if len(bits) == 1:
+            return url, []
 
         qlist = bits[1].split('&')
         qlist.sort()

@@ -3,6 +3,10 @@ import unittest
 
 class BaseTest(unittest.TestCase):
 
+    def setUp(self):
+        self.base_url = "https://api.digitalocean.com/v2/"
+        self.token = "afaketokenthatwillworksincewemockthings"
+
     def load_from_file(self, json_file):
         cwd = os.path.dirname(__file__)
         with open(os.path.join(cwd, 'data/%s' % json_file), 'r') as f:

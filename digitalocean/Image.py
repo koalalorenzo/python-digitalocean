@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from .baseapi import BaseAPI
+from .baseapi import BaseAPI, POST, DELETE, PUT
 
 
 class Image(BaseAPI):
@@ -38,10 +38,7 @@ class Image(BaseAPI):
         """
             Destroy the image
         """
-        return self.get_data(
-            "images/%s/" % self.id,
-            type="DELETE",
-        )
+        return self.get_data("images/%s/" % self.id, type=DELETE)
 
     def transfer(self, new_region_slug):
         """
@@ -49,7 +46,7 @@ class Image(BaseAPI):
         """
         return self.get_data(
             "images/%s/actions/" % self.id,
-            type="POST",
+            type=POST,
             params={"type": "transfer", "region": new_region_slug}
         )
 
@@ -59,7 +56,7 @@ class Image(BaseAPI):
         """
         return self.get_data(
             "images/%s" % self.id,
-            type="PUT",
+            type=PUT,
             params={"name": new_name}
         )
 

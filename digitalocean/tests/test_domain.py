@@ -6,13 +6,11 @@ import digitalocean
 from BaseTest import BaseTest
 
 
-class TestDroplet(BaseTest):
+class TestDomain(BaseTest):
 
     def setUp(self):
-        self.base_url = "https://api.digitalocean.com/v2/"
-        self.token = "afaketokenthatwillworksincewemockthings"
-        self.domain = digitalocean.Domain(name='example.com',
-                                          token=self.token)
+        super(TestDomain, self).setUp()
+        self.domain = digitalocean.Domain(name='example.com', token=self.token)
 
     @responses.activate
     def test_load(self):

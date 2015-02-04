@@ -8,8 +8,7 @@ from BaseTest import BaseTest
 class TestManager(BaseTest):
 
     def setUp(self):
-        self.base_url = "https://api.digitalocean.com/v2/"
-        self.token = "afaketokenthatwillworksincewemockthings"
+        super(TestManager, self).setUp()
         self.manager = digitalocean.Manager(token=self.token)
 
     @responses.activate
@@ -74,7 +73,7 @@ class TestManager(BaseTest):
         self.assertEqual(droplet.created_at, "2014-11-14T16:29:21Z")
         self.assertEqual(droplet.ip_address, "104.236.32.182")
         self.assertEqual(droplet.ip_v6_address,
-                "2604:A880:0800:0010:0000:0000:02DD:4001")
+                         "2604:A880:0800:0010:0000:0000:02DD:4001")
         self.assertEqual(droplet.kernel['id'], 2233)
         self.assertEqual(droplet.backup_ids, [7938002])
         self.assertEqual(droplet.features, ["backups",
@@ -142,7 +141,7 @@ class TestManager(BaseTest):
 
         image = all_images[0]
         self.assertEqual(image.token, self.token)
-        self.assertEqual(image.id, 119192817) 
+        self.assertEqual(image.id, 119192817)
         self.assertEqual(image.name, '14.04 x64')
         self.assertTrue(image.public)
         self.assertEqual(image.slug, "ubuntu-14-04-x64")
@@ -165,7 +164,7 @@ class TestManager(BaseTest):
 
         image = global_images[0]
         self.assertEqual(image.token, self.token)
-        self.assertEqual(image.id, 119192817) 
+        self.assertEqual(image.id, 119192817)
         self.assertEqual(image.name, '14.04 x64')
         self.assertTrue(image.public)
         self.assertEqual(image.slug, "ubuntu-14-04-x64")
@@ -188,7 +187,7 @@ class TestManager(BaseTest):
 
         image = my_images[0]
         self.assertEqual(image.token, self.token)
-        self.assertEqual(image.id, 449676856) 
+        self.assertEqual(image.id, 449676856)
         self.assertEqual(image.name, 'My Snapshot')
         self.assertFalse(image.public)
         self.assertEqual(image.slug, "")
@@ -217,7 +216,7 @@ class TestManager(BaseTest):
         self.assertEqual(key.public_key,
             "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAQQDGk5V68BJ4P3Ereh779Vi/Ft2qs/rbXrcjKLGo6zsyeyFUE0svJUpRDEJvFSf8RlezKx1/1ulJu9+kZsxRiUKn example")
         self.assertEqual(key.fingerprint,
-            "f5:d1:78:ed:28:72:5f:e1:ac:94:fd:1f:e0:a3:48:6d")
+                         "f5:d1:78:ed:28:72:5f:e1:ac:94:fd:1f:e0:a3:48:6d")
 
     @responses.activate
     def test_get_all_domains(self):

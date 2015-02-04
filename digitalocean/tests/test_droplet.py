@@ -11,9 +11,8 @@ class TestDroplet(BaseTest):
 
     @responses.activate
     def setUp(self):
-        self.base_url = "https://api.digitalocean.com/v2/"
+        super(TestDroplet, self).setUp()
         self.actions_url = self.base_url + "droplets/12345/actions/"
-        self.token = "afaketokenthatwillworksincewemockthings"
 
         data = self.load_from_file('droplets/single.json')
         responses.add(responses.GET, self.base_url + "droplets/12345",
@@ -575,7 +574,7 @@ class TestDroplet(BaseTest):
                       status=204,
                       content_type='application/json')
 
-        response = self.droplet.destroy()
+        self.droplet.destroy()
 
         self.assertEqual(responses.calls[0].request.url,
                          self.base_url + "droplets/12345")

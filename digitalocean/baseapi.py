@@ -7,12 +7,18 @@ except:
     from urllib.parse import urljoin
 
 
+GET = 'GET'
+POST = 'POST'
+DELETE = 'DELETE'
+PUT = 'PUT'
+
+
 class Error(Exception):
     """Base exception class for this module"""
     pass
 
 
-class TokenError(Error):
+lass TokenError(Error):
     pass
 
 
@@ -35,63 +41,50 @@ class BaseAPI(object):
         for attr in kwargs.keys():
             setattr(self, attr, kwargs[attr])
 
-    def __perform_get(self, url, headers=None, params=None):
-        if headers is None: headers = {}
-        if params is None: params = {}
-        self.__log_request('GET', url, headers, params)
-        return requests.get(url, headers=headers, params=params)
-
-    def __perform_post(self, url, headers=None, params=None):
-        if headers is None: headers = {}
-        if params is None: params = {}
-        self.__log_request('POST', url, headers, params)
-        return requests.post(url, headers=headers, json=params)
-
-    def __perform_put(self, url, headers=None, params=None):
-        if headers is None: headers = {}
-        if params is None: params = {}
-        self.__log_request('PUT', url, headers, params)
-        return requests.put(url, headers=headers, json=params)
-
-    def __perform_delete(self, url, headers=None, params=None):
-        if headers is None: headers = {}
-        if params is None: params = {}
-        headers['content-type'] = 'application/x-www-form-urlencoded'
-        self.__log_request('DELETE', url, headers, params)
-        return requests.delete(url, headers=headers, params=params)
-
-    def __perform_request(self, url, type='GET', params=None, headers=None):
+    def __perform_request(self, url, type=GET, params=None):
         """
             This method will perform the real request,
             in this way we can customize only the "output" of the API call by
             using self.__call_api method.
             This method will return the request object.
         """
-        if headers is None: headers = {}
         if params is None: params = {}
+
         if not self.token:
             raise TokenError("No token provied. Please use a valid token")
 
         if "https" not in url:
             url = urljoin(self.end_point, url)
 
-        headers.update({'Authorization': 'Bearer ' + self.token})
-        if type == 'POST':
-            r = self.__perform_post(url, headers=headers, params=params)
-        elif type == 'PUT':
-            r = self.__perform_put(url, headers=headers, params=params)
-        elif type == 'DELETE':
-            r = self.__perform_delete(url, headers=headers, params=params)
-        else:
-            r = self.__perform_get(url, headers=headers, params=params)
-        return r
+        # lookup table to find out the apropriate requests method,
+        # headers and payload type (json or query paramaters)
+        lookup = {
+            GET: (requests.get, {}, 'params'),
+            POST: (requests.post, {}, 'json'),
+            PUT: (requests.put, {}, 'json'),
+            DELETE: (requests.delete,
+                     {'content-type': 'application/x-www-form-urlencoded'},
+                     'params'),
+        }
 
-    def get_data(self, url, type="GET", params=dict()):
+        requests_method, headers, payload = lookup[type]
+        headers.update({'Authorization': 'Bearer ' + self.token})
+        kwargs = {'headers': headers, payload: params}
+
+        # remove token from log
+        headers_str = str(headers).replace(self.token.strip(), 'TOKEN')
+        self._log.debug('%s %s %s %s' % (type, url, params, headers_str))
+
+        return requests_method(url, **kwargs)
+
+    def get_data(self, url, type=GET, params=None):
         """
             This method is a basic implementation of __call_api that checks
             errors too. In cas of success the method will return True or the
             content of the response to the request.
         """
+        if params is None: params = dict()
+
         req = self.__perform_request(url, type, params)
         if req.status_code == 204:
             return True
@@ -107,7 +100,3 @@ class BaseAPI(object):
 
     def __unicode__(self):
         return u"%s" % self.__str__()
-
-    def __log_request(self, r_type, url, headers, params):
-        headers_str = str(headers).replace(self.token.strip(), 'TOKEN')
-        self._log.debug('%s %s %s %s' % (r_type, url, params, headers_str))

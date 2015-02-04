@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from .baseapi import BaseAPI
+from .baseapi import BaseAPI, GET, POST, DELETE, PUT
 
 
 class SSHKey(BaseAPI):
@@ -32,10 +32,7 @@ class SSHKey(BaseAPI):
         elif self.fingerprint is not None:
             identifier = self.fingerprint
 
-        data = self.get_data(
-            "account/keys/%s" % identifier,
-            type="GET"
-        )
+        data = self.get_data("account/keys/%s" % identifier, type=GET)
 
         ssh_key = data['ssh_key']
 
@@ -68,11 +65,7 @@ class SSHKey(BaseAPI):
             "public_key": self.public_key,
         }
 
-        data = self.get_data(
-            "account/keys/",
-            type="POST",
-            params=input_params
-        )
+        data = self.get_data("account/keys/", type=POST, params=input_params)
 
         if data:
             self.id = data['ssh_key']['id']
@@ -88,7 +81,7 @@ class SSHKey(BaseAPI):
 
         data = self.get_data(
             "account/keys/%s" % self.id,
-            type="PUT",
+            type=PUT,
             params=input_params
         )
 
@@ -99,10 +92,7 @@ class SSHKey(BaseAPI):
         """
             Destroy the SSH Key
         """
-        return self.get_data(
-            "account/keys/%s" % self.id,
-            type="DELETE",
-        )
+        return self.get_data("account/keys/%s" % self.id, type=DELETE)
 
     def __str__(self):
         return "%s %s" % (self.id, self.name)

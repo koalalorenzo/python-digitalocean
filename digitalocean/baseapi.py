@@ -18,7 +18,7 @@ class Error(Exception):
     pass
 
 
-lass TokenError(Error):
+class TokenError(Error):
     pass
 
 

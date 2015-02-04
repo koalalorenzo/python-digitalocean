@@ -63,8 +63,10 @@ class BaseAPI(object):
         json_dumps = lambda x: json.dumps(x)
         lookup = {
             GET: (requests.get, {}, 'params', identity),
-            POST: (requests.post, {'Content-type': 'application/json'}, 'data', json_dumps),
-            PUT: (requests.put, {'Content-type': 'application/json'}, 'data', json_dumps),
+            POST: (requests.post, {'Content-type': 'application/json'}, 'data',
+                   json_dumps),
+            PUT: (requests.put, {'Content-type': 'application/json'}, 'data',
+                  json_dumps),
             DELETE: (requests.delete,
                      {'content-type': 'application/x-www-form-urlencoded'},
                      'params', identity),
@@ -76,7 +78,8 @@ class BaseAPI(object):
 
         # remove token from log
         headers_str = str(headers).replace(self.token.strip(), 'TOKEN')
-        self._log.debug('%s %s %s %s' % (type, url, params, headers_str))
+        self._log.debug('%s %s %s:%s %s' %
+                        (type, url, payload, params, headers_str))
 
         return requests_method(url, **kwargs)
 

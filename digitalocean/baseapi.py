@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 import logging
 import requests
 try:
@@ -58,18 +59,20 @@ class BaseAPI(object):
 
         # lookup table to find out the apropriate requests method,
         # headers and payload type (json or query paramaters)
+        identity = lambda x: x
+        json_dumps = lambda x: json.dumps(x)
         lookup = {
-            GET: (requests.get, {}, 'params'),
-            POST: (requests.post, {}, 'json'),
-            PUT: (requests.put, {}, 'json'),
+            GET: (requests.get, {}, 'params', identity),
+            POST: (requests.post, {'Content-type': 'application/json'}, 'data', json_dumps),
+            PUT: (requests.put, {'Content-type': 'application/json'}, 'data', json_dumps),
             DELETE: (requests.delete,
                      {'content-type': 'application/x-www-form-urlencoded'},
-                     'params'),
+                     'params', identity),
         }
 
-        requests_method, headers, payload = lookup[type]
+        requests_method, headers, payload, transform = lookup[type]
         headers.update({'Authorization': 'Bearer ' + self.token})
-        kwargs = {'headers': headers, payload: params}
+        kwargs = {'headers': headers, payload: transform(params)}
 
         # remove token from log
         headers_str = str(headers).replace(self.token.strip(), 'TOKEN')

@@ -471,7 +471,7 @@ class Droplet(BaseAPI):
             "size": self.size_slug,
             "image": self.image,
             "region": self.region,
-            "ssh_keys[]": self.__get_ssh_keys_id_or_fingerprint(),
+            "ssh_keys": self.__get_ssh_keys_id_or_fingerprint(),
         }
 
         if self.backups:

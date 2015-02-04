@@ -1,15 +1,11 @@
-import os
 import unittest
 import responses
 
 import digitalocean
 
-class TestManager(unittest.TestCase):
+from BaseTest import BaseTest
 
-    def load_from_file(self, json_file):
-        cwd = os.path.dirname(__file__)
-        with open(os.path.join(cwd, 'data/%s' % json_file), 'r') as f:
-            return f.read()
+class TestManager(BaseTest):
 
     def setUp(self):
         self.base_url = "https://api.digitalocean.com/v2/"

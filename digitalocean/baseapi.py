@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import logging
 import requests
 try:
     from urlparse import urljoin
@@ -29,6 +30,7 @@ class BaseAPI(object):
     def __init__(self, *args, **kwargs):
         self.token = ""
         self.end_point = "https://api.digitalocean.com/v2/"
+        self._log = logging.getLogger(__name__)
 
         for attr in kwargs.keys():
             setattr(self, attr, kwargs[attr])
@@ -36,22 +38,26 @@ class BaseAPI(object):
     def __perform_get(self, url, headers=None, params=None):
         if headers is None: headers = {}
         if params is None: params = {}
+        self.__log_request('GET', url, headers, params)
         return requests.get(url, headers=headers, params=params)
 
     def __perform_post(self, url, headers=None, params=None):
         if headers is None: headers = {}
         if params is None: params = {}
+        self.__log_request('POST', url, headers, params)
         return requests.post(url, headers=headers, json=params)
 
     def __perform_put(self, url, headers=None, params=None):
         if headers is None: headers = {}
         if params is None: params = {}
+        self.__log_request('PUT', url, headers, params)
         return requests.put(url, headers=headers, json=params)
 
     def __perform_delete(self, url, headers=None, params=None):
         if headers is None: headers = {}
         if params is None: params = {}
         headers['content-type'] = 'application/x-www-form-urlencoded'
+        self.__log_request('DELETE', url, headers, params)
         return requests.delete(url, headers=headers, params=params)
 
     def __perform_request(self, url, type='GET', params=None, headers=None):
@@ -101,3 +107,7 @@ class BaseAPI(object):
 
     def __unicode__(self):
         return u"%s" % self.__str__()
+
+    def __log_request(self, r_type, url, headers, params):
+        headers_str = str(headers).replace(self.token.strip(), 'TOKEN')
+        self._log.debug('%s %s %s %s' % (r_type, url, params, headers_str))

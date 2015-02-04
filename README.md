@@ -85,7 +85,7 @@ To test this python-digitalocean you can use docker. First you can build the con
 
 Then you can run all the tests (for both python 2 and python 3)
 
-    docker build -t "pdo-tests" .
+    docker run pdo-tests 
 
 This will use Ubuntu 14.04 as base and use your repository to run tests. So every time you edit some files, please run these commands to perform tests on your changes.
 

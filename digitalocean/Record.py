@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from .baseapi import BaseAPI
+from .baseapi import BaseAPI, POST, DELETE, PUT
 
 
 class Record(BaseAPI):
@@ -39,7 +39,7 @@ class Record(BaseAPI):
 
         data = self.get_data(
             "domains/%s/records" % (self.domain),
-            type="POST",
+            type=POST,
             params=input_params,
         )
 
@@ -52,7 +52,7 @@ class Record(BaseAPI):
         """
         return self.get_data(
             "domains/%s/records/%s" % (self.domain, self.id),
-            type="DELETE",
+            type=DELETE,
         )
 
     def save(self):
@@ -69,7 +69,7 @@ class Record(BaseAPI):
         }
         return self.get_data(
             "domains/%s/records/%s" % (self.domain, self.id),
-            type="PUT",
+            type=PUT,
             params=data
         )
 

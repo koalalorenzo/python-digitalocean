@@ -4,7 +4,7 @@ import re
 from .Action import Action
 from .Image import Image
 from .Kernel import Kernel
-from .baseapi import BaseAPI, Error
+from .baseapi import BaseAPI, Error, GET, POST, DELETE
 from .SSHKey import SSHKey
 
 
@@ -117,7 +117,7 @@ class Droplet(BaseAPI):
         """
         data = super(Droplet, self).get_data(*args, **kwargs)
         if "type" in kwargs:
-            if kwargs["type"] == "POST":
+            if kwargs["type"] == POST:
                 self.__check_actions_in_data(data)
         return data
 
@@ -155,7 +155,7 @@ class Droplet(BaseAPI):
         """
         action = self.get_data(
             "droplets/%s/actions/" % self.id,
-            type="POST",
+            type=POST,
             params=params
         )
         if return_dict:
@@ -339,10 +339,7 @@ class Droplet(BaseAPI):
 
             Returns dict or Action
         """
-        return self.get_data(
-            "droplets/%s" % self.id,
-            type="DELETE"
-        )
+        return self.get_data("droplets/%s" % self.id, type=DELETE)
 
     def rename(self, name, return_dict=True):
         """Rename the droplet
@@ -472,25 +469,15 @@ class Droplet(BaseAPI):
             "image": self.image,
             "region": self.region,
             "ssh_keys": self.__get_ssh_keys_id_or_fingerprint(),
+            "backups": bool(self.backups),
+            "ipv6": bool(self.ipv6),
+            "private_networking": bool(self.private_networking),
         }
-
-        if self.backups:
-            data['backups'] = True
-
-        if self.ipv6:
-            data['ipv6'] = True
-
-        if self.private_networking:
-            data['private_networking'] = True
 
         if self.user_data:
             data["user_data"] = self.user_data
 
-        data = self.get_data(
-            "droplets",
-            type="POST",
-            params=data
-        )
+        data = self.get_data("droplets", type=POST, params=data)
 
         if data:
             self.id = data['droplet']['id']
@@ -510,10 +497,7 @@ class Droplet(BaseAPI):
             Returns a list of Action objects
             This actions can be used to check the droplet's status
         """
-        answer = self.get_data(
-            "droplets/%s/actions/" % self.id,
-            type="GET"
-        )
+        answer = self.get_data("droplets/%s/actions/" % self.id, type=GET)
 
         actions = []
         for action_dict in answer['actions']:

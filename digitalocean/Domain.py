@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-import requests
 from .Record import Record
-from .baseapi import BaseAPI
+from .baseapi import BaseAPI, GET, POST, DELETE
 
 
 class Domain(BaseAPI):
@@ -35,10 +34,7 @@ class Domain(BaseAPI):
             Destroy the domain by name
         """
         # URL https://api.digitalocean.com/v2/domains/[NAME]
-        return self.get_data(
-            "domains/%s" % self.name,
-            type="DELETE"
-        )
+        return self.get_data("domains/%s" % self.name, type=DELETE)
 
     def create_new_domain_record(self, *args, **kwargs):
         """
@@ -75,7 +71,7 @@ class Domain(BaseAPI):
 
         return self.get_data(
             "domains/%s/records" % self.name,
-            type="POST",
+            type=POST,
             params=data
         )
 
@@ -89,11 +85,7 @@ class Domain(BaseAPI):
             "ip_address": self.ip_address,
         }
 
-        domain = self.get_data(
-            "domains",
-            type="POST",
-            params=data
-        )
+        domain = self.get_data("domains", type=POST, params=data)
         return domain
 
     def get_records(self):
@@ -102,10 +94,7 @@ class Domain(BaseAPI):
         """
         # URL https://api.digitalocean.com/v2/domains/[NAME]/records/
         records = []
-        data = self.get_data(
-            "domains/%s/records/" % self.name,
-            type="GET",
-        )
+        data = self.get_data("domains/%s/records/" % self.name, type=GET)
 
         for record_data in data['domain_records']:
 

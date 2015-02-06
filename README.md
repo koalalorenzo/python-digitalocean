@@ -80,37 +80,8 @@ for action in actions:
 
 ## Testing
 
-### pytest
-Use `pytest` for testing - recommended to use a dedicated virtualenv.
-
-    $ virtualenv digitalocean_env
-    Running virtualenv with interpreter /usr/bin/python2
-    New python executable in tmp_env/bin/python2
-    Also creating executable in tmp_env/bin/python
-    Installing setuptools, pip...done.
-
-    $ source digitalocean_env/bin/activate
-    $ cd /path/to/python-digitalocean/
-    $ pip install -r requirements.txt
-    ...
-    Installing collected packages: six, mock, py, responses, pytest, requests
-    ...
-    Successfully installed mock-1.0.1 py-1.4.26 pytest-2.6.4 requests-2.5.1 responses-0.3.0
-
-    $ py.test
-    py.test
-    ======== test session starts =================
-    platform linux2 -- Python 2.7.8 -- py-1.4.26 -- pytest-2.6.4
-    collected 56 items
-
-    digitalocean/tests/test_domain.py .....
-    digitalocean/tests/test_droplet.py .................
-    digitalocean/tests/test_manager.py ..........
-
-    ===== 56 passed in 0.60 seconds =======
-
 ### Test using Docker
-To test this python-digitalocean you can use docker. First you can build the container by running in your shell:
+To test this python-digitalocean you can use [docker](https://www.docker.com) to have a **clean environment automatically**. First you have to build the container by running in your shell on the repository directory:
 
     docker build -t "pdo-tests" .
 
@@ -118,11 +89,22 @@ Then you can run all the tests (for both python 2 and python 3)
 
     docker run pdo-tests
 
-This will use Ubuntu 14.04 as base and use your repository to run tests. So every time you edit some files, please run these commands to perform tests on your changes.
+**Note**: This will use Ubuntu 14.04 as base and use your repository to run tests. So every time you edit some files, please run these commands to perform tests on your changes.
+
+### Testing using pytest manually
+Use [pytest](http://pytest.org/) to perform testing. It is recommended to use a dedicated virtualenv to perform tests, using these commands:
+
+    $ virtualenv /tmp/digitalocean_env
+    $ source /tmp/digitalocean_env/bin/activate
+    $ pip install -r requirements.txt
+
+To run all the tests manually use py.test command:
+
+    $ py.test
+
 
 ## Links
 
-  * Project Site: [http://projects.setale.me/python-digitalocean](http://projects.setale.me/python-digitalocean)
   * GitHub: [https://github.com/koalalorenzo/python-digitalocean](https://github.com/koalalorenzo/python-digitalocean)
   * PyPi page: [https://pypi.python.org/pypi/python-digitalocean/](https://pypi.python.org/pypi/python-digitalocean/)
   * Author Website: [http://who.is.lorenzo.setale.me/?](http://setale.me/)

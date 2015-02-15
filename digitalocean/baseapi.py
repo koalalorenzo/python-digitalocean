@@ -27,6 +27,10 @@ class DataReadError(Error):
     pass
 
 
+class JSONReadError(Error):
+    pass
+
+
 class BaseAPI(object):
     """
         Basic api class for
@@ -95,10 +99,15 @@ class BaseAPI(object):
         if req.status_code == 204:
             return True
 
-        data = req.json()
+        try:
+            data = req.json()
+        except ValueError as e:
+            raise JSONReadError('Read failed from DigitalOcean: %s' % e.message)
+
         if not req.ok:
             msg = [data[m] for m in ("id", "message") if m in data][1]
             raise DataReadError(msg)
+
         return data
 
     def __str__(self):

@@ -4,7 +4,6 @@
 python-digitalocean is a python package that provide easy access to digitalocean.com APIs to manage droplets, images and more.
 
 [![](https://travis-ci.org/koalalorenzo/python-digitalocean.svg)](https://travis-ci.org/koalalorenzo/python-digitalocean)
-[![](https://tip4commit.com/projects/897.svg)](https://tip4commit.com/github/koalalorenzo/python-digitalocean)
 
 <div align="center">
 

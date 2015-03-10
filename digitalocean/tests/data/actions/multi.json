@@ -2,6 +2,7 @@
   "actions":
     [
       {
+        "region_slug":"nyc3",
         "id":39388122,
         "status":"completed",
         "type":"enable_ipv6",
@@ -12,6 +13,7 @@
         "region":"nyc3"
       },
       {
+        "region_slug":"nyc3",
         "id":39290099,
         "status":"completed",
         "type":"create",

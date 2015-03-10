@@ -13,6 +13,7 @@ class Action(BaseAPI):
         self.resource_id = None
         self.resource_type = None
         self.region = None
+        self.region_slug = None
         # Custom, not provided by the json object.
         self.droplet_id = None
 

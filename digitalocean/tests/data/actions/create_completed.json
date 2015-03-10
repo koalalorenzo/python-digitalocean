@@ -1,6 +1,7 @@
 {
   "action":
     {
+      "region_slug":"nyc3",
       "id":39290099,
       "status":"completed",
       "type":"create",

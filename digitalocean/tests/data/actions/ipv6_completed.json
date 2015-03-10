@@ -1,6 +1,7 @@
 {
   "action":
     {
+      "region_slug":"nyc3",
       "id":39388122,
       "status":"completed",
       "type":"enable_ipv6",

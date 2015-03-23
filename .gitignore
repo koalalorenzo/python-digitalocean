@@ -33,5 +33,5 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
-
+dev.py
 MANIFEST

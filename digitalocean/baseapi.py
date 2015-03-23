@@ -115,3 +115,20 @@ class BaseAPI(object):
 
     def __unicode__(self):
         return u"%s" % self.__str__()
+
+    """
+      Addition:
+        This property returns a string of the object properties.
+      Description:
+        Used for a visual representaion to see the object
+        details in the console while testing.
+      Example:
+        print( droplet.details )
+    """
+    @property
+    def details(self):
+      details = ""
+      for key in self.__dict__.keys():
+        details = details+"%s: %s\n" % ( key, self.__dict__.get(key) )
+      self._details = details
+      return self._details

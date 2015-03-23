@@ -201,3 +201,73 @@ class Manager(BaseAPI):
 
     def __str__(self):
         return "%s" % (self.token)
+
+
+    """
+      Addition:
+        Class properties for lazy instantiation
+
+      Description:
+        Add properties to Manager class. This allows us to access manager
+        properties without first making an api call. If there is no data
+        set for an object property, the api will make a call to get the data.
+
+      Example:
+        for droplet in manager.droplets:
+          print( droplet.name )
+    """
+    @property
+    def account(self):
+      self._account = self.get_account()
+      return self._account
+    
+    @account.setter
+    def account(self, value):
+      self._account = value
+
+    @property
+    def droplets(self):
+      self._droplets = self.get_all_droplets()
+      return self._droplets
+    
+    @droplets.setter
+    def droplets(self, value):
+      self._droplets = value
+
+    @property
+    def domains(self):
+      self._domains = self.get_all_domains()
+      return self._domains
+    
+    @domains.setter
+    def domains(self, value):
+      self._domains = value
+
+    @property
+    def regions(self):
+      self._regions = self.get_all_regions()
+      return self._regions
+    
+    @regions.setter
+    def regions(self, value):
+      self._regions = value
+
+    @property
+    def sizes(self):
+      self._sizes = self.get_all_sizes()
+      return self._sizes
+    
+    @sizes.setter
+    def sizes(self, value):
+      self._sizes = value
+
+    @property
+    def images(self):
+      self._images = self.get_all_images()
+      return self._images
+    
+    @images.setter
+    def images(self, value):
+      self._images = value
+
+

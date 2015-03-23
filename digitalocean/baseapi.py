@@ -43,6 +43,22 @@ class BaseAPI(object):
         self.end_point = "https://api.digitalocean.com/v2/"
         self._log = logging.getLogger(__name__)
 
+        """
+          Addition:
+            Added api call count variables.
+
+          Description:
+            Useful for checking remaining call count before sending api request,
+            and keeping track of api calls used.
+            
+          Warning:
+            This is not fully implimented, and does not affect any api calls.
+            At the moment the only thing that relies on this is Backup.py.
+        """
+        self.api_calls_limit      = 5000
+        self.api_calls_remaining  = 1
+        self.api_calls_used       = 0
+
         for attr in kwargs.keys():
             setattr(self, attr, kwargs[attr])
 
@@ -96,6 +112,7 @@ class BaseAPI(object):
         if params is None: params = dict()
 
         req = self.__perform_request(url, type, params)
+
         if req.status_code == 204:
             return True
 
@@ -107,6 +124,24 @@ class BaseAPI(object):
         if not req.ok:
             msg = [data[m] for m in ("id", "message") if m in data][1]
             raise DataReadError(msg)
+
+        """
+          Addition:
+            Added api call count variables.
+
+          Description:
+            Useful for checking remaining call count before sending api request,
+            and keeping track of api calls used.
+        """
+        if "ratelimit-limit" in req.headers:
+          self.api_calls_limit = int(req.headers["ratelimit-limit"])
+
+        if "ratelimit-remaining" in req.headers:
+          self.api_calls_remaining = int(req.headers["ratelimit-remaining"])
+          if self.api_calls_used == 0:
+            self.api_calls_used = self.api_calls_used+1
+        
+        self.api_calls_used = (self.api_calls_limit-self.api_calls_remaining) - self.api_calls_used
 
         return data
 

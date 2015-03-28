@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """digitalocean API to manage droplets"""
 
-__version__ = "1.4.2"
+__version__ = "1.5"
 __author__ = "Lorenzo Setale ( http://who.is.lorenzo.setale.me/? )"
 __author_email__ = "koalalorenzo@gmail.com"
-__license__ = "See: http://creativecommons.org/licenses/by-nd/3.0/ "
+__license__ = "LGPL v3"
 __copyright__ = "Copyright (c) 2012, 2013, 2014 Lorenzo Setale"
 
 from .Manager import Manager

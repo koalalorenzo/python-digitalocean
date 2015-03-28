@@ -1,7 +1,7 @@
 #python-digitalocean
-## 
+##
 
-python-digitalocean is a python package that provide easy access to digitalocean.com APIs to manage droplets, images and more.
+This library provides easy access to Digital Ocean APIs to deploy droplets, images and more.
 
 [![](https://travis-ci.org/koalalorenzo/python-digitalocean.svg)](https://travis-ci.org/koalalorenzo/python-digitalocean)
 

@@ -257,7 +257,7 @@ class Droplet(BaseAPI):
             return_dict
         )
 
-    def take_snapshot(self, snapshot_name, return_dict=True):
+    def take_snapshot(self, snapshot_name, return_dict=True, shutdown=False):
         """Take a snapshot!
 
         Args:
@@ -266,9 +266,14 @@ class Droplet(BaseAPI):
         Optional Args:
             return_dict - bool : Return a dict when True (default),
                 otherwise return an Action.
+            shutdown - bool : Before taking the snapshot the droplet will be
+                turned off with another API call.
 
         Returns dict or Action
         """
+        if shutdown:
+            self.shutdown()
+
         return self._perform_action(
             {"type": "snapshot", "name": snapshot_name},
             return_dict
@@ -575,7 +580,7 @@ class Droplet(BaseAPI):
     def events(self):
       self._events = self.get_events()
       return self._events
-    
+
     @events.setter
     def events(self, value):
       self._events = value
@@ -584,7 +589,7 @@ class Droplet(BaseAPI):
     def actions(self):
       self._actions = self.get_actions()
       return self._actions
-    
+
     @actions.setter
     def actions(self, value):
       self._actions = value
@@ -593,7 +598,7 @@ class Droplet(BaseAPI):
     def action(self):
       self._action = self.get_action()
       return self._action
-    
+
     @action.setter
     def action(self, value):
       self._action = value
@@ -602,7 +607,7 @@ class Droplet(BaseAPI):
     def snapshots(self):
       self._snapshots = self.get_snapshots()
       return self._snapshots
-    
+
     @snapshots.setter
     def snapshots(self, value):
       self._snapshots = value
@@ -611,7 +616,7 @@ class Droplet(BaseAPI):
     def available_kernels(self):
       self._available_kernels = self.get_kernel_available()
       return self._available_kernels
-    
+
     @available_kernels.setter
     def available_kernels(self, value):
       self._available_kernels = value

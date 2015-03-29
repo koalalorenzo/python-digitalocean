@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
+from time import sleep
 
 from .Action import Action
 from .Image import Image
@@ -257,7 +258,7 @@ class Droplet(BaseAPI):
             return_dict
         )
 
-    def take_snapshot(self, snapshot_name, return_dict=True, shutdown=False):
+    def take_snapshot(self, snapshot_name, return_dict=True, power_off=False):
         """Take a snapshot!
 
         Args:
@@ -266,13 +267,18 @@ class Droplet(BaseAPI):
         Optional Args:
             return_dict - bool : Return a dict when True (default),
                 otherwise return an Action.
-            shutdown - bool : Before taking the snapshot the droplet will be
-                turned off with another API call.
+            power_off - bool : Before taking the snapshot the droplet will be
+                turned off with another API call. It will wait until the
+                droplet will be powered off.
 
         Returns dict or Action
         """
-        if shutdown:
-            self.shutdown()
+        if power_off is True and self.status != "off":
+            action = self.power_off(return_dict=False)
+            while action.status != "completed":
+                action.load()
+                sleep(1)
+            self.load()
 
         return self._perform_action(
             {"type": "snapshot", "name": snapshot_name},

@@ -564,60 +564,61 @@ class Droplet(BaseAPI):
 
 
     """
-      Addition:
-        Class properties for lazy instantiation
+        Addition:
+            Class properties for lazy instantiation.
+            
+        Description:
+            Add properties to Droplet class. This allows us to access droplet
+            properties without first making an api call. If there is no data
+            set for an object property, the api will make a call to get the
+            data.
 
-      Description:
-        Add properties to Droplet class. This allows us to access droplet
-        properties without first making an api call. If there is no data
-        set for an object property, the api will make a call to get the data.
-
-      Example:
-        for snapshot in droplet.snapshots:
-          print( snapshot.name )
+        Example:
+            for snapshot in droplet.snapshots:
+                print( snapshot.name )
     """
     @property
     def events(self):
-      self._events = self.get_events()
-      return self._events
+        self._events = self.get_events()
+        return self._events
 
     @events.setter
     def events(self, value):
-      self._events = value
+        self._events = value
 
     @property
     def actions(self):
-      self._actions = self.get_actions()
-      return self._actions
+        self._actions = self.get_actions()
+        return self._actions
 
     @actions.setter
     def actions(self, value):
-      self._actions = value
+        self._actions = value
 
     @property
     def action(self):
-      self._action = self.get_action()
-      return self._action
+        self._action = self.get_action()
+        return self._action
 
     @action.setter
     def action(self, value):
-      self._action = value
+        self._action = value
 
     @property
     def snapshots(self):
-      self._snapshots = self.get_snapshots()
-      return self._snapshots
+        self._snapshots = self.get_snapshots()
+        return self._snapshots
 
     @snapshots.setter
     def snapshots(self, value):
-      self._snapshots = value
+        self._snapshots = value
 
     @property
     def available_kernels(self):
-      self._available_kernels = self.get_kernel_available()
-      return self._available_kernels
+        self._available_kernels = self.get_kernel_available()
+        return self._available_kernels
 
     @available_kernels.setter
     def available_kernels(self, value):
-      self._available_kernels = value
+        self._available_kernels = value
 

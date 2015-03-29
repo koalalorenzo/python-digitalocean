@@ -18,4 +18,4 @@ WORKDIR /root/python-digitalocean
 RUN pip2 install -U -r requirements.txt
 RUN pip3 install -U -r requirements.txt
 
-ENTRYPOINT py.test-2.7 ; py.test-3.4
+CMD py.test-2.7 ; py.test-3.4

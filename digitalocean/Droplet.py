@@ -373,7 +373,10 @@ class Droplet(BaseAPI):
 
            Returns dict or Action
         """
-        return self._perform_action({'type': 'enable_private_networking'}, return_dict)
+        return self._perform_action(
+            {'type': 'enable_private_networking'},
+            return_dict
+        )
 
     def enable_ipv6(self, return_dict=True):
         """
@@ -415,7 +418,7 @@ class Droplet(BaseAPI):
         """
         ssh_keys_id = list()
         for ssh_key in self.ssh_keys:
-            if type(ssh_key) in [int, type(2**64)]:
+            if type(ssh_key) in [int, type(2 ** 64)]:
                 ssh_keys_id.append(int(ssh_key))
 
             elif type(ssh_key) == SSHKey:

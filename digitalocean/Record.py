@@ -20,9 +20,9 @@ class Record(BaseAPI):
         """
             Class method that will return a Record object by ID and the domain.
         """
-        Record = cls(token=api_token, domain=domain, id=record_id)
-        Record.load()
-        return Record
+        record = cls(token=api_token, domain=domain, id=record_id)
+        record.load()
+        return record
 
     def create(self):
         """

@@ -565,21 +565,6 @@ class Droplet(BaseAPI):
     def __str__(self):
         return "%s %s" % (self.id, self.name)
 
-
-    """
-        Addition:
-            Class properties for lazy instantiation.
-            
-        Description:
-            Add properties to Droplet class. This allows us to access droplet
-            properties without first making an api call. If there is no data
-            set for an object property, the api will make a call to get the
-            data.
-
-        Example:
-            for snapshot in droplet.snapshots:
-                print( snapshot.name )
-    """
     @property
     def events(self):
         self._events = self.get_events()
@@ -624,4 +609,3 @@ class Droplet(BaseAPI):
     @available_kernels.setter
     def available_kernels(self, value):
         self._available_kernels = value
-

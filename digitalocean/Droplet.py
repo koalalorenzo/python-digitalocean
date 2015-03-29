@@ -275,9 +275,7 @@ class Droplet(BaseAPI):
         """
         if power_off is True and self.status != "off":
             action = self.power_off(return_dict=False)
-            while action.status != "completed":
-                action.load()
-                sleep(1)
+            action.wait()
             self.load()
 
         return self._perform_action(

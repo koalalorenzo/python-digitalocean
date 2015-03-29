@@ -162,7 +162,7 @@ class Droplet(BaseAPI):
             return action
         else:
             action = action[u'action']
-            return_action = Action()
+            return_action = Action(token=self.token)
             # Loading attributes
             for attr in action.keys():
                 setattr(return_action, attr, action[attr])

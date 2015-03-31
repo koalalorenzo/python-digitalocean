@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import re
-from time import sleep
 
 from .Action import Action
 from .Image import Image

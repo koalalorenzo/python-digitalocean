@@ -22,7 +22,7 @@ class BadSSHKeyFormat(DropletError):
 
 
 class Droplet(BaseAPI):
-    """"Droplet managment
+    """"Droplet management
 
     Attributes accepted at creation time:
         name: str - name

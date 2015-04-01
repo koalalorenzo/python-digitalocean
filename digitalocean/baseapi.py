@@ -53,7 +53,8 @@ class BaseAPI(object):
             using self.__call_api method.
             This method will return the request object.
         """
-        if params is None: params = {}
+        if params is None:
+            params = {}
 
         if not self.token:
             raise TokenError("No token provided. Please use a valid token")
@@ -93,7 +94,8 @@ class BaseAPI(object):
             errors too. In cas of success the method will return True or the
             content of the response to the request.
         """
-        if params is None: params = dict()
+        if params is None:
+            params = dict()
 
         req = self.__perform_request(url, type, params)
         if req.status_code == 204:
@@ -102,7 +104,9 @@ class BaseAPI(object):
         try:
             data = req.json()
         except ValueError as e:
-            raise JSONReadError('Read failed from DigitalOcean: %s' % e.message)
+            raise JSONReadError(
+                'Read failed from DigitalOcean: %s' % e.message
+            )
 
         if not req.ok:
             msg = [data[m] for m in ("id", "message") if m in data][1]
@@ -131,6 +135,6 @@ class BaseAPI(object):
     def details(self):
         details = ""
         for key in self.__dict__.keys():
-            details = details+"%s: %s\n" % ( key, self.__dict__.get(key) )
+            details = details + "%s: %s\n" % (key, self.__dict__.get(key))
         self._details = details
         return self._details

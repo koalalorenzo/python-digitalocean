@@ -98,7 +98,7 @@ class Domain(BaseAPI):
 
         for record_data in data['domain_records']:
 
-            record = Record(domain_name = self.name, **record_data)
+            record = Record(domain_name=self.name, **record_data)
             record.token = self.token
             records.append(record)
 

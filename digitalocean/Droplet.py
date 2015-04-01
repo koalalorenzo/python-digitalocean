@@ -257,7 +257,7 @@ class Droplet(BaseAPI):
             return_dict
         )
 
-    def take_snapshot(self, snapshot_name, return_dict=True, shutdown=False):
+    def take_snapshot(self, snapshot_name, return_dict=True, power_off=False):
         """Take a snapshot!
 
         Args:
@@ -266,13 +266,16 @@ class Droplet(BaseAPI):
         Optional Args:
             return_dict - bool : Return a dict when True (default),
                 otherwise return an Action.
-            shutdown - bool : Before taking the snapshot the droplet will be
-                turned off with another API call.
+            power_off - bool : Before taking the snapshot the droplet will be
+                turned off with another API call. It will wait until the
+                droplet will be powered off.
 
         Returns dict or Action
         """
-        if shutdown:
-            self.shutdown()
+        if power_off is True and self.status != "off":
+            action = self.power_off(return_dict=False)
+            action.wait()
+            self.load()
 
         return self._perform_action(
             {"type": "snapshot", "name": snapshot_name},
@@ -373,7 +376,10 @@ class Droplet(BaseAPI):
 
            Returns dict or Action
         """
-        return self._perform_action({'type': 'enable_private_networking'}, return_dict)
+        return self._perform_action(
+            {'type': 'enable_private_networking'},
+            return_dict
+        )
 
     def enable_ipv6(self, return_dict=True):
         """
@@ -415,7 +421,7 @@ class Droplet(BaseAPI):
         """
         ssh_keys_id = list()
         for ssh_key in self.ssh_keys:
-            if type(ssh_key) in [int, type(2**64)]:
+            if type(ssh_key) in [int, type(2 ** 64)]:
                 ssh_keys_id.append(int(ssh_key))
 
             elif type(ssh_key) == SSHKey:
@@ -545,38 +551,23 @@ class Droplet(BaseAPI):
         kernels = list()
         data = self.get_data("droplets/%s/kernels/" % self.id)
         while True:
-                for jsond in data[u'kernels']:
-                    kernel = Kernel(**jsond)
-                    kernel.token = self.token
-                    kernels.append(kernel)
-                try:
-                    url = data[u'links'][u'pages'].get(u'next')
-                    if not url:
-                            break
-                    data = self.get_data(url)
-                except KeyError:  # No links.
-                    break
+            for jsond in data[u'kernels']:
+                kernel = Kernel(**jsond)
+                kernel.token = self.token
+                kernels.append(kernel)
+            try:
+                url = data[u'links'][u'pages'].get(u'next')
+                if not url:
+                        break
+                data = self.get_data(url)
+            except KeyError:  # No links.
+                break
 
         return kernels
 
     def __str__(self):
         return "%s %s" % (self.id, self.name)
 
-
-    """
-        Addition:
-            Class properties for lazy instantiation.
-            
-        Description:
-            Add properties to Droplet class. This allows us to access droplet
-            properties without first making an api call. If there is no data
-            set for an object property, the api will make a call to get the
-            data.
-
-        Example:
-            for snapshot in droplet.snapshots:
-                print( snapshot.name )
-    """
     @property
     def events(self):
         self._events = self.get_events()
@@ -621,4 +612,3 @@ class Droplet(BaseAPI):
     @available_kernels.setter
     def available_kernels(self, value):
         self._available_kernels = value
-

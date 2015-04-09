@@ -1,0 +1,19 @@
+{
+  "images": [
+    {
+      "id": 449676856,
+      "name": "My Snapshot",
+      "distribution": "Ubuntu",
+      "slug": "",
+      "public": false,
+      "regions": [
+        "nyc1",
+        "nyc3"
+      ],
+      "created_at": "2014-08-18T16:35:40Z"
+    }
+  ],
+  "meta": {
+    "total": 1
+  }
+}

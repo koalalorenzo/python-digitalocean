@@ -133,20 +133,23 @@ class Manager(BaseAPI):
 
     def get_my_images(self):
         """
-            This function returns a list of Image object.
+            This function returns a list of Image objects representing
+            private DigitalOcean images (e.g. snapshots and backups).
         """
-        data = self.get_data("images/")
+        params = {'private': 'true'}
+        data = self.get_data("images/", params=params)
         images = list()
         for jsoned in data['images']:
-            if not jsoned['public']:
-                image = Image(**jsoned)
-                image.token = self.token
-                images.append(image)
+            image = Image(**jsoned)
+            image.token = self.token
+            images.append(image)
         return images
 
     def get_global_images(self):
         """
-            This function returns a list of Image object.
+            This function returns a list of Image objects representing
+            public DigitalOcean images (e.g. base distribution images
+            and 'One-Click' applications).
         """
         data = self.get_data("images/")
         images = list()
@@ -155,6 +158,34 @@ class Manager(BaseAPI):
                 image = Image(**jsoned)
                 image.token = self.token
                 images.append(image)
+        return images
+
+    def get_distro_images(self):
+        """
+            This function returns a list of Image objects representing
+            public base distribution images.
+        """
+        params = {'type': 'distribution'}
+        data = self.get_data("images/", params=params)
+        images = list()
+        for jsoned in data['images']:
+            image = Image(**jsoned)
+            image.token = self.token
+            images.append(image)
+        return images
+
+    def get_app_images(self):
+        """
+            This function returns a list of Image objectobjects representing
+            public DigitalOcean 'One-Click' application images.
+        """
+        params = {'type': 'application'}
+        data = self.get_data("images/", params=params)
+        images = list()
+        for jsoned in data['images']:
+            image = Image(**jsoned)
+            image.token = self.token
+            images.append(image)
         return images
 
     def get_all_domains(self):

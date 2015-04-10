@@ -175,7 +175,7 @@ class TestManager(BaseTest):
 
     @responses.activate
     def test_get_my_images(self):
-        data = self.load_from_file('images/all.json')
+        data = self.load_from_file('images/private.json')
 
         url = self.base_url + 'images/'
         responses.add(responses.GET, url,
@@ -195,6 +195,54 @@ class TestManager(BaseTest):
         self.assertEqual(image.distribution, 'Ubuntu')
         self.assertEqual(image.regions, ['nyc1', 'nyc3'])
         self.assertEqual(image.created_at, "2014-08-18T16:35:40Z")
+        self.assert_url_query_equal(responses.calls[0].request.url,
+                                    'https://api.digitalocean.com/v2/images/?private=true&per_page=200')
+
+    @responses.activate
+    def test_get_distro_images(self):
+        data = self.load_from_file('images/distro.json')
+
+        url = self.base_url + 'images/'
+        responses.add(responses.GET, url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        distro_images = self.manager.get_distro_images()
+        self.assertEqual(len(distro_images), 2)
+
+        image = distro_images[0]
+        self.assertEqual(image.token, self.token)
+        self.assertEqual(image.id, 119192817)
+        self.assertEqual(image.name, '14.04 x64')
+        self.assertTrue(image.public)
+        self.assertEqual(image.slug, "ubuntu-14-04-x64")
+        self.assertEqual(image.distribution, 'Ubuntu')
+        self.assert_url_query_equal(responses.calls[0].request.url,
+                                    'https://api.digitalocean.com/v2/images/?type=distribution&per_page=200')
+
+    @responses.activate
+    def test_get_app_images(self):
+        data = self.load_from_file('images/app.json')
+
+        url = self.base_url + 'images/'
+        responses.add(responses.GET, url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        app_images = self.manager.get_app_images()
+        self.assertEqual(len(app_images), 2)
+
+        image = app_images[0]
+        self.assertEqual(image.token, self.token)
+        self.assertEqual(image.id, 11146864)
+        self.assertEqual(image.name, 'MEAN on 14.04')
+        self.assertTrue(image.public)
+        self.assertEqual(image.slug, "mean")
+        self.assertEqual(image.distribution, 'Ubuntu')
+        self.assert_url_query_equal(responses.calls[0].request.url,
+                                    'https://api.digitalocean.com/v2/images/?type=application&per_page=200')
 
     @responses.activate
     def test_get_all_sshkeys(self):

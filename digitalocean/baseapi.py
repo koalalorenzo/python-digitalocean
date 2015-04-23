@@ -2,6 +2,8 @@
 import json
 import logging
 import requests
+import zlib
+
 try:
     from urlparse import urljoin
 except:
@@ -102,7 +104,11 @@ class BaseAPI(object):
             return True
 
         try:
-            data = req.json()
+            if 'content-encoding' in req.headers and req.headers['content-encoding'] == 'gzip':
+                # deal with case when content remains compressed
+                data = json.loads(zlib.decompress(req.content, 16+zlib.MAX_WBITS))
+            else:
+                data = req.json()
         except ValueError as e:
             raise JSONReadError(
                 'Read failed from DigitalOcean: %s' % e.message

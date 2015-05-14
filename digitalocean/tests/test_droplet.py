@@ -360,7 +360,7 @@ class TestDroplet(BaseTest):
         self.assert_url_query_equal(responses.calls[0].request.url,
                                     self.actions_url)
         self.assertEqual(json.loads(responses.calls[0].request.body),
-                         {"type": "resize", "size": "64gb"})
+                         {"type": "resize", "size": "64gb", "disk": "true"})
         self.assertEqual(response['action']['id'], 54321)
         self.assertEqual(response['action']['status'], "in-progress")
         self.assertEqual(response['action']['type'], "resize")
@@ -381,7 +381,7 @@ class TestDroplet(BaseTest):
         self.assert_url_query_equal(responses.calls[0].request.url,
                                     self.actions_url)
         self.assertEqual(json.loads(responses.calls[0].request.body),
-                         {"type": "resize", "size": "64gb"})
+                         {"type": "resize", "size": "64gb", "disk": "true"})
         self.assertEqual(response.id, 54321)
         self.assertEqual(response.status, "in-progress")
         self.assertEqual(response.type, "resize")

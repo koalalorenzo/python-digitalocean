@@ -240,7 +240,7 @@ class Droplet(BaseAPI):
         """
         return self._perform_action({'type': 'password_reset'}, return_dict)
 
-    def resize(self, new_size_slug, return_dict=True):
+    def resize(self, new_size_slug, return_dict=True, flexible=False):
         """Resize the droplet to a new size slug.
 
         Args:
@@ -249,11 +249,15 @@ class Droplet(BaseAPI):
         Optional Args:
             return_dict - bool : Return a dict when True (default),
                 otherwise return an Action.
+            flexible - bool : If true do not resize disk and down size is possible
 
         Returns dict or Action
         """
+        if flexible: disk = "false"
+        else: disk = "true"
+
         return self._perform_action(
-            {"type": "resize", "size": new_size_slug},
+            {"type": "resize", "size": new_size_slug, "disk": disk},
             return_dict
         )
 

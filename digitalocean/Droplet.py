@@ -240,8 +240,9 @@ class Droplet(BaseAPI):
         """
         return self._perform_action({'type': 'password_reset'}, return_dict)
 
-    def resize(self, new_size_slug, return_dict=True, flexible=False):
+    def resize(self, new_size_slug, return_dict=True, disk=True):
         """Resize the droplet to a new size slug.
+        https://developers.digitalocean.com/documentation/v2/#resize-a-droplet
 
         Args:
             new_size_slug: str - name of new size
@@ -249,17 +250,14 @@ class Droplet(BaseAPI):
         Optional Args:
             return_dict - bool : Return a dict when True (default),
                 otherwise return an Action.
-            flexible - bool : If true do not resize disk and down size is possible
+            disk - bool : If a permanent resize, with disk changes included.
 
         Returns dict or Action
         """
-        if flexible: disk = "false"
-        else: disk = "true"
+        options = {"type": "resize", "size": new_size_slug}
+        if disk: options["disk"] = "true"
 
-        return self._perform_action(
-            {"type": "resize", "size": new_size_slug, "disk": disk},
-            return_dict
-        )
+        return self._perform_action(options, return_dict)
 
     def take_snapshot(self, snapshot_name, return_dict=True, power_off=False):
         """Take a snapshot!

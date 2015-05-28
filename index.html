@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Python-digitalocean by koalalorenzo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Python-digitalocean</h1>
+      <h2 class="project-tagline">Python module to manage Digital Ocean droplets</h2>
+      <a href="https://github.com/koalalorenzo/python-digitalocean" class="btn">View on GitHub</a>
+      <a href="https://github.com/koalalorenzo/python-digitalocean/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/koalalorenzo/python-digitalocean/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="python-digitalocean" class="anchor" href="#python-digitalocean" aria-hidden="true"><span class="octicon octicon-link"></span></a>python-digitalocean</h1>
+
+<p>This library provides easy access to Digital Ocean APIs to deploy droplets, images and more.</p>
+
+<p><a href="https://travis-ci.org/koalalorenzo/python-digitalocean"><img src="https://travis-ci.org/koalalorenzo/python-digitalocean.svg" alt=""></a></p>
+
+<div align="center">
+
+
+
+
+
+</div>
+
+<h2>
+<a id="how-to-install" class="anchor" href="#how-to-install" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to install</h2>
+
+<p>You can install python-digitalocean using <strong>pip</strong></p>
+
+<pre><code>pip install -U python-digitalocean
+</code></pre>
+
+<p>or via sources:</p>
+
+<pre><code>python setup.py install
+</code></pre>
+
+<h2>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h2>
+
+<p>python-digitalocean support all the features provided via digitalocean.com APIs, such as:</p>
+
+<ul>
+<li>Get user's Droplets</li>
+<li>Get user's Images (Snapshot and Backups)</li>
+<li>Get public Images</li>
+<li>Get Droplet's event status</li>
+<li>Create and Remove a Droplet</li>
+<li>Resize a Droplet</li>
+<li>Shutdown, restart and boot a Droplet</li>
+<li>Power off, power on and "power cycle" a Droplet</li>
+<li>Perform Snapshot</li>
+<li>Enable/Disable automatic Backups</li>
+<li>Restore root password of a Droplet</li>
+</ul>
+
+<h2>
+<a id="examples" class="anchor" href="#examples" aria-hidden="true"><span class="octicon octicon-link"></span></a> Examples</h2>
+
+<h3>
+<a id="shutdown-all-droplets" class="anchor" href="#shutdown-all-droplets" aria-hidden="true"><span class="octicon octicon-link"></span></a>Shutdown all droplets</h3>
+
+<p>This example shows how to shutdown all the active droplets:</p>
+
+<div class="highlight highlight-python"><pre><span class="pl-k">import</span> digitalocean
+manager <span class="pl-k">=</span> digitalocean.Manager(<span class="pl-smi">token</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>secretspecialuniquesnowflake<span class="pl-pds">"</span></span>)
+my_droplets <span class="pl-k">=</span> manager.get_all_droplets()
+<span class="pl-k">for</span> droplet <span class="pl-k">in</span> my_droplets:
+    droplet.shutdown()</pre></div>
+
+<h3>
+<a id="creating-a-droplet-and-checking-its-status" class="anchor" href="#creating-a-droplet-and-checking-its-status" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating a Droplet and checking its status</h3>
+
+<p>This example shows how to create a droplet and how to check its status</p>
+
+<div class="highlight highlight-python"><pre><span class="pl-k">import</span> digitalocean
+droplet <span class="pl-k">=</span> digitalocean.Droplet(<span class="pl-smi">token</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>secretspecialuniquesnowflake<span class="pl-pds">"</span></span>,
+                               <span class="pl-smi">name</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">'</span>Example<span class="pl-pds">'</span></span>,
+                               <span class="pl-smi">region</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">'</span>nyc2<span class="pl-pds">'</span></span>, <span class="pl-c"># New York 2</span>
+                               <span class="pl-smi">image</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">'</span>ubuntu-14-04-x64<span class="pl-pds">'</span></span>, <span class="pl-c"># Ubuntu 14.04 x64</span>
+                               <span class="pl-smi">size_slug</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">'</span>512mb<span class="pl-pds">'</span></span>,  <span class="pl-c"># 512MB</span>
+                               <span class="pl-smi">backups</span><span class="pl-k">=</span><span class="pl-c1">True</span>)
+droplet.create()</pre></div>
+
+<h3>
+<a id="checking-the-status-of-the-droplet" class="anchor" href="#checking-the-status-of-the-droplet" aria-hidden="true"><span class="octicon octicon-link"></span></a>Checking the status of the droplet</h3>
+
+<div class="highlight highlight-python"><pre>actions <span class="pl-k">=</span> droplet.get_actions()
+<span class="pl-k">for</span> action <span class="pl-k">in</span> actions:
+    action.load()
+    <span class="pl-c"># Once it shows complete, droplet is up and running</span>
+    <span class="pl-k">print</span> action.status</pre></div>
+
+<h2>
+<a id="testing" class="anchor" href="#testing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Testing</h2>
+
+<h3>
+<a id="test-using-docker" class="anchor" href="#test-using-docker" aria-hidden="true"><span class="octicon octicon-link"></span></a>Test using Docker</h3>
+
+<p>To test this python-digitalocean you can use <a href="https://www.docker.com">docker</a> to have a <strong>clean environment automatically</strong>. First you have to build the container by running in your shell on the repository directory:</p>
+
+<pre><code>docker build -t "pdo-tests" .
+</code></pre>
+
+<p>Then you can run all the tests (for both python 2 and python 3)</p>
+
+<pre><code>docker run pdo-tests
+</code></pre>
+
+<p><strong>Note</strong>: This will use Ubuntu 14.04 as base and use your repository to run tests. So every time you edit some files, please run these commands to perform tests on your changes.</p>
+
+<h3>
+<a id="testing-using-pytest-manually" class="anchor" href="#testing-using-pytest-manually" aria-hidden="true"><span class="octicon octicon-link"></span></a>Testing using pytest manually</h3>
+
+<p>Use <a href="http://pytest.org/">pytest</a> to perform testing. It is recommended to use a dedicated virtualenv to perform tests, using these commands:</p>
+
+<pre><code>$ virtualenv /tmp/digitalocean_env
+$ source /tmp/digitalocean_env/bin/activate
+$ pip install -r requirements.txt
+</code></pre>
+
+<p>To run all the tests manually use py.test command:</p>
+
+<pre><code>$ py.test
+</code></pre>
+
+<h2>
+<a id="links" class="anchor" href="#links" aria-hidden="true"><span class="octicon octicon-link"></span></a>Links</h2>
+
+<ul>
+<li>GitHub: <a href="https://github.com/koalalorenzo/python-digitalocean">https://github.com/koalalorenzo/python-digitalocean</a>
+</li>
+<li>PyPi page: <a href="https://pypi.python.org/pypi/python-digitalocean/">https://pypi.python.org/pypi/python-digitalocean/</a>
+</li>
+<li>Author Website: <a href="http://setale.me/">http://who.is.lorenzo.setale.me/?</a>
+</li>
+<li>Author Blog: <a href="http://blog.setale.me/">http://blog.setale.me/</a>
+</li>
+</ul>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/koalalorenzo/python-digitalocean">Python-digitalocean</a> is maintained by <a href="https://github.com/koalalorenzo">koalalorenzo</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
+

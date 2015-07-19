@@ -491,7 +491,9 @@ class Droplet(BaseAPI):
         data = self.get_data("droplets", type=POST, params=data)
 
         if data:
-            self.id = data['droplet']['id']
+            for attr in ('id', 'vcpus', 'disk', 'created_at', 'locked',
+                         'status', 'features'):
+                setattr(self, attr, data['droplet'][attr])
             action_id = data['links']['actions'][0]['id']
             self.action_ids = []
             self.action_ids.append(action_id)

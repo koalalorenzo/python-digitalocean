@@ -40,7 +40,6 @@ class Droplet(BaseAPI):
         memory: str - memory size
         vcpus: int - number of vcpus
         disk: int - disk size in GB
-        status: str - status
         locked: bool - True if locked
         created_at: str - creation date in format u'2014-11-06T10:42:09Z'
         status: str - status, e.g. 'new', 'active', etc
@@ -68,7 +67,6 @@ class Droplet(BaseAPI):
         self.vcpus = None
         self.disk = None
         self.region = []
-        self.status = None
         self.image = None
         self.size_slug = None
         self.locked = None

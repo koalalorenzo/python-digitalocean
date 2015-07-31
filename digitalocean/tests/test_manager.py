@@ -30,6 +30,7 @@ class TestManager(BaseTest):
         self.assertEqual(acct.email, 'web@digitalocean.com')
         self.assertEqual(acct.droplet_limit, 25)
         self.assertEqual(acct.email_verified, True)
+        self.assertEqual(acct.status, "active")
 
     @responses.activate
     def test_auth_fail(self):

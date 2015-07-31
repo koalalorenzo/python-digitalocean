@@ -8,6 +8,8 @@ class Account(BaseAPI):
         self.email = None
         self.uuid = None
         self.email_verified = None
+        self.status = None
+        self.status_message = None
 
         super(Account, self).__init__(*args, **kwargs)
 

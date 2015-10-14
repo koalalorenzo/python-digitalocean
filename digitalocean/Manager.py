@@ -8,7 +8,7 @@ from .Domain import Domain
 from .SSHKey import SSHKey
 from .Action import Action
 from .Account import Account
-
+from .FloatingIP import FloatingIP
 
 class Manager(BaseAPI):
     def __init__(self, *args, **kwargs):
@@ -225,6 +225,24 @@ class Manager(BaseAPI):
             Return an Action object by a specific ID.
         """
         return Action.get_object(api_token=self.token, action_id=action_id)
+
+    def get_all_floating_ips(self):
+        """
+            This function returns a list of FloatingIP objects.
+        """
+        data = self.get_data("floating_ips")
+        floating_ips = list()
+        for jsoned in data['floating_ips']:
+            floating_ip = FloatingIP(**jsoned)
+            floating_ip.token = self.token
+            floating_ips.append(floating_ip)
+        return floating_ips
+
+    def get_floating_ip(self, ip):
+        """
+            Returns a of FloatingIP object by its IP address.
+        """
+        return FloatingIP.get_object(api_token=self.token, ip=ip)
 
     def __str__(self):
         return "%s" % (self.token)

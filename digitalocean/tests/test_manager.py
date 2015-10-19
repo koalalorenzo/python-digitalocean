@@ -288,6 +288,19 @@ class TestManager(BaseTest):
         self.assertEqual(domain.zone_file, "Example zone file text...")
         self.assertEqual(domain.ttl, 1800)
 
+    @responses.activate
+    def test_get_all_floating_ips(self):
+        data = self.load_from_file('floatingip/list.json')
+
+        responses.add(responses.GET, self.base_url + "floating_ips",
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        fips = self.manager.get_all_floating_ips()
+
+        self.assertEqual(fips[0].ip, "45.55.96.47")
+        self.assertEqual(fips[0].region['slug'], 'nyc3')
 
 if __name__ == '__main__':
     unittest.main()

@@ -18,4 +18,5 @@ from .Domain import Domain
 from .Record import Record
 from .SSHKey import SSHKey
 from .Kernel import Kernel
+from .FloatingIP import FloatingIP
 from .baseapi import Error, TokenError, DataReadError

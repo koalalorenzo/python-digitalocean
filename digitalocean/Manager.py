@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+try:
+    from urlparse import urlparse, parse_qs
+except:
+    from urllib.parse import urlparse, parse_qs
+
 from .baseapi import BaseAPI
 from .Droplet import Droplet
 from .Region import Region
@@ -9,6 +14,7 @@ from .SSHKey import SSHKey
 from .Action import Action
 from .Account import Account
 from .FloatingIP import FloatingIP
+
 
 class Manager(BaseAPI):
     def __init__(self, *args, **kwargs):
@@ -41,7 +47,8 @@ class Manager(BaseAPI):
             than one page)
         """
         try:
-            pages = data['links']['pages']['last'].split('=')[-1]
+            lastpage_url = data['links']['pages']['last']
+            pages = parse_qs(urlparse(lastpage_url).query)['page'][0]
             key, values = data.popitem()
             for page in range(2, int(pages) + 1):
                 params.update({'page': page})

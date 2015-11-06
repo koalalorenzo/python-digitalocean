@@ -321,11 +321,17 @@ class Droplet(BaseAPI):
             return_dict
         )
 
-    def enable_backups(self):
+    def enable_backups(self, return_dict=True):
         """
-            Enable automatic backups (Not yet implemented in APIv2)
+            Enable automatic backups
+
+            Optional Args:
+                return_dict - bool : Return a dict when True (default),
+                    otherwise return an Action.
+
+            Returns dict or Action
         """
-        print("Not yet implemented in APIv2")
+        return self._perform_action({'type': 'enable_backups'}, return_dict)
 
     def disable_backups(self, return_dict=True):
         """

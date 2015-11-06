@@ -527,6 +527,27 @@ class TestDroplet(BaseTest):
         self.assertEqual(response.resource_type, "droplet")
 
     @responses.activate
+    def test_enable_backups(self):
+        data = self.load_from_file('droplet_actions/enable_backups.json')
+
+        responses.add(responses.POST, self.actions_url,
+                      body=data,
+                      status=201,
+                      content_type='application/json')
+
+        response = self.droplet.enable_backups()
+
+        self.assertEqual(responses.calls[0].request.url,
+                         self.actions_url)
+        self.assertEqual(json.loads(responses.calls[0].request.body),
+                         {"type": "enable_backups"})
+        self.assertEqual(response['action']['id'], 54321)
+        self.assertEqual(response['action']['status'], "in-progress")
+        self.assertEqual(response['action']['type'], "enable_backups")
+        self.assertEqual(response['action']['resource_id'], 12345)
+        self.assertEqual(response['action']['resource_type'], "droplet")
+
+    @responses.activate
     def test_disable_backups(self):
         data = self.load_from_file('droplet_actions/disable_backups.json')
 

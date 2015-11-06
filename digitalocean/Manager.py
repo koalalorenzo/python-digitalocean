@@ -92,7 +92,22 @@ class Manager(BaseAPI):
                     droplet.ip_address = net['ip_address']
             if droplet.networks['v6']:
                 droplet.ip_v6_address = droplet.networks['v6'][0]['ip_address']
+
+            if "backups" in droplet.features:
+                droplet.backups = True
+            else:
+                droplet.backups = False
+            if "ipv6" in droplet.features:
+                droplet.ipv6 = True
+            else:
+                droplet.ipv6 = False
+            if "private_networking" in droplet.features:
+                droplet.private_networking = True
+            else:
+                droplet.private_networking = False
+
             droplets.append(droplet)
+
         return droplets
 
     def get_droplet(self, droplet_id):

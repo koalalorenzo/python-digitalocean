@@ -138,6 +138,20 @@ class Droplet(BaseAPI):
                 self.ip_address = net['ip_address']
         if self.networks['v6']:
             self.ip_v6_address = self.networks['v6'][0]['ip_address']
+
+            if "backups" in self.features:
+                self.backups = True
+            else:
+                self.backups = False
+            if "ipv6" in self.features:
+                self.ipv6 = True
+            else:
+                self.ipv6 = False
+            if "private_networking" in self.features:
+                self.private_networking = True
+            else:
+                self.private_networking = False
+
         return self
 
     def _perform_action(self, params, return_dict=True):

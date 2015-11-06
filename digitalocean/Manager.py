@@ -233,6 +233,18 @@ class Manager(BaseAPI):
         """
         return Action.get_object(api_token=self.token, action_id=action_id)
 
+    def get_all_actions(self):
+        """
+        This functions returns a list of Action objects.
+        """
+        data = self.get_data("actions/")
+        actions = list()
+        for jsoned in data['actions']:
+            action = Action(**jsoned)
+            action.token = self.token
+            actions.append(action)
+        return actions
+
     def get_all_floating_ips(self):
         """
             This function returns a list of FloatingIP objects.

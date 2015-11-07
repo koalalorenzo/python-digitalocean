@@ -68,17 +68,19 @@ class Manager(BaseAPI):
         """
             Returns an Account object.
         """
-        return Account.get_object(api_token=self.token)
+        return Account.get_object(api_token=self.token, mocked=self.mocked)
 
     def get_all_regions(self):
         """
             This function returns a list of Region object.
         """
+        self.mock_data = "regions/all.json"
         data = self.get_data("regions/")
         regions = list()
         for jsoned in data['regions']:
             region = Region(**jsoned)
             region.token = self.token
+            region.mocked = self.mocked
             regions.append(region)
         return regions
 
@@ -86,11 +88,13 @@ class Manager(BaseAPI):
         """
             This function returns a list of Droplet object.
         """
+        self.mock_data = "droplets/all.json"
         data = self.get_data("droplets/")
         droplets = list()
         for jsoned in data['droplets']:
             droplet = Droplet(**jsoned)
             droplet.token = self.token
+            droplet.mocked = self.mocked
 
             for net in droplet.networks['v4']:
                 if net['type'] == 'private':
@@ -106,17 +110,19 @@ class Manager(BaseAPI):
         """
             Return a Droplet by its ID.
         """
-        return Droplet.get_object(api_token=self.token, droplet_id=droplet_id)
+        return Droplet.get_object(api_token=self.token, droplet_id=droplet_id, mocked=self.mocked)
 
     def get_all_sizes(self):
         """
             This function returns a list of Size object.
         """
+        self.mock_data = "sizes/all.json"
         data = self.get_data("sizes/")
         sizes = list()
         for jsoned in data['sizes']:
             size = Size(**jsoned)
             size.token = self.token
+            size.mocked = self.mocked
             sizes.append(size)
         return sizes
 
@@ -125,15 +131,20 @@ class Manager(BaseAPI):
             This function returns a list of Image object.
         """
         params = {}
+        self.mock_data = "images/all.json"
         if private:
             params['private'] = 'true'
+            self.mock_data = "images/private.json"
         if type:
             params['type'] = type
+            self.mock_data = "images/%s.json" % type
+
         data = self.get_data("images/", params=params)
         images = list()
         for jsoned in data['images']:
             image = Image(**jsoned)
             image.token = self.token
+            image.mocked = self.mocked
             images.append(image)
         return images
 
@@ -142,6 +153,7 @@ class Manager(BaseAPI):
             This function returns a list of Image objects containing all
             available DigitalOcean images, both public and private.
         """
+        self.mock_data = "images/all.json"
         images = self.get_images()
         return images
 
@@ -149,13 +161,14 @@ class Manager(BaseAPI):
         """
             Return a Image by its ID.
         """
-        return Image.get_object(api_token=self.token, image_id=image_id)
+        return Image.get_object(api_token=self.token, image_id=image_id, mocked=self.mocked)
 
     def get_my_images(self):
         """
             This function returns a list of Image objects representing
             private DigitalOcean images (e.g. snapshots and backups).
         """
+        self.mock_data = "images/private.json"
         images = self.get_images(private=True)
         return images
 
@@ -165,11 +178,13 @@ class Manager(BaseAPI):
             public DigitalOcean images (e.g. base distribution images
             and 'One-Click' applications).
         """
+        self.mock_data = "images/all.json"
         data = self.get_images()
         images = list()
         for i in data:
             if i.public:
                 i.token = self.token
+                i.mocked = self.mocked
                 images.append(i)
         return images
 
@@ -178,6 +193,7 @@ class Manager(BaseAPI):
             This function returns a list of Image objects representing
             public base distribution images.
         """
+        self.mock_data = "images/distro.json"
         images = self.get_images(type='distribution')
         return images
 
@@ -187,6 +203,7 @@ class Manager(BaseAPI):
             This function returns a list of Image objectobjects representing
             public DigitalOcean 'One-Click' application images.
         """
+        self.mock_data = "images/app.json"
         images = self.get_images(type='application')
         return images
 
@@ -195,11 +212,13 @@ class Manager(BaseAPI):
         """
             This function returns a list of Domain object.
         """
+        self.mock_data = "domains/all.json"
         data = self.get_data("domains/")
         domains = list()
         for jsoned in data['domains']:
             domain = Domain(**jsoned)
             domain.token = self.token
+            domain.mocked = self.mocked
             domains.append(domain)
         return domains
 
@@ -207,17 +226,19 @@ class Manager(BaseAPI):
         """
             Return a Domain by its domain_name
         """
-        return Domain.get_object(api_token=self.token, domain_name=domain_name)
+        return Domain.get_object(api_token=self.token, domain_name=domain_name, mocked=self.mocked)
 
     def get_all_sshkeys(self):
         """
             This function returns a list of SSHKey object.
         """
+        self.mock_data = "keys/all.json"
         data = self.get_data("account/keys/")
         ssh_keys = list()
         for jsoned in data['ssh_keys']:
             ssh_key = SSHKey(**jsoned)
             ssh_key.token = self.token
+            ssh_key.mocked = self.mocked
             ssh_keys.append(ssh_key)
         return ssh_keys
 
@@ -225,23 +246,25 @@ class Manager(BaseAPI):
         """
             Return a SSHKey object by its ID.
         """
-        return SSHKey.get_object(api_token=self.token, ssh_key_id=ssh_key_id)
+        return SSHKey.get_object(api_token=self.token, ssh_key_id=ssh_key_id, mocked=self.mocked)
 
     def get_action(self, action_id):
         """
             Return an Action object by a specific ID.
         """
-        return Action.get_object(api_token=self.token, action_id=action_id)
+        return Action.get_object(api_token=self.token, action_id=action_id, mocked=self.mocked)
 
     def get_all_actions(self):
         """
         This functions returns a list of Action objects.
         """
+        self.mock_data = "actions/multi.json"
         data = self.get_data("actions/")
         actions = list()
         for jsoned in data['actions']:
             action = Action(**jsoned)
             action.token = self.token
+            action.mocked = self.mocked
             actions.append(action)
         return actions
 
@@ -249,11 +272,13 @@ class Manager(BaseAPI):
         """
             This function returns a list of FloatingIP objects.
         """
+        self.mock_data = "floatingip/list.json"
         data = self.get_data("floating_ips")
         floating_ips = list()
         for jsoned in data['floating_ips']:
             floating_ip = FloatingIP(**jsoned)
             floating_ip.token = self.token
+            floating_ip.mocked = self.mocked
             floating_ips.append(floating_ip)
         return floating_ips
 
@@ -261,7 +286,7 @@ class Manager(BaseAPI):
         """
             Returns a of FloatingIP object by its IP address.
         """
-        return FloatingIP.get_object(api_token=self.token, ip=ip)
+        return FloatingIP.get_object(api_token=self.token, ip=ip, mocked=self.mocked)
 
     def __str__(self):
         return "%s" % (self.token)

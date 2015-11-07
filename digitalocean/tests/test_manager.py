@@ -299,7 +299,7 @@ class TestManager(BaseTest):
                       content_type='application/json')
 
         actions = self.manager.get_all_actions()
-        self.assertEqual(len(actions), 2)
+        self.assertEqual(len(actions), 3)
 
         # Test the few things we can assume about a random ssh key.
         action = actions[0]

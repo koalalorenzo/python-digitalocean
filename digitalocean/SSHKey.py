@@ -12,11 +12,12 @@ class SSHKey(BaseAPI):
         super(SSHKey, self).__init__(*args, **kwargs)
 
     @classmethod
-    def get_object(cls, api_token, ssh_key_id):
+    def get_object(cls, api_token, ssh_key_id, mocked):
         """
             Class method that will return a SSHKey object by ID.
         """
-        ssh_key = cls(token=api_token, id=ssh_key_id)
+        ssh_key = cls(token=api_token, id=ssh_key_id, mocked=mocked)
+        ssh_key.mock_data = "keys/single.json"
         ssh_key.load()
         return ssh_key
 
@@ -32,6 +33,7 @@ class SSHKey(BaseAPI):
         elif self.fingerprint is not None:
             identifier = self.fingerprint
 
+        self.mock_data = "keys/single.json"
         data = self.get_data("account/keys/%s" % identifier, type=GET)
 
         ssh_key = data['ssh_key']
@@ -48,6 +50,7 @@ class SSHKey(BaseAPI):
             uploading the same public_key twice.
         """
 
+        self.mock_data = "keys/all.json"
         data = self.get_data("account/keys/")
         for jsoned in data['ssh_keys']:
             if jsoned.get('public_key', "") == public_key:
@@ -65,6 +68,7 @@ class SSHKey(BaseAPI):
             "public_key": self.public_key,
         }
 
+        self.mock_data = "keys/single.json"
         data = self.get_data("account/keys/", type=POST, params=input_params)
 
         if data:
@@ -79,6 +83,7 @@ class SSHKey(BaseAPI):
             "public_key": self.public_key,
         }
 
+        self.mock_data = "keys/single.json"
         data = self.get_data(
             "account/keys/%s" % self.id,
             type=PUT,
@@ -92,6 +97,7 @@ class SSHKey(BaseAPI):
         """
             Destroy the SSH Key
         """
+        self.mock_status = 204
         return self.get_data("account/keys/%s" % self.id, type=DELETE)
 
     def __str__(self):

@@ -15,13 +15,15 @@ if os.path.isfile("README.md"):
 
 setup(
     name='python-digitalocean',
-    version='1.7',
+    version='1.8',
     description='digitalocean.com API to manage Droplets and Images',
     author='Lorenzo Setale ( http://who.is.lorenzo.setale.me/? )',
     author_email='koalalorenzo@gmail.com',
     url='https://github.com/koalalorenzo/python-digitalocean',
     packages=['digitalocean'],
-    install_requires=['requests'],
+    package_data={'': ['digitalocean/data/*.json']},
+    include_package_data=True,
+    install_requires=['requests', 'responses'],
     test_suite='digitalocean.tests',
     license='LGPL v3',
     long_description=long_description

@@ -16,11 +16,12 @@ class Image(BaseAPI):
         super(Image, self).__init__(*args, **kwargs)
 
     @classmethod
-    def get_object(cls, api_token, image_id):
+    def get_object(cls, api_token, image_id, mocked):
         """
             Class method that will return an Image object by ID.
         """
-        image = cls(token=api_token, id=image_id)
+        image = cls(token=api_token, id=image_id, mocked=mocked)
+        image.mock_data = "images/single.json"
         image.load()
         return image
 
@@ -38,12 +39,14 @@ class Image(BaseAPI):
         """
             Destroy the image
         """
+        self.mock_status = 204
         return self.get_data("images/%s/" % self.id, type=DELETE)
 
     def transfer(self, new_region_slug):
         """
             Transfer the image
         """
+        self.mock_data = "actions/ipv6_completed.json" 
         return self.get_data(
             "images/%s/actions/" % self.id,
             type=POST,
@@ -54,6 +57,7 @@ class Image(BaseAPI):
         """
             Rename an image
         """
+        self.mock_data = "actions/ipv6_completed.json" 
         return self.get_data(
             "images/%s" % self.id,
             type=PUT,

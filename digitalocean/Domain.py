@@ -13,11 +13,12 @@ class Domain(BaseAPI):
         super(Domain, self).__init__(*args, **kwargs)
 
     @classmethod
-    def get_object(cls, api_token, domain_name):
+    def get_object(cls, api_token, domain_name, mocked):
         """
             Class method that will return a Domain object by ID.
         """
-        domain = cls(token=api_token, name=domain_name)
+        domain = cls(token=api_token, name=domain_name, mocked=mocked)
+        domain.mock_data = "domains/single.json"
         domain.load()
         return domain
 
@@ -33,6 +34,7 @@ class Domain(BaseAPI):
         """
             Destroy the domain by name
         """
+        self.mock_status = 204
         # URL https://api.digitalocean.com/v2/domains/[NAME]
         return self.get_data("domains/%s" % self.name, type=DELETE)
 
@@ -69,6 +71,8 @@ class Domain(BaseAPI):
         if kwargs.get("weight", None):
             data['weight'] = kwargs.get("weight", None)
 
+        self.mock_data = "domains/create_record.json"
+        self.mock_status = 201
         return self.get_data(
             "domains/%s/records" % self.name,
             type=POST,
@@ -77,7 +81,7 @@ class Domain(BaseAPI):
 
     def create(self):
         """
-            Create new doamin
+            Create new domain
         """
         # URL https://api.digitalocean.com/v2/domains
         data = {
@@ -85,6 +89,8 @@ class Domain(BaseAPI):
             "ip_address": self.ip_address,
         }
 
+        self.mock_data = "domains/create.json"
+        self.mock_status = 201
         domain = self.get_data("domains", type=POST, params=data)
         return domain
 
@@ -95,6 +101,7 @@ class Domain(BaseAPI):
         if params is None:
             params = {}
         
+        self.mock_data = "domains/records.json"
         # URL https://api.digitalocean.com/v2/domains/[NAME]/records/
         records = []
         data = self.get_data("domains/%s/records/" % self.name, type=GET, params=params)

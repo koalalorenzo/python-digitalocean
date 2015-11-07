@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+import os
 import json
 import logging
+import responses
 import requests
 try:
     from urlparse import urljoin
@@ -41,6 +43,9 @@ class BaseAPI(object):
     def __init__(self, *args, **kwargs):
         self.token = ""
         self.end_point = "https://api.digitalocean.com/v2/"
+        self.mocked = False
+        self.mock_data = None
+        self.mock_status = 200
         self._log = logging.getLogger(__name__)
 
         for attr in kwargs.keys():
@@ -97,7 +102,19 @@ class BaseAPI(object):
         if params is None:
             params = dict()
 
-        req = self.__perform_request(url, type, params)
+        if self.mocked:
+            # Use mock data for responses
+            self._log.debug("Operating in MOCK mode - returning data from %s" % self.mock_data)
+            with responses.RequestsMock() as rsps:
+                mock_data = self.load_from_file(self.mock_data) if self.mock_data else None
+                rsps.add(getattr(responses, type), self.end_point + url,
+                         body=mock_data,
+                         status=self.mock_status,
+                         content_type='application/json')
+                req = self.__perform_request(url, type, params)
+        else:
+            req = self.__perform_request(url, type, params)
+
         if req.status_code == 204:
             return True
 
@@ -113,6 +130,11 @@ class BaseAPI(object):
             raise DataReadError(msg)
 
         return data
+
+    def load_from_file(self, json_file):
+        cwd = os.path.dirname(__file__)
+        with open(os.path.join(cwd, 'data/%s' % json_file), 'r') as f:
+            return f.read()
 
     def __str__(self):
         return "%s" % self.token

@@ -14,11 +14,12 @@ class Account(BaseAPI):
         super(Account, self).__init__(*args, **kwargs)
 
     @classmethod
-    def get_object(cls, api_token):
+    def get_object(cls, api_token, mocked):
         """
             Class method that will return an Account object.
         """
-        acct = cls(token=api_token)
+        acct = cls(token=api_token, mocked=mocked)
+        acct.mock_data = "account/account.json"
         acct.load()
         return acct
 

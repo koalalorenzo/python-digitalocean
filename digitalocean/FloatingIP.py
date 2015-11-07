@@ -11,7 +11,7 @@ class FloatingIP(BaseAPI):
         super(FloatingIP, self).__init__(*args, **kwargs)
 
     @classmethod
-    def get_object(cls, api_token, ip):
+    def get_object(cls, api_token, ip, mocked):
         """
             Class method that will return a FloatingIP object by its IP.
 
@@ -19,7 +19,8 @@ class FloatingIP(BaseAPI):
                 api_token: str - token
                 ip: str - floating ip address
         """
-        floating_ip = cls(token=api_token, ip=ip)
+        floating_ip = cls(token=api_token, ip=ip, mocked=mocked)
+        floating_ip.mock_data = "floatingip/single.json"
         floating_ip.load()
         return floating_ip
 
@@ -48,6 +49,7 @@ class FloatingIP(BaseAPI):
             Args:
                 droplet_id: int - droplet id
         """
+        self.mock_data = "floating_ip/create.json"
         data = self.get_data('floating_ips/',
                              type=POST,
                              params={'droplet_id': self.droplet_id})
@@ -69,6 +71,7 @@ class FloatingIP(BaseAPI):
             Args:
                 region_slug: str - region's slug (e.g. 'nyc3')
         """
+        self.mock_data = "floatingip/single.json"
         data = self.get_data('floating_ips/',
                              type=POST,
                              params={'region': self.region_slug})
@@ -83,6 +86,7 @@ class FloatingIP(BaseAPI):
         """
             Destroy the FloatingIP
         """
+        self.mock_status = 204
         return self.get_data('floating_ips/%s/' % self.ip, type=DELETE)
 
     def assign(self, droplet_id):
@@ -92,6 +96,8 @@ class FloatingIP(BaseAPI):
             Args:
                 droplet_id: int - droplet id
         """
+        self.mock_data = "floatingip/assign.json"
+        self.mock_status = 201
         return self.get_data(
             "floating_ips/%s/actions/" % self.ip,
             type=POST,
@@ -102,6 +108,8 @@ class FloatingIP(BaseAPI):
         """
             Unassign a FloatingIP.
         """
+        self.mock_data = "floatingip/unassign.json"
+        self.mock_status = 201
         return self.get_data(
             "floating_ips/%s/actions/" % self.ip,
             type=POST,

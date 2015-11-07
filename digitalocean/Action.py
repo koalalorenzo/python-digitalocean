@@ -22,15 +22,17 @@ class Action(BaseAPI):
         super(Action, self).__init__(*args, **kwargs)
 
     @classmethod
-    def get_object(cls, api_token, action_id):
+    def get_object(cls, api_token, action_id, mocked):
         """
             Class method that will return a Action object by ID.
         """
-        action = cls(token=api_token, id=action_id)
+        action = cls(token=api_token, id=action_id, mocked=mocked)
+        action.mock_data = "actions/ipv6_completed.json"
         action.load_directly()
         return action
 
     def load_directly(self):
+        self.mock_data = "actions/ipv6_completed.json" 
         action = self.get_data("actions/%s" % self.id)
         if action:
             action = action[u'action']
@@ -39,6 +41,7 @@ class Action(BaseAPI):
                 setattr(self, attr, action[attr])
 
     def load(self):
+        self.mock_data = "actions/ipv6_completed.json" 
         action = self.get_data(
             "droplets/%s/actions/%s" % (
                 self.droplet_id,

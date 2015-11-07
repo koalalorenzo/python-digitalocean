@@ -289,6 +289,27 @@ class TestManager(BaseTest):
         self.assertEqual(domain.ttl, 1800)
 
     @responses.activate
+    def test_get_all_actions(self):
+        data = self.load_from_file('actions/multi.json')
+
+        url = self.base_url + 'actions/'
+        responses.add(responses.GET, url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        actions = self.manager.get_all_actions()
+        self.assertEqual(len(actions), 3)
+
+        # Test the few things we can assume about a random ssh key.
+        action = actions[0]
+        self.assertEqual(action.token, self.token)
+        self.assertEqual(action.type, "enable_ipv6")
+        self.assertEqual(action.status, "completed")
+        self.assertEqual(action.id, 39388122)
+        self.assertEqual(action.region_slug, 'nyc3')
+
+    @responses.activate
     def test_get_all_floating_ips(self):
         data = self.load_from_file('floatingip/list.json')
 

@@ -10,7 +10,7 @@ class BaseTest(unittest.TestCase):
 
     def load_from_file(self, json_file):
         cwd = os.path.dirname(__file__)
-        with open(os.path.join(cwd, 'data/%s' % json_file), 'r') as f:
+        with open(os.path.join(cwd, '../data/%s' % json_file), 'r') as f:
             return f.read()
 
     def split_url(self, url):

@@ -5,6 +5,7 @@ from .baseapi import BaseAPI
 class Account(BaseAPI):
     def __init__(self, *args, **kwargs):
         self.droplet_limit = None
+        self.floating_ip_limit = None
         self.email = None
         self.uuid = None
         self.email_verified = None

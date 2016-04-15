@@ -503,6 +503,11 @@ class Droplet(BaseAPI):
             "private_networking": bool(self.private_networking),
         }
 
+        if "addl_opts" in kwargs.keys():
+            addl_opts = kwargs["addl_opts"]
+            for addl_opt in addl_opts:
+                data[addl_opt] = addl_opts[addl_opt]
+
         if self.user_data:
             data["user_data"] = self.user_data
 

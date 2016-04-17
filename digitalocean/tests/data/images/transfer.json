@@ -1,0 +1,34 @@
+{
+  "action": {
+    "id": 68212728,
+    "status": "in-progress",
+    "type": "transfer",
+    "started_at": "2015-10-15T17:45:44Z",
+    "completed_at": null,
+    "resource_id": 449676856,
+    "resource_type": "image",
+    "region": {
+      "name": "New York 3",
+      "slug": "nyc3",
+      "sizes": [
+        "512mb",
+        "1gb",
+        "2gb",
+        "4gb",
+        "8gb",
+        "16gb",
+        "32gb",
+        "48gb",
+        "64gb"
+      ],
+      "features": [
+        "private_networking",
+        "backups",
+        "ipv6",
+        "metadata"
+      ],
+      "available": true
+    },
+    "region_slug": "nyc3"
+  }
+}

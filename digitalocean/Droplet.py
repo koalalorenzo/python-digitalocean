@@ -51,8 +51,6 @@ class Droplet(BaseAPI):
         action_ids: [int] - list of ids of actions
         features: [str] - list of enabled features. e.g.
                   [u'private_networking', u'virtio']
-        min_size: str - minumum size of droplet that can bew created from a
-                   snapshot of this droplet
         image: dict - details of image used to create this droplet
         ip_address: str - public ip addresses
         private_ip_address: str - private ip address

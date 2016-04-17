@@ -8,10 +8,11 @@ class Image(BaseAPI):
         self.name = None
         self.distribution = None
         self.slug = None
-        self.min_size = None
+        self.min_disk_size = None
         self.public = None
         self.regions = []
         self.created_at = None
+        self.size_gigabytes = None
 
         super(Image, self).__init__(*args, **kwargs)
 

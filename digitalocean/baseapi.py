@@ -105,7 +105,7 @@ class BaseAPI(object):
             data = req.json()
         except ValueError as e:
             raise JSONReadError(
-                'Read failed from DigitalOcean: %s' % e.message
+                'Read failed from DigitalOcean: %s' % str(e)
             )
 
         if not req.ok:

@@ -1,5 +1,5 @@
-import digitalocean
-from digitalocean.baseapi import BaseAPI
+from .baseapi import BaseAPI
+from .Droplet import Droplet
 
 
 class Tag(BaseAPI):
@@ -16,7 +16,7 @@ class Tag(BaseAPI):
 
     def load(self):
         """
-           Fetch data about tag - use this instead of get_data()
+           Fetch data about tag
         """
         tags = self.get_data("tags/%s" % self.name)
         tag = tags['tag']
@@ -33,69 +33,89 @@ class Tag(BaseAPI):
         for attr in kwargs.keys():
             setattr(self, attr, kwargs[attr])
 
-        data = {
-            "name": self.name,
-        }
+        query = {"name": self.name}
 
-        data = self.get_data("tags/", type="POST", params=data)
-        if data:
-            self.name = data['tag']['name']
-            self.resources = data['tag']['resources']
+        output = self.get_data("tags/", type="POST", params=query)
+        if output:
+            self.name = output['tag']['name']
+            self.resources = output['tag']['resources']
 
-    def load_or_create(self, **kwargs):
-        """
-            Load or create the tag.
-        """
-        create = False
-        for attr in kwargs.keys():
-            setattr(self, attr, kwargs[attr])
-
-        try:
-            self.load()
-        except digitalocean.DataReadError:
-            self.create()
-            create = True
-        return create
-
-    def _resources(self, resources, type):
-        if not resources:
-            return True
-        # TODO: check resources format
-        # example: [{"resource_id": droplet.id, "resource_type": "droplet"}]
+    def get_resources(self, resources, method):
+        """ Method used to talk directly to the API (TAGs' Resources) """
         tagged = self.get_data(
             'tags/%s/resources' % self.name, params={
                 "resources": resources
             },
-            type=type,
+            type=method,
         )
         return tagged
 
-    def tagging_resources(self, resources):
-        return self._resources(resources, type='POST')
+    def add_resources(self, resources):
+        """
+            Add to the resources to this tag.
 
-    def untagging_resources(self, resources):
-        return self._resources(resources, type='DELETE')
+            Attributes accepted at creation time:
+                resources: array - See API.
+        """
+        return self.get_resources(resources, method='POST')
 
-    def tagging_droplets(self, droplet_ids):
-        return self.tagging_resources([
-           {"resource_id": droplet_id, "resource_type": "droplet"}
-           for droplet_id in droplet_ids
-        ])
+    def remove_resources(self, resources):
+        """
+            Remove resources from this tag.
 
-    def untagging_droplets(self, droplet_ids):
-        return self.untagging_resources([
-           {"resource_id": droplet_id, "resource_type": "droplet"}
-           for droplet_id in droplet_ids
-        ])
+            Attributes accepted at creation time:
+                resources: array - See API.
+        """
+        return self.get_resources(resources, method='DELETE')
 
-    def tagging_droplet(self, droplet_id):
-        return self.tagging_resources([{
-            "resource_id": droplet_id,
-            "resource_type": "droplet"
-        }])
+    def __extract_resources_from_droplets(self, data):
+        """
+            Private method to extract from a value, the resources.
+            It will check the type of object in the array provided and build
+            the right structure for the API.
+        """
+        resources = []
+        if not isinstance(data, list): return data
+        for a_droplet in data:
+            res = {}
+            if isinstance(a_droplet, str) or isinstance(a_droplet, int):
+                res = {"resource_id": a_droplet, "resource_type": "droplet"}
+            elif isinstance(a_droplet, Droplet):
+                res = {"resource_id": a_droplet.id, "resource_type": "droplet"}
+            else:
+                continue
+            resources.append(res)
 
-    def untagging_droplet(self, droplet_id):
-        return self.untagging_resources([{
-            "resource_id": droplet_id,
-            "resource_type": "droplet"
-        }])
+    def add_droplets(self, droplet):
+        """
+            Add the Tag to a Droplet.
+
+            Attributes accepted at creation time:
+                droplet: array of string or array of int, or array of Droplets.
+        """
+        if isinstance(droplet, list):
+            # Extracting data from the Droplet object
+            resources = self.__extract_resources_from_droplets(droplet)
+            return self.add_resources(resources)
+        else:
+            return self.add_resources([{
+                "resource_id": droplet.id,
+                "resource_type": "droplet"
+            }])
+
+    def remove_droplets(self, droplet):
+        """
+            Remove the Tag from the Droplet.
+
+            Attributes accepted at creation time:
+                droplet: array of string or array of int, or array of Droplets.
+        """
+        if isinstance(droplet, list):
+            # Extracting data from the Droplet object
+            resources = self.__extract_resources_from_droplets(droplet)
+            return self.remove_resources(resources)
+        else:
+            return self.remove_resources([{
+                "resource_id": droplet.id,
+                "resource_type": "droplet"
+            }])

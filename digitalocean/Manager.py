@@ -84,11 +84,15 @@ class Manager(BaseAPI):
             regions.append(region)
         return regions
 
-    def get_all_droplets(self):
+    def get_all_droplets(self, tag_name=None):
         """
             This function returns a list of Droplet object.
         """
-        data = self.get_data("droplets/")
+        url = "droplets/"
+        if tag_name:
+            url += '?tag_name=' + tag_name
+
+        data = self.get_data(url)
         droplets = list()
         for jsoned in data['droplets']:
             droplet = Droplet(**jsoned)

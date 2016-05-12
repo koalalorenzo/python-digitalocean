@@ -2,11 +2,11 @@ import digitalocean
 from digitalocean.baseapi import BaseAPI
 
 
-class Tags(BaseAPI):
+class Tag(BaseAPI):
     def __init__(self, *args, **kwargs):
         self.name = ""
         self.resources = {}
-        super().__init__(*args, **kwargs)
+        super(Tag, self).__init__(*args, **kwargs)
 
     @classmethod
     def get_object(cls, api_token, tag_name):

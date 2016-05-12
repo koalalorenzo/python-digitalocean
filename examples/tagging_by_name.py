@@ -4,7 +4,7 @@ from digitalocean.Tag import Tag
 
 TOKEN = "some-token"
 TAG = "test"
-APPLY_TAG_REQUIRED = lambda droplet_name: TAG in droplet_name.lowar()
+APPLY_TAG_REQUIRED = lambda droplet_name: TAG in droplet_name.lower()
 
 tag = Tag(token=TOKEN, name=TAG)
 tag.load_or_create()

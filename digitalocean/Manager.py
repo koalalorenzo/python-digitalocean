@@ -5,6 +5,7 @@ except:
     from urllib.parse import urlparse, parse_qs
 
 from .baseapi import BaseAPI
+from .baseapi import GET
 from .Droplet import Droplet
 from .Region import Region
 from .Size import Size
@@ -36,9 +37,10 @@ class Manager(BaseAPI):
 
         kwargs["params"] = params
         data = super(Manager, self).get_data(*args, **kwargs)
-        unpaged_data = self.__deal_with_pagination(args[0], data, params)
-
-        return unpaged_data
+        if kwargs.get('type') == GET:
+            return self.__deal_with_pagination(args[0], data, params)
+        else:
+            return data
 
     def __deal_with_pagination(self, url, data, params):
         """

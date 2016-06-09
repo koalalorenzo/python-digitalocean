@@ -102,6 +102,36 @@ class Droplet(BaseAPI):
         droplet.load()
         return droplet
 
+    @classmethod
+    def create_multiple(**kwargs):
+        api = BaseAPI(token=kwargs.get("token"))
+
+        data = {
+            "names": kwargs.get("names"),
+            "size": kwargs.get("size_slug") or kwargs.get("size"),
+            "image": kwargs.get("image"),
+            "region": kwargs.get("region"),
+            "backups": bool(kwargs.get("backups")),
+            "ipv6": bool(kwargs.get("ipv6")),
+            "private_networking": bool(kwargs.get("private_networking")),
+        }
+
+        if kwargs.get("user_data"):
+            data["user_data"] = kwargs["user_data"]
+
+        droplets = []
+
+        data = api.get_data("droplets", type=POST, params=data)
+
+        if data:
+            action_ids = [data["links"]["actions"][0]["id"]]
+            for droplet_json in data["droplets"]:
+                droplet = Droplet(droplet_json)
+                droplet.action_ids = action_ids
+                droplets.append(droplet)
+
+        return droplets
+
     def __check_actions_in_data(self, data):
         # reloading actions if actions is provided.
         if u"actions" in data:

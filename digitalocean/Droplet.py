@@ -103,7 +103,8 @@ class Droplet(BaseAPI):
         return droplet
 
     @classmethod
-    def create_multiple(**kwargs):
+    def create_multiple(*args, **kwargs):
+        print(kwargs)
         api = BaseAPI(token=kwargs.get("token"))
 
         data = {
@@ -126,7 +127,8 @@ class Droplet(BaseAPI):
         if data:
             action_ids = [data["links"]["actions"][0]["id"]]
             for droplet_json in data["droplets"]:
-                droplet = Droplet(droplet_json)
+                droplet_json['token'] = kwargs["token"]
+                droplet = Droplet(**droplet_json)
                 droplet.action_ids = action_ids
                 droplets.append(droplet)
 

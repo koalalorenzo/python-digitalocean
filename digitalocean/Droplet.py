@@ -104,7 +104,6 @@ class Droplet(BaseAPI):
 
     @classmethod
     def create_multiple(*args, **kwargs):
-        print(kwargs)
         api = BaseAPI(token=kwargs.get("token"))
 
         data = {

@@ -465,7 +465,7 @@ class Droplet(BaseAPI):
             return_dict
         )
 
-    @classmethod
+    @staticmethod
     def __get_ssh_keys_id_or_fingerprint(ssh_keys, token, name):
         """
             Check and return a list of SSH key IDs or fingerprints according

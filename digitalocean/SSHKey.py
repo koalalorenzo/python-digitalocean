@@ -27,7 +27,7 @@ class SSHKey(BaseAPI):
             Requires either self.id or self.fingerprint to be set.
         """
         identifier = None
-        if self.id is not None:
+        if self.id:
             identifier = self.id
         elif self.fingerprint is not None:
             identifier = self.fingerprint

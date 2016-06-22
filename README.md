@@ -115,7 +115,7 @@ Use [pytest](http://pytest.org/) to perform testing. It is recommended to use a 
 
 To run all the tests manually use py.test command:
 
-    $ py.test
+    $ python -m pytest
 
 
 ## Links

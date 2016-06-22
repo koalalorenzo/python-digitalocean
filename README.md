@@ -78,6 +78,21 @@ for action in actions:
     print action.status
 ```
 
+### Creating a new droplet with all your SSH keys
+```python
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+keys = manager.get_all_sshkeys()
+
+droplet = digitalocean.Droplet(token="secretspecialuniquesnowflake",
+                               name='DropletWithSSHKeys',
+                               region='ams3', # Amster
+                               image='ubuntu-14-04-x64', # Ubuntu 14.04 x64
+                               size_slug='512mb',  # 512MB
+                               ssh_keys=keys, #Automatic conversion
+                               backups=False)
+droplet.create()
+```
+
 ## Testing
 
 ### Test using Docker
@@ -100,7 +115,7 @@ Use [pytest](http://pytest.org/) to perform testing. It is recommended to use a 
 
 To run all the tests manually use py.test command:
 
-    $ py.test
+    $ python -m pytest
 
 
 ## Links

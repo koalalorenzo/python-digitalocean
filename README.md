@@ -78,6 +78,17 @@ for action in actions:
     print action.status
 ```
 
+### Add SSHKey into DigitalOcean Account
+```python
+from digitalocean import SSHKey
+
+user_ssh_key = open('/home/<$USER>/.ssh/id_rsa.pub').read()
+key = SSHKey(token='secretspecialuniquesnowflake',
+             name='uniquehostname',
+             public_key=user_ssh_key)
+key.create()
+```
+
 ### Creating a new droplet with all your SSH keys
 ```python
 manager = digitalocean.Manager(token="secretspecialuniquesnowflake")

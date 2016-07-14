@@ -1,0 +1,8 @@
+{
+  "ssh_key": {
+    "id": 1234,
+    "fingerprint": "ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff",
+    "public_key": "AAAAkey",
+    "name": "new_key"
+  }
+}

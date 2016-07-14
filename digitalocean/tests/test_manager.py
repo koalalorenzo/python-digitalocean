@@ -272,6 +272,27 @@ class TestManager(BaseTest):
                          "f5:d1:78:ed:28:72:5f:e1:ac:94:fd:1f:e0:a3:48:6d")
 
     @responses.activate
+    def test_post_new_ssh_key(self):
+        data = self.load_from_file('keys/newly_posted.json')
+
+        url = self.base_url + 'account/keys/'
+        responses.add(responses.POST, url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        params = {'public_key': 'AAAAkey', 'name': 'new_key'}
+        ssh_key = self.manager.get_data(url='account/keys/',
+                                        type='POST',
+                                        params=params)
+
+        key = ssh_key['ssh_key']
+        self.assertEqual(key['id'], 1234)
+        self.assertEqual(key['fingerprint'], 'ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff')
+        self.assertEqual(key['public_key'], 'AAAAkey')
+        self.assertEqual(key['name'], 'new_key')
+
+    @responses.activate
     def test_get_all_domains(self):
         data = self.load_from_file('domains/all.json')
 
@@ -304,6 +325,20 @@ class TestManager(BaseTest):
 
         self.assertEqual(fips[0].ip, "45.55.96.47")
         self.assertEqual(fips[0].region['slug'], 'nyc3')
+
+    @responses.activate
+    def test_get_all_volumes(self):
+        data = self.load_from_file('volumes/all.json')
+
+        responses.add(responses.GET, self.base_url + "volumes",
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        fips = self.manager.get_all_volumes()
+
+        self.assertEqual(fips[0].id, "506f78a4-e098-11e5-ad9f-000f53306ae1")
+        self.assertEqual(fips[0].region['slug'], 'nyc1')
 
 if __name__ == '__main__':
     unittest.main()

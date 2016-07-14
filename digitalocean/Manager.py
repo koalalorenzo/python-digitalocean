@@ -15,7 +15,7 @@ from .SSHKey import SSHKey
 from .Action import Action
 from .Account import Account
 from .FloatingIP import FloatingIP
-
+from .Volume import Volume
 
 class Manager(BaseAPI):
     def __init__(self, *args, **kwargs):
@@ -267,6 +267,24 @@ class Manager(BaseAPI):
             Returns a of FloatingIP object by its IP address.
         """
         return FloatingIP.get_object(api_token=self.token, ip=ip)
+
+    def get_all_volumes(self):
+        """
+            This function returns a list of Volume objects.
+        """
+        data = self.get_data("volumes")
+        volumes = list()
+        for jsoned in data['volumes']:
+            volume = Volume(**jsoned)
+            volume.token = self.token
+            volumes.append(volume)
+        return volumes
+
+    def get_volume(self, volume_id):
+        """
+            Returns a Volume object by its ID.
+        """
+        return Volume.get_object(api_token=self.token, volume_id=volume_id)
 
     def __str__(self):
         return "%s" % (self.token)

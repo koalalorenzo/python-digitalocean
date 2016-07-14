@@ -1,0 +1,73 @@
+{
+  "volumes": [
+    {
+      "id": "506f78a4-e098-11e5-ad9f-000f53306ae1",
+      "region": {
+        "name": "New York 1",
+        "slug": "nyc1",
+        "sizes": [
+          "512mb",
+          "1gb",
+          "2gb",
+          "4gb",
+          "8gb",
+          "16gb",
+          "32gb",
+          "48gb",
+          "64gb"
+        ],
+        "features": [
+          "private_networking",
+          "backups",
+          "ipv6",
+          "metadata"
+        ],
+        "available": true
+      },
+      "droplet_ids": [
+
+      ],
+      "name": "example",
+      "description": "Block store for examples",
+      "size_gigabytes": 100,
+      "created_at": "2016-03-02T17:00:49Z"
+    },
+    {
+      "id": "2d2967ff-491d-11e6-860c-000f53315870",
+      "region": {
+        "name": "New York 1",
+        "slug": "nyc1",
+        "sizes": [
+          "512mb",
+          "1gb",
+          "2gb",
+          "4gb",
+          "8gb",
+          "16gb",
+          "32gb",
+          "48gb",
+          "64gb"
+        ],
+        "features": [
+          "private_networking",
+          "backups",
+          "ipv6",
+          "metadata"
+        ],
+        "available": true
+      },
+      "droplet_ids": [
+        19486237
+      ],
+      "name": "another-example",
+      "description": "A bigger example volume",
+      "size_gigabytes": 500,
+      "created_at": "2016-03-05T17:00:49Z"
+    }
+  ],
+  "links": {
+  },
+  "meta": {
+    "total": 2
+  }
+}

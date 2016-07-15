@@ -813,6 +813,43 @@ class TestDroplet(BaseTest):
         self.assertEqual(droplet.action_ids, [36805096])
 
     @responses.activate
+    def test_create_multiple_no_keys(self):
+        data = self.load_from_file('droplet_actions/create_multiple.json')
+
+        responses.add(responses.POST, self.base_url + "droplets",
+                      body=data,
+                      status=202,
+                      content_type='application/json')
+
+
+        droplets = digitalocean.Droplet.create_multiple(names=["example.com",
+                                                               "example2.com"],
+                                                        size_slug="512mb",
+                                                        image="ubuntu-14-04-x64",
+                                                        region="nyc3",
+                                                        backups=True,
+                                                        ipv6=True,
+                                                        private_networking=True,
+                                                        user_data="Some user data.",
+                                                        token=self.token)
+        self.assert_url_query_equal(responses.calls[0].request.url,
+                                    self.base_url + "droplets")
+        self.assertEqual(len(droplets), 2)
+        self.assertEqual(droplets[0].id, 3164494)
+        self.assertEqual(droplets[1].id, 3164495)
+        self.assertEqual(droplets[0].action_ids, [36805096])
+        self.assertEqual(droplets[1].action_ids, [36805096])
+
+        self.maxDiff = None
+        self.assertEqual(
+            json.loads(responses.calls[0].request.body),
+            {u"names": [u"example.com", u"example2.com"], u"region": u"nyc3",
+             u"user_data": u"Some user data.", u"ipv6": True,
+             u"private_networking": True, u"backups": True,
+             u"image": u"ubuntu-14-04-x64", u"size": u"512mb"})
+
+
+    @responses.activate
     def test_get_actions(self):
         data = self.load_from_file('actions/multi.json')
         create = self.load_from_file('actions/create_completed.json')

@@ -102,6 +102,42 @@ class Droplet(BaseAPI):
         droplet.load()
         return droplet
 
+    @classmethod
+    def create_multiple(*args, **kwargs):
+        api = BaseAPI(token=kwargs.get("token"))
+
+        data = {
+            "names": kwargs.get("names"),
+            "size": kwargs.get("size_slug") or kwargs.get("size"),
+            "image": kwargs.get("image"),
+            "region": kwargs.get("region"),
+            "backups": bool(kwargs.get("backups")),
+            "ipv6": bool(kwargs.get("ipv6")),
+            "private_networking": bool(kwargs.get("private_networking")),
+        }
+
+        if kwargs.get("ssh_keys"):
+            data["ssh_keys"] = Droplet.__get_ssh_keys_id_or_fingerprint(
+                    kwargs["ssh_keys"], kwargs.get("token"),
+                    kwargs["names"][0])
+
+        if kwargs.get("user_data"):
+            data["user_data"] = kwargs["user_data"]
+
+        droplets = []
+
+        data = api.get_data("droplets", type=POST, params=data)
+
+        if data:
+            action_ids = [data["links"]["actions"][0]["id"]]
+            for droplet_json in data["droplets"]:
+                droplet_json["token"] = kwargs["token"]
+                droplet = Droplet(**droplet_json)
+                droplet.action_ids = action_ids
+                droplets.append(droplet)
+
+        return droplets
+
     def __check_actions_in_data(self, data):
         # reloading actions if actions is provided.
         if u"actions" in data:
@@ -429,14 +465,15 @@ class Droplet(BaseAPI):
             return_dict
         )
 
-    def __get_ssh_keys_id_or_fingerprint(self):
+    @staticmethod
+    def __get_ssh_keys_id_or_fingerprint(ssh_keys, token, name):
         """
             Check and return a list of SSH key IDs or fingerprints according
             to DigitalOcean's API. This method is used to check and create a
             droplet with the correct SSH keys.
         """
         ssh_keys_id = list()
-        for ssh_key in self.ssh_keys:
+        for ssh_key in ssh_keys:
             if type(ssh_key) in [int, type(2 ** 64)]:
                 ssh_keys_id.append(int(ssh_key))
 
@@ -457,12 +494,12 @@ class Droplet(BaseAPI):
 
                 else:
                     key = SSHKey()
-                    key.token = self.token
+                    key.token = token
                     results = key.load_by_pub_key(ssh_key)
 
                     if results is None:
                         key.public_key = ssh_key
-                        key.name = "SSH Key %s" % self.name
+                        key.name = "SSH Key %s" % name
                         key.create()
                     else:
                         key = results
@@ -490,12 +527,16 @@ class Droplet(BaseAPI):
         if not self.size_slug and self.size:
             self.size_slug = self.size
 
+        ssh_keys_id = Droplet.__get_ssh_keys_id_or_fingerprint(self.ssh_keys,
+                                                               self.token,
+                                                               self.name)
+
         data = {
             "name": self.name,
             "size": self.size_slug,
             "image": self.image,
             "region": self.region,
-            "ssh_keys": self.__get_ssh_keys_id_or_fingerprint(),
+            "ssh_keys": ssh_keys_id,
             "backups": bool(self.backups),
             "ipv6": bool(self.ipv6),
             "private_networking": bool(self.private_networking),

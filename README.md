@@ -132,6 +132,6 @@ To run all the tests manually use py.test command:
 ## Links
 
   * GitHub: [https://github.com/koalalorenzo/python-digitalocean](https://github.com/koalalorenzo/python-digitalocean)
-  * PyPi page: [https://pypi.python.org/pypi/python-digitalocean/](https://pypi.python.org/pypi/python-digitalocean/)
+  * PyPI page: [https://pypi.python.org/pypi/python-digitalocean/](https://pypi.python.org/pypi/python-digitalocean/)
   * Author Website: [http://who.is.lorenzo.setale.me/?](http://setale.me/)
   * Author Blog: [http://blog.setale.me/](http://blog.setale.me/)

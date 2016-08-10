@@ -808,7 +808,8 @@ class TestDroplet(BaseTest):
             {u"name": u"example.com", u"region": u"nyc3",
              u"user_data": u"Some user data.", u"ipv6": True,
              u"private_networking": True, u"backups": True,
-             u"image": u"ubuntu-14-04-x64", u"size": u"512mb", u"ssh_keys": []})
+             u"image": u"ubuntu-14-04-x64", u"size": u"512mb", u"ssh_keys": [],
+             u"volumes": []})
         self.assertEqual(droplet.id, 3164494)
         self.assertEqual(droplet.action_ids, [36805096])
 

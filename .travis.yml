@@ -2,5 +2,5 @@ language: python
 python:
   - "2.7"
   - "3.4"
-install: "pip install -U -r requirements.txt --use-mirrors"
+install: "pip install -U -r requirements.txt"
 script: python -m pytest

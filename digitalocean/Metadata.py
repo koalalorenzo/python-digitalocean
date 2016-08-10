@@ -2,7 +2,7 @@
 import requests
 try:
     from urlparse import urljoin
-except:
+except ImportError:
     from urllib.parse import urljoin
 
 from .baseapi import BaseAPI

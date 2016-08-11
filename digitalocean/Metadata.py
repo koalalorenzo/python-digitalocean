@@ -25,8 +25,7 @@ class Metadata(BaseAPI):
             Customized version of get_data to directly get the data without
             using the authentication method.
         """
-        if "https" not in url:
-            url = urljoin(self.end_point, url)
+        url = urljoin(self.end_point, url)
 
         response = requests.get(url, headers=headers, params=params)
 

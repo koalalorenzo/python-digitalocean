@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 try:
     from urlparse import urlparse, parse_qs
-except:
+except ImportError:
     from urllib.parse import urlparse, parse_qs
 
 from .baseapi import BaseAPI

@@ -41,7 +41,7 @@ class Manager(BaseAPI):
         # page, try to deal with pagination. Note: Breaking the logic on
         # multiple pages,
         if 'meta' in data:
-            if 'total' in data['meta']['total'] > params['per_page']:
+            if 'total' in data and data['meta']['total'] > params['per_page']:
                 return self.__deal_with_pagination(args[0], data, params)
             else:
                 return data

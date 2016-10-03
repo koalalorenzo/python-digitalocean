@@ -17,3 +17,6 @@ class Size(BaseAPI):
 
     def __str__(self):
         return "%s" % (self.slug)
+
+    def __repr__(self):
+        return str(self)

@@ -84,4 +84,7 @@ class Record(BaseAPI):
                 setattr(self, attr, record[attr])
 
     def __str__(self):
-        return "%s %s" % (self.id, self.domain)
+        return "<Record: %s %s>" % (self.id, self.domain)
+
+    def __repr__(self):
+        return str(self)

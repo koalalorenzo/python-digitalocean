@@ -67,4 +67,7 @@ class Action(BaseAPI):
         return self.status == u'completed'
 
     def __str__(self):
-        return "%s %s [%s]" % (self.id, self.type, self.status)
+        return "<Action: %s %s %s>" % (self.id, self.type, self.status)
+
+    def __repr__(self):
+        return str(self)

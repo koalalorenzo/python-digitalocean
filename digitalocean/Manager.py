@@ -287,4 +287,7 @@ class Manager(BaseAPI):
         return Volume.get_object(api_token=self.token, volume_id=volume_id)
 
     def __str__(self):
-        return "%s" % (self.token)
+        return "<Manager: %s>" % (self.token)
+
+    def __repr__(self):
+        return str(self)

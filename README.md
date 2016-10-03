@@ -5,13 +5,9 @@ This library provides easy access to Digital Ocean APIs to deploy droplets, imag
 
 [![](https://travis-ci.org/koalalorenzo/python-digitalocean.svg)](https://travis-ci.org/koalalorenzo/python-digitalocean)
 
-<div align="center">
-
 [![](https://img.shields.io/github/forks/badges/shields.svg?style=social&label=Fork)](https://travis-ci.org/koalalorenzo/python-digitalocean)
 [![](https://img.shields.io/github/stars/badges/shields.svg?style=social&label=Star)](https://travis-ci.org/koalalorenzo/python-digitalocean)
 [![](https://img.shields.io/github/watchers/badges/shields.svg?style=social&label=Watch)](https://travis-ci.org/koalalorenzo/python-digitalocean)
-
-</div>
 
 ## How to install
 

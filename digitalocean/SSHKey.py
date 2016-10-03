@@ -95,4 +95,4 @@ class SSHKey(BaseAPI):
         return self.get_data("account/keys/%s" % self.id, type=DELETE)
 
     def __str__(self):
-        return "%s %s" % (self.id, self.name)
+        return "<SSHKey: %s %s>" % (self.id, self.name)

@@ -42,6 +42,17 @@ python-digitalocean support all the features provided via digitalocean.com APIs,
 
 
 ## Examples
+### Listing the droplets
+
+This example shows how to list all the active droplets:
+
+```python
+import digitalocean
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+print(manager.get_all_droplets())
+```
+
+
 ### Shutdown all droplets
 
 This example shows how to shutdown all the active droplets:

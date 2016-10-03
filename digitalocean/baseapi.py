@@ -118,3 +118,6 @@ class BaseAPI(object):
 
     def __unicode__(self):
         return u"%s" % self.__str__()
+
+    def __repr__(self):
+        return str(self)

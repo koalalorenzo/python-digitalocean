@@ -33,6 +33,3 @@ class Account(BaseAPI):
 
     def __str__(self):
         return "%s" % (self.email)
-
-    def __repr__(self):
-        return str(self)

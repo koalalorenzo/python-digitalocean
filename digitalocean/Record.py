@@ -85,6 +85,3 @@ class Record(BaseAPI):
 
     def __str__(self):
         return "<Record: %s %s>" % (self.id, self.domain)
-
-    def __repr__(self):
-        return str(self)

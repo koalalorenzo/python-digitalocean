@@ -11,6 +11,3 @@ class Kernel(BaseAPI):
 
     def __str__(self):
         return "<Kernel: %s %s>" % (self.name, self.version)
-
-    def __repr__(self):
-        return str(self)

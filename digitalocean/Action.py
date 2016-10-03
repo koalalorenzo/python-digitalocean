@@ -68,6 +68,3 @@ class Action(BaseAPI):
 
     def __str__(self):
         return "<Action: %s %s %s>" % (self.id, self.type, self.status)
-
-    def __repr__(self):
-        return str(self)

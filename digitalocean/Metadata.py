@@ -43,6 +43,3 @@ class Metadata(BaseAPI):
 
     def __str__(self):
         return "<Metadata: %s>" % (self.droplet_id)
-
-    def __repr__(self):
-        return str(self)

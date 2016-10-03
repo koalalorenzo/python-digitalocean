@@ -96,6 +96,3 @@ class SSHKey(BaseAPI):
 
     def __str__(self):
         return "<SSHKey: %s %s>" % (self.id, self.name)
-
-    def __repr__(self):
-        return str(self)

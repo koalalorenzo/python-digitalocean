@@ -288,6 +288,3 @@ class Manager(BaseAPI):
 
     def __str__(self):
         return "<Manager: %s>" % (self.token)
-
-    def __repr__(self):
-        return str(self)

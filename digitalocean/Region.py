@@ -13,6 +13,3 @@ class Region(BaseAPI):
 
     def __str__(self):
         return "<Region: %s %s>" % (self.slug, self.name)
-
-    def __repr__(self):
-        return str(self)

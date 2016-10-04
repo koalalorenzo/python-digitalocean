@@ -114,7 +114,10 @@ class BaseAPI(object):
         return data
 
     def __str__(self):
-        return "%s" % self.token
+        return "<%s>" % self.__class__.__name__
 
     def __unicode__(self):
         return u"%s" % self.__str__()
+
+    def __repr__(self):
+        return str(self)

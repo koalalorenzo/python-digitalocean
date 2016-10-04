@@ -32,4 +32,4 @@ class Account(BaseAPI):
             setattr(self, attr, account[attr])
 
     def __str__(self):
-        return "%s" % self.email
+        return "%s" % (self.email)

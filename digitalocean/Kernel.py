@@ -10,4 +10,4 @@ class Kernel(BaseAPI):
         super(Kernel, self).__init__(*args, **kwargs)
 
     def __str__(self):
-        return "%s %s" % (self.name, self.version)
+        return "<Kernel: %s %s>" % (self.name, self.version)

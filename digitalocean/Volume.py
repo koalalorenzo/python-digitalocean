@@ -116,7 +116,4 @@ class Volume(BaseAPI):
         )
 
     def __str__(self):
-        return "%s %s %s" % (self.id, self.name, self.size_gigabytes)
-
-    def __repr__(self):
-        return "< %s %s %s >" % (self.id, self.name, self.size_gigabytes)
+        return "<Volume: %s %s %s>" % (self.id, self.name, self.size_gigabytes)

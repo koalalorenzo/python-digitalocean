@@ -12,4 +12,4 @@ class Region(BaseAPI):
         super(Region, self).__init__(*args, **kwargs)
 
     def __str__(self):
-        return "%s" % self.name
+        return "<Region: %s %s>" % (self.slug, self.name)

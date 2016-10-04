@@ -42,4 +42,4 @@ class Metadata(BaseAPI):
         return self
 
     def __str__(self):
-        return "%s" % self.droplet_id
+        return "<Metadata: %s>" % (self.droplet_id)

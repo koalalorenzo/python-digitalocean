@@ -27,8 +27,8 @@ class Metadata(BaseAPI):
         """
         url = urljoin(self.end_point, url)
 
-        timeout = self.extract_timeout(params)
-        response = requests.get(url, headers=headers, params=params, timeout=timeout)
+        response = requests.get(url, headers=headers, params=params,
+                                timeout=self.get_timeout())
 
         if render_json:
             return response.json()

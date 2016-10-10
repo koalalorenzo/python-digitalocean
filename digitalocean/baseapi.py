@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 import json
 import logging
 import requests
@@ -12,6 +13,7 @@ GET = 'GET'
 POST = 'POST'
 DELETE = 'DELETE'
 PUT = 'PUT'
+REQUEST_TIMEOUT_ENV_VAR = 'PYTHON_DIGITALOCEAN_REQUEST_TIMEOUT_SEC'
 
 
 class Error(Exception):
@@ -56,8 +58,6 @@ class BaseAPI(object):
         if params is None:
             params = {}
 
-        timeout = self.extract_timeout(params)
-
         if not self.token:
             raise TokenError("No token provided. Please use a valid token")
 
@@ -81,6 +81,8 @@ class BaseAPI(object):
         requests_method, headers, payload, transform = lookup[type]
         headers.update({'Authorization': 'Bearer ' + self.token})
         kwargs = {'headers': headers, payload: transform(params)}
+
+        timeout = self.get_timeout()
         if timeout:
             kwargs['timeout'] = timeout
 
@@ -91,17 +93,13 @@ class BaseAPI(object):
 
         return requests_method(url, **kwargs)
 
-    def extract_timeout(self, params):
+    def get_timeout(self):
         """
-            This method checks if there is a timeout specified in the params for
-            the request and extracts it from there. As a result, the params hash
-            is modified and the 'timeout' key is deleted.
+            Checks if any timeout for the requests to DigitalOcean is required.
+            To set a timeout, use the REQUEST_TIMEOUT_ENV_VAR environment
+            variable.
         """
-        timeout = None
-        if 'timeout' in params:
-            timeout = params['timeout']
-            del params['timeout']
-        return timeout
+        return os.environ.get(REQUEST_TIMEOUT_ENV_VAR)
 
     def get_data(self, url, type=GET, params=None):
         """

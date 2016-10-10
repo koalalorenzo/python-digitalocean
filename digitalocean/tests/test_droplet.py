@@ -53,6 +53,7 @@ class TestDroplet(BaseTest):
                          "2604:A880:0800:0010:0000:0000:031D:2001")
         self.assertEqual(d.kernel['id'], 2233)
         self.assertEqual(d.features, ["ipv6", "virtio"])
+        self.assertEqual(d.tags, [])
 
     @responses.activate
     def test_power_off(self):

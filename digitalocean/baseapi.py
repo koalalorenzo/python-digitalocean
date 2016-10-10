@@ -56,6 +56,8 @@ class BaseAPI(object):
         if params is None:
             params = {}
 
+        timeout = self.extract_timeout(params)
+
         if not self.token:
             raise TokenError("No token provided. Please use a valid token")
 
@@ -79,13 +81,27 @@ class BaseAPI(object):
         requests_method, headers, payload, transform = lookup[type]
         headers.update({'Authorization': 'Bearer ' + self.token})
         kwargs = {'headers': headers, payload: transform(params)}
+        if timeout:
+            kwargs['timeout'] = timeout
 
         # remove token from log
         headers_str = str(headers).replace(self.token.strip(), 'TOKEN')
-        self._log.debug('%s %s %s:%s %s' %
-                        (type, url, payload, params, headers_str))
+        self._log.debug('%s %s %s:%s %s %s' %
+                        (type, url, payload, params, headers_str, timeout))
 
         return requests_method(url, **kwargs)
+
+    def extract_timeout(self, params):
+        """
+            This method checks if there is a timeout specified in the params for
+            the request and extracts it from there. As a result, the params hash
+            is modified and the 'timeout' key is deleted.
+        """
+        timeout = None
+        if 'timeout' in params:
+            timeout = params['timeout']
+            del params['timeout']
+        return timeout
 
     def get_data(self, url, type=GET, params=None):
         """

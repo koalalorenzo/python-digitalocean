@@ -4,7 +4,7 @@ import logging
 import requests
 try:
     from urlparse import urljoin
-except:
+except ImportError:
     from urllib.parse import urljoin
 
 
@@ -59,8 +59,7 @@ class BaseAPI(object):
         if not self.token:
             raise TokenError("No token provided. Please use a valid token")
 
-        if "https" not in url:
-            url = urljoin(self.end_point, url)
+        url = urljoin(self.end_point, url)
 
         # lookup table to find out the apropriate requests method,
         # headers and payload type (json or query parameters)
@@ -115,7 +114,10 @@ class BaseAPI(object):
         return data
 
     def __str__(self):
-        return "%s" % self.token
+        return "<%s>" % self.__class__.__name__
 
     def __unicode__(self):
         return u"%s" % self.__str__()
+
+    def __repr__(self):
+        return str(self)

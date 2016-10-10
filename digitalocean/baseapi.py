@@ -31,6 +31,10 @@ class JSONReadError(Error):
     pass
 
 
+class NotFoundError(Error):
+    pass
+
+
 class BaseAPI(object):
     """
         Basic api class for
@@ -73,8 +77,8 @@ class BaseAPI(object):
             PUT: (requests.put, {'Content-type': 'application/json'}, 'data',
                   json_dumps),
             DELETE: (requests.delete,
-                     {'content-type': 'application/x-www-form-urlencoded'},
-                     'params', identity),
+                     {'content-type': 'application/json'},
+                     'data', json_dumps),
         }
 
         requests_method, headers, payload, transform = lookup[type]
@@ -101,6 +105,9 @@ class BaseAPI(object):
         if req.status_code == 204:
             return True
 
+        if req.status_code == 404:
+            raise NotFoundError()
+            
         try:
             data = req.json()
         except ValueError as e:

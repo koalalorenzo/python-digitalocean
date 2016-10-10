@@ -1,6 +1,6 @@
+from .baseapi import NotFoundError
 from .baseapi import BaseAPI
 from .Droplet import Droplet
-
 
 class Tag(BaseAPI):
     def __init__(self, *args, **kwargs):
@@ -29,18 +29,30 @@ class Tag(BaseAPI):
     def create(self, **kwargs):
         """
             Create the tag.
+            Check if the tag is already taken before creating
         """
         for attr in kwargs.keys():
             setattr(self, attr, kwargs[attr])
 
         query = {"name": self.name}
 
+        ## check if the tag already exists
         output = self.get_data("tags/", type="POST", params=query)
         if output:
             self.name = output['tag']['name']
             self.resources = output['tag']['resources']
 
-    def get_resources(self, resources, method):
+    def update_tag(self, name):
+        query = {"name": name}
+        updated = self.get_data("tags/%s" % self.name, type="PUT", params=query)
+        if updated:
+            self.name = updated["tag"]["name"]
+
+
+    def delete(self):
+        return self.get_data("tags/%s" % self.name, type="DELETE")
+
+    def __get_resources(self, resources, method):
         """ Method used to talk directly to the API (TAGs' Resources) """
         tagged = self.get_data(
             'tags/%s/resources' % self.name, params={
@@ -50,23 +62,23 @@ class Tag(BaseAPI):
         )
         return tagged
 
-    def add_resources(self, resources):
+    def __add_resources(self, resources):
         """
             Add to the resources to this tag.
 
             Attributes accepted at creation time:
                 resources: array - See API.
         """
-        return self.get_resources(resources, method='POST')
+        return self.__get_resources(resources, method='POST')
 
-    def remove_resources(self, resources):
+    def __remove_resources(self, resources):
         """
             Remove resources from this tag.
 
             Attributes accepted at creation time:
                 resources: array - See API.
         """
-        return self.get_resources(resources, method='DELETE')
+        return self.__get_resources(resources, method='DELETE')
 
     def __extract_resources_from_droplets(self, data):
         """
@@ -78,13 +90,16 @@ class Tag(BaseAPI):
         if not isinstance(data, list): return data
         for a_droplet in data:
             res = {}
-            if isinstance(a_droplet, str) or isinstance(a_droplet, int):
+
+            if isinstance(a_droplet, str) or isinstance(a_droplet, unicode) or isinstance(a_droplet, int):
                 res = {"resource_id": a_droplet, "resource_type": "droplet"}
             elif isinstance(a_droplet, Droplet):
                 res = {"resource_id": a_droplet.id, "resource_type": "droplet"}
-            else:
-                continue
-            resources.append(res)
+
+            if len(res) > 0:
+                resources.append(res)
+
+        return resources
 
     def add_droplets(self, droplet):
         """
@@ -93,15 +108,17 @@ class Tag(BaseAPI):
             Attributes accepted at creation time:
                 droplet: array of string or array of int, or array of Droplets.
         """
-        if isinstance(droplet, list):
-            # Extracting data from the Droplet object
-            resources = self.__extract_resources_from_droplets(droplet)
-            return self.add_resources(resources)
-        else:
-            return self.add_resources([{
-                "resource_id": droplet.id,
-                "resource_type": "droplet"
-            }])
+        droplets = droplet
+        if not isinstance(droplets, list):
+            droplets = [droplet]
+
+        # Extracting data from the Droplet object
+        resources = self.__extract_resources_from_droplets(droplets)
+        if len(resources) > 0:
+            return self.__add_resources(resources)
+
+        return False
+
 
     def remove_droplets(self, droplet):
         """
@@ -110,12 +127,13 @@ class Tag(BaseAPI):
             Attributes accepted at creation time:
                 droplet: array of string or array of int, or array of Droplets.
         """
-        if isinstance(droplet, list):
-            # Extracting data from the Droplet object
-            resources = self.__extract_resources_from_droplets(droplet)
-            return self.remove_resources(resources)
-        else:
-            return self.remove_resources([{
-                "resource_id": droplet.id,
-                "resource_type": "droplet"
-            }])
+        droplets = droplet
+        if not isinstance(droplets, list):
+            droplets = [droplet]
+
+        # Extracting data from the Droplet object
+        resources = self.__extract_resources_from_droplets(droplets)
+        if len(resources) > 0:
+            return self.__remove_resources(resources)
+
+        return False

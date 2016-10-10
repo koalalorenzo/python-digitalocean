@@ -1,0 +1,11 @@
+{
+  "tag": {
+    "name": "awesome",
+    "resources": {
+      "droplets": {
+        "count": 0,
+        "last_tagged": null
+      }
+    }
+  }
+}

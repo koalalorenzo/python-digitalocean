@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 import json
 import logging
 import requests
@@ -12,6 +13,7 @@ GET = 'GET'
 POST = 'POST'
 DELETE = 'DELETE'
 PUT = 'PUT'
+REQUEST_TIMEOUT_ENV_VAR = 'PYTHON_DIGITALOCEAN_REQUEST_TIMEOUT_SEC'
 
 
 class Error(Exception):
@@ -80,12 +82,24 @@ class BaseAPI(object):
         headers.update({'Authorization': 'Bearer ' + self.token})
         kwargs = {'headers': headers, payload: transform(params)}
 
+        timeout = self.get_timeout()
+        if timeout:
+            kwargs['timeout'] = timeout
+
         # remove token from log
         headers_str = str(headers).replace(self.token.strip(), 'TOKEN')
-        self._log.debug('%s %s %s:%s %s' %
-                        (type, url, payload, params, headers_str))
+        self._log.debug('%s %s %s:%s %s %s' %
+                        (type, url, payload, params, headers_str, timeout))
 
         return requests_method(url, **kwargs)
+
+    def get_timeout(self):
+        """
+            Checks if any timeout for the requests to DigitalOcean is required.
+            To set a timeout, use the REQUEST_TIMEOUT_ENV_VAR environment
+            variable.
+        """
+        return os.environ.get(REQUEST_TIMEOUT_ENV_VAR)
 
     def get_data(self, url, type=GET, params=None):
         """

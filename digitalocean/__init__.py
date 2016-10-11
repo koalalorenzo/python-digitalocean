@@ -21,3 +21,4 @@ from .Kernel import Kernel
 from .FloatingIP import FloatingIP
 from .Volume import Volume
 from .baseapi import Error, TokenError, DataReadError
+from .Tag import Tag

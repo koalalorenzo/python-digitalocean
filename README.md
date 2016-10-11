@@ -27,6 +27,7 @@ python-digitalocean support all the features provided via digitalocean.com APIs,
 * Get public Images
 * Get Droplet's event status
 * Create and Remove a Droplet
+* Create, Add and Remove Tags from Droplets
 * Resize a Droplet
 * Shutdown, restart and boot a Droplet
 * Power off, power on and "power cycle" a Droplet
@@ -43,9 +44,31 @@ This example shows how to list all the active droplets:
 ```python
 import digitalocean
 manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
-print(manager.get_all_droplets())
+my_droplets = manager.get_all_droplets()
+print(my_droplets)
 ```
 
+### Listing the droplets by tags
+
+This example shows how to list all the active droplets:
+
+```python
+import digitalocean
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+my_droplets = manager.get_all_droplets(tag_name="awesome")
+print(my_droplets)
+```
+
+### Add a tag to a droplet
+
+This example shows how to list all the active droplets:
+
+```python
+import digitalocean
+tag = digitalocean.Tag(token="secretspecialuniquesnowflake", name="tag_name")
+tag.create() # create tag if not already created
+tag.add_droplets(["DROPLET_ID"])
+```
 
 ### Shutdown all droplets
 

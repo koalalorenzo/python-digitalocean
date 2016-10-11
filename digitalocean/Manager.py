@@ -40,8 +40,8 @@ class Manager(BaseAPI):
         # if there are more elements available (total) than the elements per 
         # page, try to deal with pagination. Note: Breaking the logic on
         # multiple pages,
-        if 'meta' in data:
-            if 'total' in data and data['meta']['total'] > params['per_page']:
+        if 'meta' in data and 'total' in data['meta']:
+            if data['meta']['total'] > params['per_page']:
                 return self.__deal_with_pagination(args[0], data, params)
             else:
                 return data

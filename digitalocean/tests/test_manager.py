@@ -1,6 +1,5 @@
 import unittest
 import responses
-
 import digitalocean
 
 from .BaseTest import BaseTest
@@ -84,6 +83,44 @@ class TestManager(BaseTest):
         self.assertEqual(droplet.features, ["backups",
                                             "ipv6",
                                             "virtio"])
+
+    @responses.activate
+    def test_get_droplets_by_tag(self):
+        data = self.load_from_file('droplets/bytag.json')
+
+        url = self.base_url + 'droplets/'
+        responses.add(responses.GET, url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        manager = digitalocean.Manager(token=self.token)
+        droplets = manager.get_all_droplets(tag_name="awesome")
+
+        droplet = droplets[0]
+        self.assertEqual(droplet.token, self.token)
+        self.assertEqual(droplet.id, 3164444)
+        self.assertEqual(droplet.name, "example.com")
+        self.assertEqual(droplet.memory, 512)
+        self.assertEqual(droplet.vcpus, 1)
+        self.assertEqual(droplet.disk, 20)
+        self.assertEqual(droplet.backups, True)
+        self.assertEqual(droplet.ipv6, True)
+        self.assertEqual(droplet.private_networking, False)
+        self.assertEqual(droplet.region['slug'], "nyc3")
+        self.assertEqual(droplet.status, "active")
+        self.assertEqual(droplet.image['slug'], "ubuntu-14-04-x64")
+        self.assertEqual(droplet.size_slug, '512mb')
+        self.assertEqual(droplet.created_at, "2014-11-14T16:29:21Z")
+        self.assertEqual(droplet.ip_address, "104.236.32.182")
+        self.assertEqual(droplet.ip_v6_address,
+                         "2604:A880:0800:0010:0000:0000:02DD:4001")
+        self.assertEqual(droplet.kernel['id'], 2233)
+        self.assertEqual(droplet.backup_ids, [7938002])
+        self.assertEqual(droplet.features, ["backups",
+                                            "ipv6",
+                                            "virtio"])
+        self.assertEqual(droplet.tags, ["awesome"])
 
     @responses.activate
     def test_get_all_regions(self):

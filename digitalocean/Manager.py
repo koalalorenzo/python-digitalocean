@@ -90,11 +90,16 @@ class Manager(BaseAPI):
             regions.append(region)
         return regions
 
-    def get_all_droplets(self):
+    def get_all_droplets(self, tag_name=None):
         """
             This function returns a list of Droplet object.
         """
-        data = self.get_data("droplets/")
+        if tag_name:
+            params = {"tag_name": tag_name}
+            data = self.get_data("droplets/", params=params)
+        else:
+            data = self.get_data("droplets/")
+
         droplets = list()
         for jsoned in data['droplets']:
             droplet = Droplet(**jsoned)
@@ -293,4 +298,4 @@ class Manager(BaseAPI):
         return Volume.get_object(api_token=self.token, volume_id=volume_id)
 
     def __str__(self):
-        return "%s" % (self.token)
+        return "<Manager>"

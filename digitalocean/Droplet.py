@@ -89,6 +89,7 @@ class Droplet(BaseAPI):
         self.private_networking = None
         self.user_data = None
         self.volumes = []
+        self.tags = []
 
         # This will load also the values passed
         super(Droplet, self).__init__(*args, **kwargs)
@@ -189,6 +190,9 @@ class Droplet(BaseAPI):
             else:
                 self.private_networking = False
 
+        if "tags" in droplets:
+            self.tags = droplets["tags"]
+            
         return self
 
     def _perform_action(self, params, return_dict=True):
@@ -627,4 +631,4 @@ class Droplet(BaseAPI):
         return kernels
 
     def __str__(self):
-        return "%s %s" % (self.id, self.name)
+        return "<Droplet: %s %s>" % (self.id, self.name)

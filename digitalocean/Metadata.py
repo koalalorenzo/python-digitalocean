@@ -27,7 +27,8 @@ class Metadata(BaseAPI):
         """
         url = urljoin(self.end_point, url)
 
-        response = requests.get(url, headers=headers, params=params)
+        response = requests.get(url, headers=headers, params=params,
+                                timeout=self.get_timeout())
 
         if render_json:
             return response.json()
@@ -42,4 +43,4 @@ class Metadata(BaseAPI):
         return self
 
     def __str__(self):
-        return "%s" % self.droplet_id
+        return "<Metadata: %s>" % (self.droplet_id)

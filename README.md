@@ -5,15 +5,9 @@ This library provides easy access to Digital Ocean APIs to deploy droplets, imag
 
 [![](https://travis-ci.org/koalalorenzo/python-digitalocean.svg)](https://travis-ci.org/koalalorenzo/python-digitalocean)
 
-<div align="center">
-
-<iframe src="http://ghbtns.com/github-btn.html?user=koalalorenzo&repo=python-digitalocean&type=follow&size=large&count=true"
-  allowtransparency="true" frameborder="0" scrolling="0" width="220" height="30"></iframe>
-
-<iframe src="http://ghbtns.com/github-btn.html?user=koalalorenzo&repo=python-digitalocean&type=watch&size=large&count=true"
-  allowtransparency="true" frameborder="0" scrolling="0" width="150" height="30"></iframe>
-
-</div>
+[![](https://img.shields.io/github/forks/badges/shields.svg?style=social&label=Fork)](https://travis-ci.org/koalalorenzo/python-digitalocean)
+[![](https://img.shields.io/github/stars/badges/shields.svg?style=social&label=Star)](https://travis-ci.org/koalalorenzo/python-digitalocean)
+[![](https://img.shields.io/github/watchers/badges/shields.svg?style=social&label=Watch)](https://travis-ci.org/koalalorenzo/python-digitalocean)
 
 ## How to install
 
@@ -33,6 +27,7 @@ python-digitalocean support all the features provided via digitalocean.com APIs,
 * Get public Images
 * Get Droplet's event status
 * Create and Remove a Droplet
+* Create, Add and Remove Tags from Droplets
 * Resize a Droplet
 * Shutdown, restart and boot a Droplet
 * Power off, power on and "power cycle" a Droplet
@@ -42,6 +37,39 @@ python-digitalocean support all the features provided via digitalocean.com APIs,
 
 
 ## Examples
+### Listing the droplets
+
+This example shows how to list all the active droplets:
+
+```python
+import digitalocean
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+my_droplets = manager.get_all_droplets()
+print(my_droplets)
+```
+
+### Listing the droplets by tags
+
+This example shows how to list all the active droplets:
+
+```python
+import digitalocean
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+my_droplets = manager.get_all_droplets(tag_name="awesome")
+print(my_droplets)
+```
+
+### Add a tag to a droplet
+
+This example shows how to list all the active droplets:
+
+```python
+import digitalocean
+tag = digitalocean.Tag(token="secretspecialuniquesnowflake", name="tag_name")
+tag.create() # create tag if not already created
+tag.add_droplets(["DROPLET_ID"])
+```
+
 ### Shutdown all droplets
 
 This example shows how to shutdown all the active droplets:

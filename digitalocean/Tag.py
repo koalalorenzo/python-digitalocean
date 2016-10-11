@@ -1,4 +1,3 @@
-from .baseapi import NotFoundError
 from .baseapi import BaseAPI
 from .Droplet import Droplet
 
@@ -8,11 +7,13 @@ class Tag(BaseAPI):
         self.resources = {}
         super(Tag, self).__init__(*args, **kwargs)
 
+
     @classmethod
     def get_object(cls, api_token, tag_name):
         tag = cls(token=api_token, name=tag_name)
         tag.load()
         return tag
+
 
     def load(self):
         """
@@ -26,21 +27,21 @@ class Tag(BaseAPI):
 
         return self
 
+
     def create(self, **kwargs):
         """
             Create the tag.
-            Check if the tag is already taken before creating
         """
         for attr in kwargs.keys():
             setattr(self, attr, kwargs[attr])
 
-        query = {"name": self.name}
+        params = {"name": self.name}
 
-        ## check if the tag already exists
-        output = self.get_data("tags/", type="POST", params=query)
+        output = self.get_data("tags/", type="POST", params=params)
         if output:
             self.name = output['tag']['name']
             self.resources = output['tag']['resources']
+
 
     def update_tag(self, name):
         query = {"name": name}
@@ -52,6 +53,7 @@ class Tag(BaseAPI):
     def delete(self):
         return self.get_data("tags/%s" % self.name, type="DELETE")
 
+
     def __get_resources(self, resources, method):
         """ Method used to talk directly to the API (TAGs' Resources) """
         tagged = self.get_data(
@@ -62,6 +64,7 @@ class Tag(BaseAPI):
         )
         return tagged
 
+
     def __add_resources(self, resources):
         """
             Add to the resources to this tag.
@@ -71,6 +74,7 @@ class Tag(BaseAPI):
         """
         return self.__get_resources(resources, method='POST')
 
+
     def __remove_resources(self, resources):
         """
             Remove resources from this tag.
@@ -79,6 +83,7 @@ class Tag(BaseAPI):
                 resources: array - See API.
         """
         return self.__get_resources(resources, method='DELETE')
+
 
     def __extract_resources_from_droplets(self, data):
         """
@@ -100,6 +105,7 @@ class Tag(BaseAPI):
                 resources.append(res)
 
         return resources
+
 
     def add_droplets(self, droplet):
         """

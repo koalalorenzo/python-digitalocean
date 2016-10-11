@@ -9,8 +9,8 @@ except ImportError:
 
 long_description = """This library provides easy access to Digital Ocean APIs to deploy droplets, images and more."""
 
-if os.path.isfile("README.md"):
-    with open('README.md') as file:
+if os.path.isfile("DESCRIPTION.rst"):
+    with open('DESCRIPTION.rst') as file:
         long_description = file.read()
 
 setup(

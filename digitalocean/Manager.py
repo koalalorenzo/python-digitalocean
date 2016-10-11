@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 try:
     from urlparse import urlparse, parse_qs
-except:
+except ImportError:
     from urllib.parse import urlparse, parse_qs
 
 from .baseapi import BaseAPI
@@ -292,4 +292,4 @@ class Manager(BaseAPI):
         return Volume.get_object(api_token=self.token, volume_id=volume_id)
 
     def __str__(self):
-        return "%s" % (self.token)
+        return "<Manager>"

@@ -103,7 +103,15 @@ class BaseAPI(object):
             To set a timeout, use the REQUEST_TIMEOUT_ENV_VAR environment
             variable.
         """
-        return os.environ.get(REQUEST_TIMEOUT_ENV_VAR)
+        timeout_str = os.environ.get(REQUEST_TIMEOUT_ENV_VAR)
+        if timeout_str:
+            try:
+                return float(timeout_str)
+            except:
+                self._log.error('Failed parsing the request read timeout of '
+                                '"%s". Please use a valid float number!' %
+                                        timeout_str)
+        return None
 
     def get_data(self, url, type=GET, params=None):
         """
@@ -120,7 +128,7 @@ class BaseAPI(object):
 
         if req.status_code == 404:
             raise NotFoundError()
-            
+
         try:
             data = req.json()
         except ValueError as e:

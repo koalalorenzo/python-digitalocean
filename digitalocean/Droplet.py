@@ -549,6 +549,10 @@ class Droplet(BaseAPI):
             "private_networking": bool(self.private_networking),
             "volumes": self.volumes,
         }
+        
+        if type(self.image) is int:
+            data["image_i"] = self.image
+            data.pop("image")
 
         if self.user_data:
             data["user_data"] = self.user_data

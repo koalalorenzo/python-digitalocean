@@ -548,6 +548,7 @@ class Droplet(BaseAPI):
             "ipv6": bool(self.ipv6),
             "private_networking": bool(self.private_networking),
             "volumes": self.volumes,
+            "tags": self.tags,
         }
 
         if self.user_data:

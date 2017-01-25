@@ -25,39 +25,41 @@ class Droplet(BaseAPI):
     """"Droplet management
 
     Attributes accepted at creation time:
-        name: str - name
-        size_slug: str - droplet size
-        image: str - image name to use to create droplet
-        region: str - region
-        ssh_keys: [str] - list of ssh keys
-        backups: bool - True if backups enabled
-        ipv6: bool - True if ipv6 enabled
-        private_networking: bool - True if private networking enabled
-        user_data: str - arbitrary data to pass to droplet
-        volumes: [str] - list of blockstorage volumes
+
+    Args:
+        name (str): name
+        size_slug (str): droplet size
+        image (str): image name to use to create droplet
+        region (str): region
+        ssh_keys: (:obj:`str`, optional): list of ssh keys
+        backups (bool): True if backups enabled
+        ipv6 (bool): True if ipv6 enabled
+        private_networking (bool): True if private networking enabled
+        user_data (str): arbitrary data to pass to droplet
+        volumes (:obj:`str`, optional): list of blockstorage volumes
 
     Attributes returned by API:
-        id: int - droplet id
-        memory: str - memory size
-        vcpus: int - number of vcpus
-        disk: int - disk size in GB
-        status: str - status
-        locked: bool - True if locked
-        created_at: str - creation date in format u'2014-11-06T10:42:09Z'
-        status: str - status, e.g. 'new', 'active', etc
-        networks: dict - details of connected networks
-        kernel: dict - details of kernel
-        backup_ids: [int] - list of ids of backups of this droplet
-        snapshot_ids: [int] - list of ids of snapshots of this droplet
-        action_ids: [int] - list of ids of actions
-        features: [str] - list of enabled features. e.g.
+        id (int): droplet id
+        memory (str): memory size
+        vcpus (int): number of vcpus
+        disk (int): disk size in GB
+        status (str): status
+        locked (bool): True if locked
+        created_at (str): creation date in format u'2014-11-06T10:42:09Z'
+        status (str): status, e.g. 'new', 'active', etc
+        networks (dict): details of connected networks
+        kernel (dict): details of kernel
+        backup_ids (:obj:`int`, optional): list of ids of backups of this droplet
+        snapshot_ids (:obj:`int`, optional): list of ids of snapshots of this droplet
+        action_ids (:obj:`int`, optional): list of ids of actions
+        features (:obj:`str`, optional): list of enabled features. e.g.
                   [u'private_networking', u'virtio']
-        image: dict - details of image used to create this droplet
-        ip_address: str - public ip addresses
-        private_ip_address: str - private ip address
-        ip_v6_address: [str] - list of ipv6 addresses assigned
-        end_point: str - url of api endpoint used
-        volume_ids: [str] - list of blockstorage volumes
+        image (dict): details of image used to create this droplet
+        ip_address (str): public ip addresses
+        private_ip_address (str): private ip address
+        ip_v6_address (:obj:`str`, optional): list of ipv6 addresses assigned
+        end_point (str): url of api endpoint used
+        volume_ids (:obj:`str`, optional): list of blockstorage volumes
     """
 
     def __init__(self, *args, **kwargs):
@@ -99,8 +101,8 @@ class Droplet(BaseAPI):
         """Class method that will return a Droplet object by ID.
 
         Args:
-            api_token: str - token
-            droplet_id: int - droplet id
+            api_token (str): token
+            droplet_id (int): droplet id
         """
         droplet = cls(token=api_token, id=droplet_id)
         droplet.load()
@@ -200,10 +202,10 @@ class Droplet(BaseAPI):
             Perform a droplet action.
 
             Args:
-                params - dict : parameters of the action
+                params (dict): parameters of the action
 
             Optional Args:
-                return_dict - bool : Return a dict when True (default),
+                return_dict (bool): Return a dict when True (default),
                     otherwise return an Action.
 
             Returns dict or Action
@@ -228,7 +230,7 @@ class Droplet(BaseAPI):
             Boot up the droplet
 
             Optional Args:
-                return_dict - bool : Return a dict when True (default),
+                return_dict (bool): Return a dict when True (default),
                     otherwise return an Action.
 
             Returns dict or Action
@@ -240,7 +242,7 @@ class Droplet(BaseAPI):
             shutdown the droplet
 
             Optional Args:
-                return_dict - bool : Return a dict when True (default),
+                return_dict (bool): Return a dict when True (default),
                     otherwise return an Action.
 
             Returns dict or Action
@@ -252,7 +254,7 @@ class Droplet(BaseAPI):
             restart the droplet
 
             Optional Args:
-                return_dict - bool : Return a dict when True (default),
+                return_dict (bool): Return a dict when True (default),
                     otherwise return an Action.
 
             Returns dict or Action
@@ -264,7 +266,7 @@ class Droplet(BaseAPI):
             restart the droplet
 
             Optional Args:
-                return_dict - bool : Return a dict when True (default),
+                return_dict (bool): Return a dict when True (default),
                     otherwise return an Action.
 
             Returns dict or Action
@@ -276,7 +278,7 @@ class Droplet(BaseAPI):
             restart the droplet
 
             Optional Args:
-                return_dict - bool : Return a dict when True (default),
+                return_dict (bool): Return a dict when True (default),
                     otherwise return an Action.
 
             Returns dict or Action
@@ -288,7 +290,7 @@ class Droplet(BaseAPI):
             reset the root password
 
             Optional Args:
-                return_dict - bool : Return a dict when True (default),
+                return_dict (bool): Return a dict when True (default),
                     otherwise return an Action.
 
             Returns dict or Action
@@ -300,12 +302,12 @@ class Droplet(BaseAPI):
         https://developers.digitalocean.com/documentation/v2/#resize-a-droplet
 
         Args:
-            new_size_slug: str - name of new size
+            new_size_slug (str): name of new size
 
         Optional Args:
-            return_dict - bool : Return a dict when True (default),
-                otherwise return an Action.
-            disk - bool : If a permanent resize, with disk changes included.
+            return_dict (bool): Return a dict when True (default),
+                                otherwise return an Action.
+            disk (bool): If a permanent resize, with disk changes included.
 
         Returns dict or Action
         """
@@ -318,12 +320,12 @@ class Droplet(BaseAPI):
         """Take a snapshot!
 
         Args:
-            snapshot_name: str - name of snapshot
+            snapshot_name (str): name of snapshot
 
         Optional Args:
-            return_dict - bool : Return a dict when True (default),
+            return_dict (bool): Return a dict when True (default),
                 otherwise return an Action.
-            power_off - bool : Before taking the snapshot the droplet will be
+            power_off (bool): Before taking the snapshot the droplet will be
                 turned off with another API call. It will wait until the
                 droplet will be powered off.
 
@@ -343,10 +345,10 @@ class Droplet(BaseAPI):
         """Restore the droplet to an image ( snapshot or backup )
 
         Args:
-            image_id : int - id of image
+            image_id (int): id of image
 
         Optional Args:
-            return_dict - bool : Return a dict when True (default),
+            return_dict (bool): Return a dict when True (default),
                 otherwise return an Action.
 
         Returns dict or Action
@@ -360,10 +362,10 @@ class Droplet(BaseAPI):
         """Restore the droplet to an image ( snapshot or backup )
 
         Args:
-            image_id : int - id of image
+            image_id (int): id of image
 
         Optional Args:
-            return_dict - bool : Return a dict when True (default),
+            return_dict (bool): Return a dict when True (default),
                 otherwise return an Action.
 
         Returns dict or Action
@@ -381,7 +383,7 @@ class Droplet(BaseAPI):
             Enable automatic backups
 
             Optional Args:
-                return_dict - bool : Return a dict when True (default),
+                return_dict (bool): Return a dict when True (default),
                     otherwise return an Action.
 
             Returns dict or Action
@@ -393,7 +395,7 @@ class Droplet(BaseAPI):
             Disable automatic backups
 
             Optional Args:
-                return_dict - bool : Return a dict when True (default),
+                return_dict (bool): Return a dict when True (default),
                     otherwise return an Action.
 
             Returns dict or Action
@@ -412,10 +414,10 @@ class Droplet(BaseAPI):
         """Rename the droplet
 
         Args:
-            name : str - new name
+            name (str): new name
 
         Optional Args:
-            return_dict - bool : Return a dict when True (default),
+            return_dict (bool): Return a dict when True (default),
                 otherwise return an Action.
 
         Returns dict or Action
@@ -430,7 +432,7 @@ class Droplet(BaseAPI):
            Enable private networking on an existing Droplet where available.
 
            Optional Args:
-               return_dict - bool : Return a dict when True (default),
+               return_dict (bool): Return a dict when True (default),
                    otherwise return an Action.
 
            Returns dict or Action
@@ -445,7 +447,7 @@ class Droplet(BaseAPI):
             Enable IPv6 on an existing Droplet where available.
 
             Optional Args:
-                return_dict - bool : Return a dict when True (default),
+                return_dict (bool): Return a dict when True (default),
                     otherwise return an Action.
 
             Returns dict or Action
@@ -459,7 +461,7 @@ class Droplet(BaseAPI):
             kernel : instance of digitalocean.Kernel.Kernel
 
         Optional Args:
-            return_dict - bool : Return a dict when True (default),
+            return_dict (bool): Return a dict when True (default),
                 otherwise return an Action.
 
         Returns dict or Action
@@ -588,7 +590,7 @@ class Droplet(BaseAPI):
         """Returns a specific Action by its ID.
 
         Args:
-            action_id: int - id of action
+            action_id (int): id of action
         """
         return Action.get_object(
             api_token=self.token,

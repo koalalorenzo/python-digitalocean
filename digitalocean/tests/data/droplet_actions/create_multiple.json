@@ -30,7 +30,10 @@
     "networks": {
     },
     "region": {
-    }
+    },
+    "tags": [
+      "web"
+    ]
   }, {
     "id": 3164495,
     "name": "example2.com",
@@ -62,7 +65,10 @@
     "networks": {
     },
     "region": {
-    }
+    },
+    "tags": [
+      "web"
+    ]
   }],
   "links": {
     "actions": [

@@ -118,6 +118,7 @@ class Droplet(BaseAPI):
             "backups": bool(kwargs.get("backups")),
             "ipv6": bool(kwargs.get("ipv6")),
             "private_networking": bool(kwargs.get("private_networking")),
+            "tags": kwargs.get("tags"),
         }
 
         if kwargs.get("ssh_keys"):

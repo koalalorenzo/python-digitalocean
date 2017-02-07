@@ -798,7 +798,8 @@ class TestDroplet(BaseTest):
                                        ipv6=True,
                                        private_networking=True,
                                        user_data="Some user data.",
-                                       token=self.token)
+                                       token=self.token,
+                                       tags=["web"])
         droplet.create()
 
         self.assert_url_query_equal(responses.calls[0].request.url,
@@ -810,7 +811,7 @@ class TestDroplet(BaseTest):
              u"user_data": u"Some user data.", u"ipv6": True,
              u"private_networking": True, u"backups": True,
              u"image": u"ubuntu-14-04-x64", u"size": u"512mb", u"ssh_keys": [],
-             u"volumes": [], u"tags": []})
+             u"volumes": [], u"tags": ["web"]})
         self.assertEqual(droplet.id, 3164494)
         self.assertEqual(droplet.action_ids, [36805096])
 
@@ -833,7 +834,8 @@ class TestDroplet(BaseTest):
                                                         ipv6=True,
                                                         private_networking=True,
                                                         user_data="Some user data.",
-                                                        token=self.token)
+                                                        token=self.token,
+                                                        tags=["web"])
         self.assert_url_query_equal(responses.calls[0].request.url,
                                     self.base_url + "droplets")
         self.assertEqual(len(droplets), 2)
@@ -848,7 +850,8 @@ class TestDroplet(BaseTest):
             {u"names": [u"example.com", u"example2.com"], u"region": u"nyc3",
              u"user_data": u"Some user data.", u"ipv6": True,
              u"private_networking": True, u"backups": True,
-             u"image": u"ubuntu-14-04-x64", u"size": u"512mb"})
+             u"image": u"ubuntu-14-04-x64", u"size": u"512mb",
+             u"tags": ["web"]})
 
 
     @responses.activate

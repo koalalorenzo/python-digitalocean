@@ -122,6 +122,7 @@ class Droplet(BaseAPI):
             "backups": bool(kwargs.get("backups")),
             "ipv6": bool(kwargs.get("ipv6")),
             "private_networking": bool(kwargs.get("private_networking")),
+            "tags": kwargs.get("tags"),
             "monitoring": bool(kwargs.get("monitoring")),
         }
 
@@ -553,6 +554,7 @@ class Droplet(BaseAPI):
             "ipv6": bool(self.ipv6),
             "private_networking": bool(self.private_networking),
             "volumes": self.volumes,
+            "tags": self.tags,
             "monitoring": bool(self.monitoring),
         }
 

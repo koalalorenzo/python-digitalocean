@@ -37,6 +37,7 @@ class Droplet(BaseAPI):
         private_networking (bool): True if private networking enabled
         user_data (str): arbitrary data to pass to droplet
         volumes (:obj:`str`, optional): list of blockstorage volumes
+        monitoring: (bool) - True if installing the DigitalOcean monitoring agent
 
     Attributes returned by API:
         id (int): droplet id
@@ -92,6 +93,7 @@ class Droplet(BaseAPI):
         self.user_data = None
         self.volumes = []
         self.tags = []
+        self.monitoring = None
 
         # This will load also the values passed
         super(Droplet, self).__init__(*args, **kwargs)
@@ -120,6 +122,7 @@ class Droplet(BaseAPI):
             "backups": bool(kwargs.get("backups")),
             "ipv6": bool(kwargs.get("ipv6")),
             "private_networking": bool(kwargs.get("private_networking")),
+            "monitoring": bool(kwargs.get("monitoring")),
         }
 
         if kwargs.get("ssh_keys"):
@@ -194,7 +197,7 @@ class Droplet(BaseAPI):
 
         if "tags" in droplets:
             self.tags = droplets["tags"]
-            
+
         return self
 
     def _perform_action(self, params, return_dict=True):
@@ -550,6 +553,7 @@ class Droplet(BaseAPI):
             "ipv6": bool(self.ipv6),
             "private_networking": bool(self.private_networking),
             "volumes": self.volumes,
+            "monitoring": bool(self.monitoring),
         }
 
         if self.user_data:

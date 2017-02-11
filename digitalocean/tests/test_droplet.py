@@ -838,9 +838,7 @@ class TestDroplet(BaseTest):
                                                         monitoring=True,
                                                         user_data="Some user data.",
                                                         token=self.token,
-                                                        
-                                                        
-                                                        =["web"])
+                                                        tags=["web"])
         self.assert_url_query_equal(responses.calls[0].request.url,
                                     self.base_url + "droplets")
         self.assertEqual(len(droplets), 2)

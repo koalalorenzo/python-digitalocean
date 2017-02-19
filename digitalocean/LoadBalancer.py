@@ -10,10 +10,10 @@ class StickySesions(object):
     "cookie_ttl_seconds": 300
   },
     """
-    def __init__(self, session_type='none', cookie_name='DO_LB',
+    def __init__(self, type='none', cookie_name='DO_LB',
                  cookie_ttl_seconds=300):
-        self.type = session_type
-        if session_type is 'cookies':
+        self.type = type
+        if type is 'cookies':
             self.cookie_name = cookie_name
             self.cookie_ttl_seconds = cookie_ttl_seconds
 
@@ -111,7 +111,19 @@ class LoadBalancer(BaseAPI):
 
         # Setting the attribute values
         for attr in load_balancer.keys():
-            setattr(self, attr, load_balancer[attr])
+            if attr == 'health_check':
+                health_check = HealthCheck(**load_balancer['health_check'])
+                setattr(self, attr, health_check)
+            elif attr == 'sticky_sessions':
+                sticky_ses = StickySesions(**load_balancer['sticky_sessions'])
+                setattr(self, attr, sticky_ses)
+            elif attr == 'forwarding_rules':
+                rules = list()
+                for rule in load_balancer['forwarding_rules']:
+                    rules.append(ForwardingRule(**rule))
+                setattr(self, attr, rules)
+            else:
+                setattr(self, attr, load_balancer[attr])
 
         return self
 
@@ -157,6 +169,7 @@ class LoadBalancer(BaseAPI):
 
         if data:
             self.id = data['load_balancer']['id']
+            self.ip = data['load_balancer']['ip']
             self.algorithm = data['load_balancer']['algorithm']
             self.health_check = data['load_balancer']['health_check']  # FIXME
             self.sticky_sessions = data['load_balancer']['sticky_sessions']  # FIXME

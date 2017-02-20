@@ -284,7 +284,7 @@ class Manager(BaseAPI):
 
     def get_all_load_balancers(self):
         """
-            Retruns a list of Load Balancer objects.
+            Returns a list of Load Balancer objects.
         """
         data = self.get_data("load_balancers")
 
@@ -304,6 +304,9 @@ class Manager(BaseAPI):
     def get_load_balancer(self, id):
         """
             Returns a Load Balancer object by its ID.
+
+            Args:
+                id (str): Load Balancer ID
         """
         return LoadBalancer.get_object(api_token=self.token, id=id)
 

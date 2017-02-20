@@ -171,8 +171,10 @@ class LoadBalancer(BaseAPI):
             self.id = data['load_balancer']['id']
             self.ip = data['load_balancer']['ip']
             self.algorithm = data['load_balancer']['algorithm']
-            self.health_check = data['load_balancer']['health_check']  # FIXME
-            self.sticky_sessions = data['load_balancer']['sticky_sessions']  # FIXME
+            self.health_check = HealthCheck(
+                **data['load_balancer']['health_check'])
+            self.sticky_sessions = StickySesions(
+                **data['load_balancer']['sticky_sessions'])
             self.droplet_ids = data['load_balancer']['droplet_ids']
             self.status = data['load_balancer']['status']
             self.created_at = data['load_balancer']['created_at']

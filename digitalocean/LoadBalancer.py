@@ -282,7 +282,7 @@ class LoadBalancer(BaseAPI):
             forwarding_rules (obj:`list`): A list of `ForwrdingRules` objects
         """
         rules_dict = [rule.__dict__ for rule in forwarding_rules]
-        print rules_dict
+
         return self.get_data(
             "load_balancers/%s/forwarding_rules/" % self.id,
             type=POST,

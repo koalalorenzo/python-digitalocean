@@ -364,6 +364,34 @@ class TestManager(BaseTest):
         self.assertEqual(fips[0].region['slug'], 'nyc3')
 
     @responses.activate
+    def test_get_all_load_balancers(self):
+        data = self.load_from_file('loadbalancer/all.json')
+
+        responses.add(responses.GET, self.base_url + "load_balancers",
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        lbs = self.manager.get_all_load_balancers()
+        resp_rules = lbs[0].forwarding_rules[0]
+
+        self.assertEqual(lbs[0].id, '4de2ac7b-495b-4884-9e69-1050d6793cd4')
+        self.assertEqual(lbs[0].algorithm, 'round_robin')
+        self.assertEqual(lbs[0].ip, '104.131.186.248')
+        self.assertEqual(lbs[0].name, 'example-lb-02')
+        self.assertEqual(len(lbs[0].forwarding_rules), 2)
+        self.assertEqual(resp_rules.entry_protocol, 'http')
+        self.assertEqual(resp_rules.entry_port, 80)
+        self.assertEqual(resp_rules.target_protocol, 'http')
+        self.assertEqual(resp_rules.target_port, 80)
+        self.assertEqual(resp_rules.tls_passthrough, False)
+        self.assertEqual(lbs[0].health_check.protocol, 'http')
+        self.assertEqual(lbs[0].health_check.port, 80)
+        self.assertEqual(lbs[0].sticky_sessions.type, 'none')
+        self.assertEqual(lbs[0].tag, 'web')
+        self.assertEqual(lbs[0].droplet_ids, [3164444, 3164445])
+
+    @responses.activate
     def test_get_all_volumes(self):
         data = self.load_from_file('volumes/all.json')
 

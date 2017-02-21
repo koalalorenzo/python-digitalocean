@@ -60,6 +60,14 @@ digitalocean.Kernel module
     :undoc-members:
     :show-inheritance:
 
+digitalocean.LoadBalancer module
+--------------------------
+
+.. automodule:: digitalocean.LoadBalancer
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 digitalocean.Manager module
 ---------------------------
 

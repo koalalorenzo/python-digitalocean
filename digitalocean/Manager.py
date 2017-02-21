@@ -15,7 +15,10 @@ from .SSHKey import SSHKey
 from .Action import Action
 from .Account import Account
 from .FloatingIP import FloatingIP
+from .LoadBalancer import LoadBalancer
+from .LoadBalancer import StickySesions, HealthCheck, ForwardingRule
 from .Volume import Volume
+
 
 class Manager(BaseAPI):
     def __init__(self, *args, **kwargs):
@@ -278,6 +281,34 @@ class Manager(BaseAPI):
             Returns a of FloatingIP object by its IP address.
         """
         return FloatingIP.get_object(api_token=self.token, ip=ip)
+
+    def get_all_load_balancers(self):
+        """
+            Returns a list of Load Balancer objects.
+        """
+        data = self.get_data("load_balancers")
+
+        load_balancers = list()
+        for jsoned in data['load_balancers']:
+            load_balancer = LoadBalancer(**jsoned)
+            load_balancer.token = self.token
+            load_balancer.health_check = HealthCheck(**jsoned['health_check'])
+            load_balancer.sticky_sessions = StickySesions(**jsoned['sticky_sessions'])
+            forwarding_rules = list()
+            for rule in jsoned['forwarding_rules']:
+                forwarding_rules.append(ForwardingRule(**rule))
+            load_balancer.forwarding_rules = forwarding_rules
+            load_balancers.append(load_balancer)
+        return load_balancers
+
+    def get_load_balancer(self, id):
+        """
+            Returns a Load Balancer object by its ID.
+
+            Args:
+                id (str): Load Balancer ID
+        """
+        return LoadBalancer.get_object(api_token=self.token, id=id)
 
     def get_all_volumes(self):
         """

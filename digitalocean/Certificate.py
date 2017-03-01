@@ -82,6 +82,8 @@ class Certificate(BaseAPI):
             self.sha1_fingerprint = data['certificate']['sha1_fingerprint']
             self.created_at = data['certificate']['created_at']
 
+        return self
+
     def destroy(self):
         """
             Delete the Certificate

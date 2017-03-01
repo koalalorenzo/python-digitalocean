@@ -4,15 +4,29 @@ from .baseapi import BaseAPI, POST, DELETE
 
 class Certificate(BaseAPI):
     """
-    {
-  "certificate": {
-    "id": "892071a0-bb95-49bc-8021-3afd67a210bf",
-    "name": "web-cert-01",
-    "not_after": "2017-02-22T00:23:00Z",
-    "sha1_fingerprint": "dfcc9f57d86bf58e321c2c6c31c7a971be244ac7",
-    "created_at": "2017-02-08T16:02:37Z"
-  }
-}
+    An object representing an SSL Certificate stored on DigitalOcean.
+
+    Attributes accepted at creation time:
+
+    Args:
+        name (str): A name for the Certificate
+        private_key (str): The contents of a PEM-formatted private-key
+            corresponding to the SSL certificate
+        leaf_certificate (str): The contents of a PEM-formatted public SSL
+            certificate
+        certificate_chain (str): The full PEM-formatted trust chain between the
+            certificate authority's certificate and your domain's SSL
+            certificate
+
+    Attributes returned by API:
+        name (str): The name of the Certificate
+        id (str): A unique identifier for the Certificate
+        not_after (str): A string that represents the Certificate's expiration
+            date.
+        sha1_fingerprint (str): A unique identifier for the Certificate
+            generated from its SHA-1 fingerprint
+        created_at (str): A string that represents when the Certificate was
+            created
     """
     def __init__(self, *args, **kwargs):
         self.id = ""
@@ -29,7 +43,7 @@ class Certificate(BaseAPI):
     @classmethod
     def get_object(cls, api_token, cert_id):
         """
-            Class method that will return a Certificate object by ID.
+            Class method that will return a Certificate object by its ID.
         """
         certificate = cls(token=api_token, id=cert_id)
         certificate.load()
@@ -39,7 +53,7 @@ class Certificate(BaseAPI):
         """
             Load the Certificate object from DigitalOcean.
 
-            Requires either self.id to be set.
+            Requires self.id to be set.
         """
         data = self.get_data("certificates/%s" % self.id)
         certificate = data["certificate"]

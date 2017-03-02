@@ -24,3 +24,4 @@ from .baseapi import Error, TokenError, DataReadError
 from .Tag import Tag
 from .LoadBalancer import LoadBalancer
 from .LoadBalancer import StickySesions, ForwardingRule, HealthCheck
+from .Certificate import Certificate

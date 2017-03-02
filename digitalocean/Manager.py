@@ -17,6 +17,7 @@ from .Account import Account
 from .FloatingIP import FloatingIP
 from .LoadBalancer import LoadBalancer
 from .LoadBalancer import StickySesions, HealthCheck, ForwardingRule
+from .Certificate import Certificate
 from .Volume import Volume
 
 
@@ -309,6 +310,28 @@ class Manager(BaseAPI):
                 id (str): Load Balancer ID
         """
         return LoadBalancer.get_object(api_token=self.token, id=id)
+
+    def get_certificate(self, id):
+        """
+            Returns a Certificate object by its ID.
+
+            Args:
+                id (str): Certificate ID
+        """
+        return Certificate.get_object(api_token=self.token, cert_id=id)
+
+    def get_all_certificates(self):
+        """
+            This function returns a list of Certificate objects.
+        """
+        data = self.get_data("certificates")
+        certificates = list()
+        for jsoned in data['certificates']:
+            cert = Certificate(**jsoned)
+            cert.token = self.token
+            certificates.append(cert)
+
+        return certificates
 
     def get_all_volumes(self):
         """

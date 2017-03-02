@@ -392,6 +392,24 @@ class TestManager(BaseTest):
         self.assertEqual(lbs[0].droplet_ids, [3164444, 3164445])
 
     @responses.activate
+    def test_get_all_certificates(self):
+        data = self.load_from_file('certificate/list.json')
+
+        responses.add(responses.GET, self.base_url + 'certificates',
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        certs = self.manager.get_all_certificates()
+
+        self.assertEqual(certs[0].id, '892071a0-bb95-49bc-8021-3afd67a210bf')
+        self.assertEqual(certs[0].name, 'web-cert-01')
+        self.assertEqual(certs[0].sha1_fingerprint,
+            'dfcc9f57d86bf58e321c2c6c31c7a971be244ac7')
+        self.assertEqual(certs[0].not_after, '2017-02-22T00:23:00Z')
+        self.assertEqual(certs[0].created_at, '2017-02-08T16:02:37Z')
+
+    @responses.activate
     def test_get_all_volumes(self):
         data = self.load_from_file('volumes/all.json')
 
@@ -400,10 +418,10 @@ class TestManager(BaseTest):
                       status=200,
                       content_type='application/json')
 
-        fips = self.manager.get_all_volumes()
+        volumes = self.manager.get_all_volumes()
 
-        self.assertEqual(fips[0].id, "506f78a4-e098-11e5-ad9f-000f53306ae1")
-        self.assertEqual(fips[0].region['slug'], 'nyc1')
+        self.assertEqual(volumes[0].id, "506f78a4-e098-11e5-ad9f-000f53306ae1")
+        self.assertEqual(volumes[0].region['slug'], 'nyc1')
 
 if __name__ == '__main__':
     unittest.main()

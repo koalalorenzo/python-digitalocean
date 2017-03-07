@@ -15,8 +15,9 @@ class TestTags(BaseTest):
     def test_load(self):
         data = self.load_from_file('tags/single.json')
 
+        url = self.base_url + "tags/awesome"
         responses.add(responses.GET,
-                      self.base_url + "tags/awesome",
+                      url,
                       body=data,
                       status=200,
                       content_type='application/json')
@@ -24,8 +25,7 @@ class TestTags(BaseTest):
         droplet_tag = digitalocean.Tag(name='awesome', token=self.token)
         droplet_tag.load()
 
-        self.assertEqual(responses.calls[0].request.url,
-                         self.base_url + "tags/awesome")
+        self.assert_get_url_equal(responses.calls[0].request.url, url)
         self.assertEqual(droplet_tag.name,
                          "awesome")
 
@@ -34,8 +34,9 @@ class TestTags(BaseTest):
     def test_create(self):
         data = self.load_from_file('tags/single.json')
 
+        url = self.base_url + "tags/"
         responses.add(responses.POST,
-                      self.base_url + "tags/",
+                      url,
                       body=data,
                       status=201,
                       content_type='application/json')
@@ -51,8 +52,9 @@ class TestTags(BaseTest):
     def test_update_tag(self):
         data = self.load_from_file('tags/updatetag.json')
 
+        url = self.base_url + "tags/awesome"
         responses.add(responses.PUT,
-                      self.base_url + "tags/awesome",
+                      url,
                       body=data,
                       status=200,
                       content_type='application/json')
@@ -67,8 +69,9 @@ class TestTags(BaseTest):
 
     @responses.activate
     def test_delete(self):
+        url = self.base_url + "tags/awesome"
         responses.add(responses.DELETE,
-                      self.base_url + "tags/awesome",
+                      url,
                       status=204,
                       content_type='application/json')
 
@@ -84,8 +87,9 @@ class TestTags(BaseTest):
     def test_add_droplets(self):
         data = self.load_from_file('tags/resources.json')
 
+        url = self.base_url + "tags/awesome/resources"
         responses.add(responses.POST,
-                      self.base_url + "tags/awesome/resources",
+                      url,
                       body=data,
                       status=204,
                       content_type='application/json')
@@ -103,8 +107,9 @@ class TestTags(BaseTest):
     def test_remove_droplets(self):
         data = self.load_from_file('tags/resources.json')
 
+        url = self.base_url + "tags/awesome/resources"
         responses.add(responses.DELETE,
-                      self.base_url + "tags/awesome/resources",
+                      url,
                       body=data,
                       status=201,
                       content_type='application/json')

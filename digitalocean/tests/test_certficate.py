@@ -26,7 +26,7 @@ class TestCertificate(BaseTest):
 
         self.cert.load()
 
-        self.assertEqual(responses.calls[0].request.url, url)
+        self.assert_get_url_equal(responses.calls[0].request.url, url)
         self.assertEqual(self.cert.id, self.cert_id)
         self.assertEqual(self.cert.name, 'web-cert-01')
         self.assertEqual(self.cert.sha1_fingerprint,

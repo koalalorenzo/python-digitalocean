@@ -17,16 +17,16 @@ class TestVolume(BaseTest):
         data = self.load_from_file('volumes/single.json')
         volume_path = "volumes/506f78a4-e098-11e5-ad9f-000f53306ae1"
 
+        url = self.base_url + volume_path
         responses.add(responses.GET,
-                      self.base_url + volume_path,
+                      url,
                       body=data,
                       status=200,
                       content_type='application/json')
 
         self.volume.load()
 
-        self.assertEqual(responses.calls[0].request.url,
-                         self.base_url + volume_path)
+        self.assert_get_url_equal(responses.calls[0].request.url, url)
         self.assertEqual(self.volume.id,
                          "506f78a4-e098-11e5-ad9f-000f53306ae1")
         self.assertEqual(self.volume.size_gigabytes, 100)
@@ -35,8 +35,9 @@ class TestVolume(BaseTest):
     def test_create(self):
         data = self.load_from_file('volumes/single.json')
 
+        url = self.base_url + "volumes/"
         responses.add(responses.POST,
-                      self.base_url + "volumes/",
+                      url,
                       body=data,
                       status=201,
                       content_type='application/json')
@@ -54,8 +55,9 @@ class TestVolume(BaseTest):
     @responses.activate
     def test_destroy(self):
         volume_path = "volumes/506f78a4-e098-11e5-ad9f-000f53306ae1/"
+        url = self.base_url + volume_path
         responses.add(responses.DELETE,
-                      self.base_url + volume_path,
+                      url,
                       status=204,
                       content_type='application/json')
 
@@ -69,7 +71,9 @@ class TestVolume(BaseTest):
         data = self.load_from_file('volumes/attach.json')
         volume_path = "volumes/" + self.volume.id + "/actions/"
 
-        responses.add(responses.POST, self.base_url + volume_path,
+        url = self.base_url + volume_path
+        responses.add(responses.POST,
+                      url,
                       body=data,
                       status=201,
                       content_type='application/json')
@@ -87,7 +91,9 @@ class TestVolume(BaseTest):
         data = self.load_from_file('volumes/detach.json')
         volume_path = "volumes/" + self.volume.id + "/actions/"
 
-        responses.add(responses.POST, self.base_url + volume_path,
+        url = self.base_url + volume_path
+        responses.add(responses.POST,
+                      url,
                       body=data,
                       status=201,
                       content_type='application/json')
@@ -105,7 +111,9 @@ class TestVolume(BaseTest):
         data = self.load_from_file('volumes/resize.json')
         volume_path = "volumes/" + self.volume.id + "/actions/"
 
-        responses.add(responses.POST, self.base_url + volume_path,
+        url = self.base_url + volume_path
+        responses.add(responses.POST,
+                      url,
                       body=data,
                       status=201,
                       content_type='application/json')

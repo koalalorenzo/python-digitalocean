@@ -2,6 +2,9 @@ import os
 import unittest
 
 
+DEFAULT_PER_PAGE = 200
+
+
 class BaseTest(unittest.TestCase):
 
     def setUp(self):
@@ -35,3 +38,12 @@ class BaseTest(unittest.TestCase):
 
         self.assertEqual(base1, base2)
         self.assertEqual(qlist1, qlist2)
+
+    def assert_get_url_equal(self, url1, url2):
+        if "?" in url2:
+            url2 += "&"
+        else:
+            url2 += "?"
+
+        url2 += "per_page=%d" % DEFAULT_PER_PAGE
+        return self.assert_url_query_equal(url1, url2)

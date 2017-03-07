@@ -4,9 +4,9 @@ import json
 import logging
 import requests
 try:
-    from urlparse import urljoin
+    import urlparse
 except ImportError:
-    from urllib.parse import urljoin
+    from urllib import parse as urlparse
 
 
 GET = 'GET'
@@ -65,7 +65,7 @@ class BaseAPI(object):
         if not self.token:
             raise TokenError("No token provided. Please use a valid token")
 
-        url = urljoin(self.end_point, url)
+        url = urlparse.urljoin(self.end_point, url)
 
         # lookup table to find out the apropriate requests method,
         # headers and payload type (json or query parameters)
@@ -97,6 +97,32 @@ class BaseAPI(object):
 
         return requests_method(url, **kwargs)
 
+    def __deal_with_pagination(self, url, method, params, data):
+        """
+            Perform multiple calls in order to have a full list of elements
+            when the API are "paginated". (content list is divided in more
+            than one page)
+        """
+        all_data = data
+        while data.get("links", {}).get("pages", {}).get("next"):
+            url, query = data["links"]["pages"]["next"].split("?", 1)
+            print(params)
+
+            # Merge the query parameters
+            for key, value in urlparse.parse_qs(query).items():
+                params[key] = value
+
+            data = self.__perform_request(url, method, params).json()
+
+            # Merge the dictionaries
+            for key, value in data.items():
+                if isinstance(value, list) and key in all_data:
+                    all_data[key] += value
+                else:
+                    all_data[key] = value
+
+        return all_data
+
     def get_timeout(self):
         """
             Checks if any timeout for the requests to DigitalOcean is required.
@@ -116,11 +142,17 @@ class BaseAPI(object):
     def get_data(self, url, type=GET, params=None):
         """
             This method is a basic implementation of __call_api that checks
-            errors too. In cas of success the method will return True or the
+            errors too. In case of success the method will return True or the
             content of the response to the request.
+
+            Pagination is automatically detected and handled accordingly
         """
         if params is None:
             params = dict()
+
+        # If per_page is not set, make sure it has a sane default
+        if type is GET:
+            params.setdefault("per_page", 200)
 
         req = self.__perform_request(url, type, params)
         if req.status_code == 204:
@@ -140,7 +172,14 @@ class BaseAPI(object):
             msg = [data[m] for m in ("id", "message") if m in data][1]
             raise DataReadError(msg)
 
-        return data
+        # If there are more elements available (total) than the elements per 
+        # page, try to deal with pagination. Note: Breaking the logic on
+        # multiple pages,
+        pages = data.get("links", {}).get("pages", {})
+        if pages.get("next") and "page" not in params:
+            return self.__deal_with_pagination(url, type, params, data)
+        else:
+            return data
 
     def __str__(self):
         return "<%s>" % self.__class__.__name__

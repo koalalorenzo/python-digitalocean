@@ -15,16 +15,16 @@ class TestFloatingIP(BaseTest):
     def test_load(self):
         data = self.load_from_file('floatingip/single.json')
 
+        url = self.base_url + "floating_ips/45.55.96.47"
         responses.add(responses.GET,
-                      self.base_url + "floating_ips/45.55.96.47",
+                      url,
                       body=data,
                       status=200,
                       content_type='application/json')
 
         self.fip.load()
 
-        self.assertEqual(responses.calls[0].request.url,
-                         self.base_url + "floating_ips/45.55.96.47")
+        self.assert_get_url_equal(responses.calls[0].request.url, url)
         self.assertEqual(self.fip.ip, "45.55.96.47")
         self.assertEqual(self.fip.region['slug'], 'nyc3')
 
@@ -32,8 +32,9 @@ class TestFloatingIP(BaseTest):
     def test_create(self):
         data = self.load_from_file('floatingip/single.json')
 
+        url = self.base_url + "floating_ips/"
         responses.add(responses.POST,
-                      self.base_url + "floating_ips/",
+                      url,
                       body=data,
                       status=201,
                       content_type='application/json')
@@ -50,8 +51,9 @@ class TestFloatingIP(BaseTest):
     def test_reserve(self):
         data = self.load_from_file('floatingip/single.json')
 
+        url = self.base_url + "floating_ips/"
         responses.add(responses.POST,
-                      self.base_url + "floating_ips/",
+                      url,
                       body=data,
                       status=201,
                       content_type='application/json')
@@ -66,8 +68,9 @@ class TestFloatingIP(BaseTest):
 
     @responses.activate
     def test_destroy(self):
+        url = self.base_url + "floating_ips/45.55.96.47/"
         responses.add(responses.DELETE,
-                      self.base_url + "floating_ips/45.55.96.47/",
+                      url,
                       status=204,
                       content_type='application/json')
 

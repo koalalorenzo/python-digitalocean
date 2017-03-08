@@ -14,17 +14,17 @@ class TestImage(BaseTest):
     @responses.activate
     def test_load(self):
         data = self.load_from_file('images/single.json')
+        url = "{}images/{}".format(self.base_url, self.image.id)
 
         responses.add(responses.GET,
-                      '{}images/{}'.format(self.base_url, self.image.id),
+                      url,
                       body=data,
                       status=200,
                       content_type='application/json')
 
         self.image.load()
 
-        self.assertEqual(responses.calls[0].request.url,
-                         self.base_url + 'images/449676856')
+        self.assert_get_url_equal(responses.calls[0].request.url, url)
         self.assertEqual(self.image.id, 449676856)
         self.assertEqual(self.image.name, 'My Snapshot')
         self.assertEqual(self.image.distribution, 'Ubuntu')

@@ -27,7 +27,7 @@ class TestLoadBalancer(BaseTest):
         self.lb.load()
         rules = self.lb.forwarding_rules
 
-        self.assertEqual(responses.calls[0].request.url, url)
+        self.assert_get_url_equal(responses.calls[0].request.url, url)
         self.assertEqual(self.lb.id, self.lb_id)
         self.assertEqual(self.lb.region['slug'], 'nyc3')
         self.assertEqual(self.lb.algorithm, 'round_robin')
@@ -48,8 +48,9 @@ class TestLoadBalancer(BaseTest):
     def test_create_ids(self):
         data = self.load_from_file('loadbalancer/single.json')
 
+        url = self.base_url + "load_balancers/"
         responses.add(responses.POST,
-                      self.base_url + 'load_balancers/',
+                      url,
                       body=data,
                       status=201,
                       content_type='application/json')
@@ -75,8 +76,7 @@ class TestLoadBalancer(BaseTest):
                                        token=self.token).create()
         resp_rules = lb.forwarding_rules
 
-        self.assertEqual(responses.calls[0].request.url,
-                         self.base_url + 'load_balancers/')
+        self.assert_url_query_equal(responses.calls[0].request.url, url)
         self.assertEqual(lb.id, self.lb_id)
         self.assertEqual(lb.algorithm, 'round_robin')
         self.assertEqual(lb.ip, '104.131.186.241')
@@ -96,8 +96,9 @@ class TestLoadBalancer(BaseTest):
     def test_create_tag(self):
         data = self.load_from_file('loadbalancer/single_tag.json')
 
+        url = self.base_url + "load_balancers/"
         responses.add(responses.POST,
-                      self.base_url + 'load_balancers/',
+                      url,
                       body=data,
                       status=201,
                       content_type='application/json')
@@ -145,8 +146,9 @@ class TestLoadBalancer(BaseTest):
     def test_create_exception(self):
         data = self.load_from_file('loadbalancer/single_tag.json')
 
+        url = self.base_url + "load_balancers/"
         responses.add(responses.POST,
-                      self.base_url + 'load_balancers/',
+                      url,
                       body=data,
                       status=201,
                       content_type='application/json')

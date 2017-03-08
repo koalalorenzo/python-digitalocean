@@ -25,57 +25,6 @@ class Manager(BaseAPI):
     def __init__(self, *args, **kwargs):
         super(Manager, self).__init__(*args, **kwargs)
 
-    def get_data(self, *args, **kwargs):
-        """
-            Customized version of get_data to perform __check_actions_in_data.
-
-            The default amount of elements per page defined is 200 as explained
-            here: https://github.com/koalalorenzo/python-digitalocean/pull/78
-        """
-        params = {}
-        if "params" in kwargs:
-            params = kwargs["params"]
-
-        if "per_page" not in params:
-            params["per_page"] = 200
-
-        kwargs["params"] = params
-        data = super(Manager, self).get_data(*args, **kwargs)
-        # if there are more elements available (total) than the elements per 
-        # page, try to deal with pagination. Note: Breaking the logic on
-        # multiple pages,
-        if 'meta' in data and 'total' in data['meta']:
-            if data['meta']['total'] > params['per_page']:
-                return self.__deal_with_pagination(args[0], data, params)
-            else:
-                return data
-        else:
-            return data
-
-    def __deal_with_pagination(self, url, data, params):
-        """
-            Perform multiple calls in order to have a full list of elements
-            when the API are "paginated". (content list is divided in more
-            than one page)
-        """
-        try:
-            lastpage_url = data['links']['pages']['last']
-            pages = parse_qs(urlparse(lastpage_url).query)['page'][0]
-            key, values = data.popitem()
-            for page in range(2, int(pages) + 1):
-                params.update({'page': page})
-                new_data = super(Manager, self).get_data(url, params=params)
-
-                more_values = list(new_data.values())[0]
-                for value in more_values:
-                    values.append(value)
-            data = {}
-            data[key] = values
-        except KeyError:  # No pages.
-            pass
-
-        return data
-
     def get_account(self):
         """
             Returns an Account object.
@@ -98,11 +47,11 @@ class Manager(BaseAPI):
         """
             This function returns a list of Droplet object.
         """
+        params = dict()
         if tag_name:
-            params = {"tag_name": tag_name}
-            data = self.get_data("droplets/", params=params)
-        else:
-            data = self.get_data("droplets/")
+            params["tag_name"] = tag_name
+
+        data = self.get_data("droplets/", params=params)
 
         droplets = list()
         for jsoned in data['droplets']:

@@ -136,7 +136,7 @@ class Droplet(BaseAPI):
 
         droplets = []
 
-        data = api.get_data("droplets", type=POST, params=data)
+        data = api.get_data("droplets/", type=POST, params=data)
 
         if data:
             action_ids = [data["links"]["actions"][0]["id"]]
@@ -561,7 +561,7 @@ class Droplet(BaseAPI):
         if self.user_data:
             data["user_data"] = self.user_data
 
-        data = self.get_data("droplets", type=POST, params=data)
+        data = self.get_data("droplets/", type=POST, params=data)
 
         if data:
             self.id = data['droplet']['id']

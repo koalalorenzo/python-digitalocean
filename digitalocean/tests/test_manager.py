@@ -23,8 +23,7 @@ class TestManager(BaseTest):
 
         acct = self.manager.get_account()
 
-        self.assertEqual(responses.calls[0].request.url,
-                         self.base_url + "account/")
+        self.assert_get_url_equal(responses.calls[0].request.url, url)
         self.assertEqual(acct.token, self.token)
         self.assertEqual(acct.email, 'web@digitalocean.com')
         self.assertEqual(acct.droplet_limit, 25)
@@ -88,11 +87,21 @@ class TestManager(BaseTest):
     def test_get_droplets_by_tag(self):
         data = self.load_from_file('droplets/bytag.json')
 
-        url = self.base_url + 'droplets/'
-        responses.add(responses.GET, url,
+        url = self.base_url + "droplets"
+        responses.add(responses.GET,
+                      url + "/",
                       body=data,
                       status=200,
                       content_type='application/json')
+
+        # The next pages don"t use trailing slashes. Return an empty result
+        # to prevent an infinite loop
+        responses.add(responses.GET,
+                      url,
+                      body="{}",
+                      status=200,
+                      content_type="application/json")
+
 
         manager = digitalocean.Manager(token=self.token)
         droplets = manager.get_all_droplets(tag_name="awesome")
@@ -219,7 +228,8 @@ class TestManager(BaseTest):
         data = self.load_from_file('images/private.json')
 
         url = self.base_url + 'images/'
-        responses.add(responses.GET, url,
+        responses.add(responses.GET,
+                      url,
                       body=data,
                       status=200,
                       content_type='application/json')
@@ -244,7 +254,8 @@ class TestManager(BaseTest):
         data = self.load_from_file('images/distro.json')
 
         url = self.base_url + 'images/'
-        responses.add(responses.GET, url,
+        responses.add(responses.GET,
+                      url,
                       body=data,
                       status=200,
                       content_type='application/json')
@@ -353,7 +364,9 @@ class TestManager(BaseTest):
     def test_get_all_floating_ips(self):
         data = self.load_from_file('floatingip/list.json')
 
-        responses.add(responses.GET, self.base_url + "floating_ips",
+        url = self.base_url + "floating_ips"
+        responses.add(responses.GET,
+                      url,
                       body=data,
                       status=200,
                       content_type='application/json')
@@ -367,7 +380,9 @@ class TestManager(BaseTest):
     def test_get_all_load_balancers(self):
         data = self.load_from_file('loadbalancer/all.json')
 
-        responses.add(responses.GET, self.base_url + "load_balancers",
+        url = self.base_url + "load_balancers"
+        responses.add(responses.GET,
+                      url,
                       body=data,
                       status=200,
                       content_type='application/json')
@@ -395,7 +410,9 @@ class TestManager(BaseTest):
     def test_get_all_certificates(self):
         data = self.load_from_file('certificate/list.json')
 
-        responses.add(responses.GET, self.base_url + 'certificates',
+        url = self.base_url + "certificates"
+        responses.add(responses.GET,
+                      url,
                       body=data,
                       status=200,
                       content_type='application/json')
@@ -413,7 +430,9 @@ class TestManager(BaseTest):
     def test_get_all_volumes(self):
         data = self.load_from_file('volumes/all.json')
 
-        responses.add(responses.GET, self.base_url + "volumes",
+        url = self.base_url + "volumes"
+        responses.add(responses.GET,
+                      url,
                       body=data,
                       status=200,
                       content_type='application/json')

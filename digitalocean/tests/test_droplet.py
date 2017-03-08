@@ -1,9 +1,9 @@
-import unittest
-import responses
 import json
+import unittest
+
+import responses
 
 import digitalocean
-
 from .BaseTest import BaseTest
 
 
@@ -15,7 +15,9 @@ class TestDroplet(BaseTest):
         self.actions_url = self.base_url + "droplets/12345/actions/"
 
         data = self.load_from_file('droplets/single.json')
-        responses.add(responses.GET, self.base_url + "droplets/12345",
+        url = self.base_url + "droplets/12345"
+        responses.add(responses.GET,
+                      url,
                       body=data,
                       status=200,
                       content_type='application/json')
@@ -25,7 +27,9 @@ class TestDroplet(BaseTest):
     def test_load(self):
         data = self.load_from_file('droplets/single.json')
 
-        responses.add(responses.GET, self.base_url + "droplets/12345",
+        url = self.base_url + "droplets/12345"
+        responses.add(responses.GET,
+                      url,
                       body=data,
                       status=200,
                       content_type='application/json')
@@ -33,8 +37,7 @@ class TestDroplet(BaseTest):
         droplet = digitalocean.Droplet(id='12345', token=self.token)
         d = droplet.load()
 
-        self.assertEqual(responses.calls[0].request.url,
-                         self.base_url + "droplets/12345")
+        self.assert_get_url_equal(responses.calls[0].request.url, url)
         self.assertEqual(d.id, 12345)
         self.assertEqual(d.name, "example.com")
         self.assertEqual(d.memory, 512)
@@ -595,7 +598,9 @@ class TestDroplet(BaseTest):
 
     @responses.activate
     def test_destroy(self):
-        responses.add(responses.DELETE, self.base_url + "droplets/12345",
+        url = self.base_url + "droplets/12345"
+        responses.add(responses.DELETE,
+                      url,
                       status=204,
                       content_type='application/json')
 
@@ -785,7 +790,9 @@ class TestDroplet(BaseTest):
     def test_create_no_keys(self):
         data = self.load_from_file('droplet_actions/create.json')
 
-        responses.add(responses.POST, self.base_url + "droplets",
+        url = self.base_url + "droplets/"
+        responses.add(responses.POST,
+                      url,
                       body=data,
                       status=202,
                       content_type='application/json')
@@ -803,8 +810,7 @@ class TestDroplet(BaseTest):
                                        tags=["web"])
         droplet.create()
 
-        self.assert_url_query_equal(responses.calls[0].request.url,
-                                    self.base_url + "droplets")
+        self.assert_url_query_equal(responses.calls[0].request.url, url)
         self.maxDiff = None
         self.assertEqual(
             json.loads(responses.calls[0].request.body),
@@ -821,7 +827,9 @@ class TestDroplet(BaseTest):
     def test_create_multiple_no_keys(self):
         data = self.load_from_file('droplet_actions/create_multiple.json')
 
-        responses.add(responses.POST, self.base_url + "droplets",
+        url = self.base_url + "droplets/"
+        responses.add(responses.POST,
+                      url,
                       body=data,
                       status=202,
                       content_type='application/json')
@@ -839,8 +847,7 @@ class TestDroplet(BaseTest):
                                                         user_data="Some user data.",
                                                         token=self.token,
                                                         tags=["web"])
-        self.assert_url_query_equal(responses.calls[0].request.url,
-                                    self.base_url + "droplets")
+        self.assert_url_query_equal(responses.calls[0].request.url, url)
         self.assertEqual(len(droplets), 2)
         self.assertEqual(droplets[0].id, 3164494)
         self.assertEqual(droplets[1].id, 3164495)
@@ -880,11 +887,12 @@ class TestDroplet(BaseTest):
 
         self.assertEqual(len(actions), 2)
         self.assertEqual(len(responses.calls), 3)
-        self.assertEqual(responses.calls[0].request.url, self.actions_url)
-        self.assertEqual(responses.calls[1].request.url,
-                         self.actions_url + "39388122")
-        self.assertEqual(responses.calls[2].request.url,
-                         self.actions_url + "39290099")
+        self.assert_get_url_equal(responses.calls[0].request.url,
+                                  self.actions_url)
+        self.assert_get_url_equal(responses.calls[1].request.url,
+                                  self.actions_url + "39388122")
+        self.assert_get_url_equal(responses.calls[2].request.url,
+                                  self.actions_url + "39290099")
         self.assertEqual(actions[0].id, 39290099)
         self.assertEqual(actions[0].type, "create")
         self.assertEqual(actions[0].status, "completed")
@@ -896,15 +904,16 @@ class TestDroplet(BaseTest):
     def test_get_action(self):
         data = self.load_from_file('actions/create_completed.json')
 
-        responses.add(responses.GET, self.base_url + "actions/39388122",
+        url = self.base_url + "actions/39388122"
+        responses.add(responses.GET,
+                      url,
                       body=data,
                       status=200,
                       content_type='application/json')
 
         action = self.droplet.get_action(39388122)
 
-        self.assertEqual(responses.calls[0].request.url,
-                         self.base_url + "actions/39388122")
+        self.assert_get_url_equal(responses.calls[0].request.url, url)
         self.assertEqual(action.id, 39290099)
         self.assertEqual(action.type, "create")
         self.assertEqual(action.status, "completed")
@@ -919,15 +928,16 @@ class TestDroplet(BaseTest):
     def test_get_kernel_available_no_pages(self):
         data = self.load_from_file('kernels/list.json')
 
-        responses.add(responses.GET, self.base_url + "droplets/12345/kernels/",
+        url = self.base_url + "droplets/12345/kernels/"
+        responses.add(responses.GET,
+                      url,
                       body=data,
                       status=200,
                       content_type='application/json')
 
         kernels = self.droplet.get_kernel_available()
 
-        self.assertEqual(responses.calls[0].request.url,
-                         self.base_url + "droplets/12345/kernels/")
+        self.assert_get_url_equal(responses.calls[0].request.url, url)
         self.assertEqual(len(kernels), 2)
         self.assertEqual(kernels[0].id, 61833229)
         self.assertEqual(kernels[0].name,
@@ -938,12 +948,15 @@ class TestDroplet(BaseTest):
         one = self.load_from_file('kernels/page_one.json')
         two = self.load_from_file('kernels/page_two.json')
 
-        responses.add(responses.GET, self.base_url + "droplets/12345/kernels/",
+        url_0 = self.base_url + "droplets/12345/kernels/"
+        responses.add(responses.GET,
+                      url_0,
                       body=one,
                       status=200,
                       content_type='application/json')
+        url_1 = self.base_url + "droplets/12345/kernels?page=2&per_page=200"
         responses.add(responses.GET,
-                      self.base_url + "droplets/12345/kernels?page=2",
+                      url_1,
                       body=two,
                       status=200,
                       content_type='application/json',
@@ -951,10 +964,8 @@ class TestDroplet(BaseTest):
 
         kernels = self.droplet.get_kernel_available()
 
-        self.assertEqual(responses.calls[0].request.url,
-                         self.base_url + "droplets/12345/kernels/")
-        self.assertEqual(responses.calls[1].request.url,
-                         self.base_url + "droplets/12345/kernels?page=2")
+        self.assert_get_url_equal(responses.calls[0].request.url, url_0)
+        self.assert_url_query_equal(responses.calls[1].request.url, url_1)
         self.assertEqual(len(kernels), 3)
         self.assertEqual(kernels[0].id, 61833229)
         self.assertEqual(kernels[0].name,

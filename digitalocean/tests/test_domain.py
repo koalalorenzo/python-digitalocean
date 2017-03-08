@@ -1,8 +1,9 @@
-import unittest
-import responses
 import json
-import digitalocean
+import unittest
 
+import responses
+
+import digitalocean
 from .BaseTest import BaseTest
 
 
@@ -16,7 +17,9 @@ class TestDomain(BaseTest):
     def test_load(self):
         data = self.load_from_file('domains/single.json')
 
-        responses.add(responses.GET, self.base_url + "domains/example.com",
+        url = self.base_url + "domains/example.com"
+        responses.add(responses.GET,
+                      url,
                       body=data,
                       status=200,
                       content_type='application/json')
@@ -24,28 +27,29 @@ class TestDomain(BaseTest):
         domain = digitalocean.Domain(name='example.com', token=self.token)
         domain.load()
 
-        self.assertEqual(responses.calls[0].request.url,
-                         self.base_url + "domains/example.com")
+        self.assert_get_url_equal(responses.calls[0].request.url, url)
         self.assertEqual(domain.name, "example.com")
         self.assertEqual(domain.ttl, 1800)
 
     @responses.activate
     def test_destroy(self):
-        responses.add(responses.DELETE, self.base_url + "domains/example.com",
+        url = self.base_url + "domains/example.com"
+        responses.add(responses.DELETE,
+                      url,
                       status=204,
                       content_type='application/json')
 
         self.domain.destroy()
 
-        self.assertEqual(responses.calls[0].request.url,
-                         self.base_url + "domains/example.com")
+        self.assertEqual(responses.calls[0].request.url, url)
 
     @responses.activate
     def test_create_new_domain_record(self):
         data = self.load_from_file('domains/create_record.json')
 
+        url = self.base_url + "domains/example.com/records"
         responses.add(responses.POST,
-                      self.base_url + "domains/example.com/records",
+                      url,
                       body=data,
                       status=201,
                       content_type='application/json')
@@ -66,8 +70,9 @@ class TestDomain(BaseTest):
     def test_create(self):
         data = self.load_from_file('domains/create.json')
 
+        url = self.base_url + "domains"
         responses.add(responses.POST,
-                      self.base_url + "domains",
+                      url,
                       body=data,
                       status=201,
                       content_type='application/json')
@@ -87,16 +92,16 @@ class TestDomain(BaseTest):
     def test_get_records(self):
         data = self.load_from_file('domains/records.json')
 
+        url = self.base_url + "domains/example.com/records/"
         responses.add(responses.GET,
-                      self.base_url + "domains/example.com/records/",
+                      url,
                       body=data,
                       status=200,
                       content_type='application/json')
 
         records = self.domain.get_records()
 
-        self.assertEqual(responses.calls[0].request.url,
-                         self.base_url + "domains/example.com/records/")
+        self.assert_get_url_equal(responses.calls[0].request.url, url)
         self.assertEqual(len(records), 5)
         self.assertEqual(records[0].type, "A")
         self.assertEqual(records[0].name, "@")

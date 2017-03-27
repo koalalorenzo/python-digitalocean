@@ -127,5 +127,51 @@ class TestVolume(BaseTest):
         self.assertEqual(res['action']['status'], 'in-progress')
         self.assertEqual(res['action']['id'], 72531856)
 
+    @responses.activate
+    def test_snapshot(self):
+        data = self.load_from_file('volumes/snapshot.json')
+        volume_path = "volumes/" + self.volume.id + "/snapshots/"
+
+        url = self.base_url + volume_path
+        responses.add(responses.POST,
+                      url,
+                      body=data,
+                      status=201,
+                      content_type='application/json')
+
+        res = self.volume.snapshot(name='big-data-snapshot1475261774')
+
+        self.assertEqual(responses.calls[0].request.url,
+                         self.base_url + volume_path)
+        self.assertEqual(res['snapshot']['resource_type'], 'volume')
+        self.assertEqual(res['snapshot']['min_disk_size'], 10)
+        self.assertEqual(res['snapshot']['size_gigabytes'], 20.2)
+        self.assertEqual(res['snapshot']['id'], '8fa70202-873f-11e6-8b68-000f533176b1')
+
+    @responses.activate
+    def test_get_snapshots(self):
+        data = self.load_from_file('volumes/snapshots.json')
+        volume_path = "volumes/" + self.volume.id + "/snapshots/"
+
+        url = self.base_url + volume_path
+        responses.add(responses.GET,
+                      url,
+                      body=data,
+                      status=201,
+                      content_type='application/json')
+
+        res = self.volume.get_snapshots()
+
+        self.assert_get_url_equal(responses.calls[0].request.url,
+                         self.base_url + volume_path)
+
+        self.assertEqual(len(res), 2)
+        self.assertEqual(res[0].id, '8eb4d51a-873f-11e6-96bf-000f53315a41')
+        self.assertEqual(res[0].name, 'big-data-snapshot1475261752')
+        self.assertEqual(res[0].size_gigabytes, 20.2)
+        self.assertEqual(res[1].id, '8eb4d51a-873f-11e6-96bf-000f53315a42')
+        self.assertEqual(res[1].name, 'big-data-snapshot1475261752-2')
+        self.assertEqual(res[1].size_gigabytes, 40.4)
+
 if __name__ == '__main__':
     unittest.main()

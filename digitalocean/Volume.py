@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from .baseapi import BaseAPI, POST, DELETE
-
+from .Snapshot import Snapshot
 
 class Volume(BaseAPI):
     def __init__(self, *args, **kwargs):
@@ -114,6 +114,35 @@ class Volume(BaseAPI):
                     "size_gigabytes": size_gigabytes,
                     "region": region}
         )
+
+    def snapshot(self, name):
+        """
+        Create a snapshot of the volume.
+
+        Args:
+            name: string - a human-readable name for the snapshot
+        """
+        return self.get_data(
+            "volumes/%s/snapshots/" % self.id,
+            type=POST,
+            params={"name": name}
+        )
+
+    def get_snapshots(self):
+        """
+        Retrieve the list of snapshots that have been created from a volume.
+
+        Args:
+        """
+        data = self.get_data("volumes/%s/snapshots/" % self.id)
+        snapshots = list()
+        for jsond in data[u'snapshots']:
+            snapshot = Snapshot(**jsond)
+            snapshot.token = self.token
+            snapshots.append(snapshot)
+
+        return snapshots
+
 
     def __str__(self):
         return "<Volume: %s %s %s>" % (self.id, self.name, self.size_gigabytes)

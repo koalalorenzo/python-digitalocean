@@ -106,7 +106,6 @@ class BaseAPI(object):
         all_data = data
         while data.get("links", {}).get("pages", {}).get("next"):
             url, query = data["links"]["pages"]["next"].split("?", 1)
-            print(params)
 
             # Merge the query parameters
             for key, value in urlparse.parse_qs(query).items():

@@ -43,13 +43,6 @@ class Tag(BaseAPI):
             self.resources = output['tag']['resources']
 
 
-    def update_tag(self, name):
-        query = {"name": name}
-        updated = self.get_data("tags/%s" % self.name, type="PUT", params=query)
-        if updated:
-            self.name = updated["tag"]["name"]
-
-
     def delete(self):
         return self.get_data("tags/%s" % self.name, type="DELETE")
 

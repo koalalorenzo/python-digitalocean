@@ -48,24 +48,6 @@ class TestTags(BaseTest):
                          self.base_url + "tags/")
         self.assertEqual(droplet_tag.name, "awesome")
 
-    @responses.activate
-    def test_update_tag(self):
-        data = self.load_from_file('tags/updatetag.json')
-
-        url = self.base_url + "tags/awesome"
-        responses.add(responses.PUT,
-                      url,
-                      body=data,
-                      status=200,
-                      content_type='application/json')
-
-        droplet_tag = digitalocean.Tag(name='awesome', token=self.token)
-        droplet_tag.update_tag(name="extra-awesome")
-
-        self.assertEqual(responses.calls[0].request.url,
-                         self.base_url + "tags/awesome")
-        self.assertEqual(droplet_tag.name, "extra-awesome")
-
 
     @responses.activate
     def test_delete(self):

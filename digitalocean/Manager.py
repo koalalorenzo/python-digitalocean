@@ -139,6 +139,15 @@ class Manager(BaseAPI):
         """
         images = self.get_images(private=True)
         return images
+    
+    def get_image_by_id(self, image_id):
+        """
+            This function will return an Image object by ID.
+        """
+        data = self.get_data("images/{}".format(str(image_id)))
+        image = Image(**data['image'])
+        image.token = self.token
+        return image
 
     def get_global_images(self):
         """

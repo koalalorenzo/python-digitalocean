@@ -1,0 +1,12 @@
+{
+    "meta": {"total": 1},
+    "links": {},
+    "tags": [
+        {
+            "name": "test",
+            "resources": {
+                "droplets": {"count": 0, "last_tagged": null}
+            }
+        }
+    ]
+}

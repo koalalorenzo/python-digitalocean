@@ -6,18 +6,19 @@ except ImportError:
 
 from .baseapi import BaseAPI
 from .baseapi import GET
-from .Droplet import Droplet
-from .Region import Region
-from .Size import Size
-from .Image import Image
-from .Domain import Domain
-from .SSHKey import SSHKey
-from .Action import Action
 from .Account import Account
+from .Action import Action
+from .Certificate import Certificate
+from .Domain import Domain
+from .Droplet import Droplet
 from .FloatingIP import FloatingIP
+from .Image import Image
 from .LoadBalancer import LoadBalancer
 from .LoadBalancer import StickySesions, HealthCheck, ForwardingRule
-from .Certificate import Certificate
+from .Region import Region
+from .SSHKey import SSHKey
+from .Size import Size
+from .Tag import Tag
 from .Volume import Volume
 
 
@@ -207,6 +208,15 @@ class Manager(BaseAPI):
             Return a SSHKey object by its ID.
         """
         return SSHKey.get_object(api_token=self.token, ssh_key_id=ssh_key_id)
+
+    def get_all_tags(self):
+        """
+            This method returns a list of all tags.
+        """
+        data = self.get_data("tags/")
+        return [
+            Tag(token=self.token, **tag) for tag in data['tags']
+        ]
 
     def get_action(self, action_id):
         """

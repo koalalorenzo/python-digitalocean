@@ -102,7 +102,6 @@ class TestManager(BaseTest):
                       status=200,
                       content_type="application/json")
 
-
         manager = digitalocean.Manager(token=self.token)
         droplets = manager.get_all_droplets(tag_name="awesome")
 
@@ -148,7 +147,7 @@ class TestManager(BaseTest):
         self.assertEqual(region.token, self.token)
         self.assertEqual(region.name, 'New York')
         self.assertEqual(region.slug, 'nyc1')
-        self.assertEqual(region.sizes,["1gb", "512mb"])
+        self.assertEqual(region.sizes, ["1gb", "512mb"])
         self.assertEqual(region.features, ['virtio',
                                            'private_networking',
                                            'backups',
@@ -246,8 +245,10 @@ class TestManager(BaseTest):
         self.assertEqual(image.distribution, 'Ubuntu')
         self.assertEqual(image.regions, ['nyc1', 'nyc3'])
         self.assertEqual(image.created_at, "2014-08-18T16:35:40Z")
-        self.assert_url_query_equal(responses.calls[0].request.url,
-                                    'https://api.digitalocean.com/v2/images/?private=true&per_page=200')
+        self.assert_url_query_equal(
+            responses.calls[0].request.url,
+            'https://api.digitalocean.com/v2/images/?private=true&per_page=200'
+        )
 
     @responses.activate
     def test_get_distro_images(self):
@@ -441,6 +442,23 @@ class TestManager(BaseTest):
 
         self.assertEqual(volumes[0].id, "506f78a4-e098-11e5-ad9f-000f53306ae1")
         self.assertEqual(volumes[0].region['slug'], 'nyc1')
+
+    @responses.activate
+    def test_get_all_tags(self):
+        data = self.load_from_file('tags/all.json')
+
+        url = self.base_url + 'tags/'
+        responses.add(responses.GET, url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        all_tags = self.manager.get_all_tags()
+
+        self.assertEqual(len(all_tags), 1)
+        self.assertEqual(all_tags[0].name, 'test')
+        self.assertEqual(all_tags[0].resources['droplets']['count'], 0)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -459,6 +459,68 @@ class TestManager(BaseTest):
         self.assertEqual(all_tags[0].name, 'test')
         self.assertEqual(all_tags[0].resources['droplets']['count'], 0)
 
+    @responses.activate
+    def test_get_all_snapshots(self):
+        data = self.load_from_file('snapshots/all.json')
+
+        url = self.base_url + 'snapshots/'
+        responses.add(responses.GET, url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        all_snapshots = self.manager.get_all_snapshots()
+
+        self.assertEqual(len(all_snapshots), 1)
+        self.assertEqual(all_snapshots[0].name, 'test')
+        self.assertEqual(all_snapshots[0].id, 6372321)
+        self.assertEqual(all_snapshots[0].size_gigabytes, 1.42)
+        self.assertEqual(all_snapshots[0].resource_type, 'droplet')
+        self.assertEqual(len(all_snapshots[0].regions), 11)
+
+    @responses.activate
+    def test_get_droplet_snapshots(self):
+        data = self.load_from_file('snapshots/droplets.json')
+
+        url = self.base_url + 'snapshots?resource_type=droplet&per_page=200'
+        responses.add(responses.GET, url,
+                      match_querystring=True,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        droplet_snapshots = self.manager.get_droplet_snapshots()
+
+        self.assertEqual(len(droplet_snapshots), 1)
+        self.assertEqual(droplet_snapshots[0].name, 'droplet-test')
+        self.assertEqual(droplet_snapshots[0].id, 19602538)
+        self.assertEqual(droplet_snapshots[0].min_disk_size, 20)
+        self.assertEqual(droplet_snapshots[0].size_gigabytes, 0.31)
+        self.assertEqual(droplet_snapshots[0].resource_type, 'droplet')
+        self.assertEqual(len(droplet_snapshots[0].regions), 12)
+
+    @responses.activate
+    def test_get_volume_snapshots(self):
+        data = self.load_from_file('snapshots/volumes.json')
+
+        url = self.base_url + 'snapshots?resource_type=volume&per_page=200'
+        responses.add(responses.GET, url,
+                      match_querystring=True,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        volume_snapshots = self.manager.get_volume_snapshots()
+
+        self.assertEqual(len(volume_snapshots), 1)
+        self.assertEqual(volume_snapshots[0].name, 'volume-test')
+        self.assertEqual(
+            volume_snapshots[0].id, '4f60fc64-85d1-11e6-a004-000f53315871'
+        )
+        self.assertEqual(volume_snapshots[0].min_disk_size, 10)
+        self.assertEqual(volume_snapshots[0].size_gigabytes, 0)
+        self.assertEqual(volume_snapshots[0].resource_type, 'volume')
+        self.assertEqual(len(volume_snapshots[0].regions), 1)
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,0 +1,19 @@
+{
+  "snapshots": [
+    {
+      "id": "4f60fc64-85d1-11e6-a004-000f53315871",
+      "name": "volume-test",
+      "regions": [
+        "nyc1"
+      ],
+      "created_at": "2016-09-28T23:14:30Z",
+      "resource_id": "89bcc42f-85cf-11e6-a004-000f53315871",
+      "resource_type": "volume",
+      "min_disk_size": 10,
+      "size_gigabytes": 0
+    }
+  ],
+  "meta": {
+    "total": 1
+  }
+}

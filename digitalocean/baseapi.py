@@ -3,6 +3,8 @@ import os
 import json
 import logging
 import requests
+import zlib
+
 try:
     import urlparse
 except ImportError:
@@ -161,7 +163,11 @@ class BaseAPI(object):
             raise NotFoundError()
 
         try:
-            data = req.json()
+            if 'content-encoding' in req.headers and req.headers['content-encoding'] == 'gzip':
+                # deal with case when content remains compressed
+                data = json.loads(zlib.decompress(req.content, 16+zlib.MAX_WBITS))
+            else:
+                data = req.json()
         except ValueError as e:
             raise JSONReadError(
                 'Read failed from DigitalOcean: %s' % str(e)

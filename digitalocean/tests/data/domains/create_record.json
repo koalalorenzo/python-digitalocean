@@ -6,6 +6,7 @@
     "data": "@",
     "priority": null,
     "port": null,
+    "ttl": 600,
     "weight": null
   }
 }

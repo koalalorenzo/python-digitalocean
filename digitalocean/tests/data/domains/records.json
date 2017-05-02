@@ -7,6 +7,7 @@
       "data": "8.8.8.8",
       "priority": null,
       "port": null,
+      "ttl": 1800,
       "weight": null
     },
     {
@@ -16,6 +17,7 @@
       "data": "NS1.DIGITALOCEAN.COM.",
       "priority": null,
       "port": null,
+      "ttl": 1800,
       "weight": null
     },
     {
@@ -25,6 +27,7 @@
       "data": "NS2.DIGITALOCEAN.COM.",
       "priority": null,
       "port": null,
+      "ttl": 1800,
       "weight": null
     },
     {
@@ -34,6 +37,7 @@
       "data": "NS3.DIGITALOCEAN.COM.",
       "priority": null,
       "port": null,
+      "ttl": 1800,
       "weight": null
     },
     {
@@ -43,6 +47,7 @@
       "data": "@",
       "priority": null,
       "port": null,
+      "ttl": 600,
       "weight": null
     }
   ],

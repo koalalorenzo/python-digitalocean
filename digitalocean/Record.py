@@ -11,6 +11,7 @@ class Record(BaseAPI):
         self.data = None
         self.priority = None
         self.port = None
+        self.ttl = None
         self.weight = None
 
         super(Record, self).__init__(*args, **kwargs)
@@ -34,6 +35,7 @@ class Record(BaseAPI):
             "name": self.name,
             "priority": self.priority,
             "port": self.port,
+            "ttl": self.ttl,
             "weight": self.weight
         }
 
@@ -65,6 +67,7 @@ class Record(BaseAPI):
             "name": self.name,
             "priority": self.priority,
             "port": self.port,
+            "ttl": self.ttl,
             "weight": self.weight,
         }
         return self.get_data(

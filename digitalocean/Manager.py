@@ -2,7 +2,7 @@
 try:
     from urlparse import urlparse, parse_qs
 except ImportError:
-    from urllib.parse import urlparse, parse_qs             # noqa
+    from urllib.parse import urlparse, parse_qs                 # noqa
 
 from .baseapi import BaseAPI
 from .Account import Account
@@ -15,9 +15,9 @@ from .Image import Image
 from .LoadBalancer import LoadBalancer
 from .LoadBalancer import StickySesions, HealthCheck, ForwardingRule
 from .Region import Region
+from .SSHKey import SSHKey
 from .Size import Size
 from .Snapshot import Snapshot
-from .SSHKey import SSHKey
 from .Tag import Tag
 from .Volume import Volume
 
@@ -32,61 +32,21 @@ class Manager(BaseAPI):
         """
         return Account.get_object(api_token=self.token)
 
-    def get_action(self, action_id):
+    def get_all_regions(self):
         """
-            Return an Action object by a specific ID.
+            This function returns a list of Region object.
         """
-        return Action.get_object(api_token=self.token, action_id=action_id)
-
-    def get_certificate(self, id):
-        """
-            Returns a Certificate object by its ID.
-
-            Args:
-                id (str): Certificate ID
-        """
-        return Certificate.get_object(api_token=self.token, cert_id=id)
-
-    def get_all_certificates(self):
-        """
-            This method returns a list of Certificate objects.
-        """
-        data = self.get_data("certificates")
-        certificates = list()
-        for jsoned in data['certificates']:
-            cert = Certificate(**jsoned)
-            cert.token = self.token
-            certificates.append(cert)
-
-        return certificates
-
-    def get_domain(self, domain_name):
-        """
-            Return a Domain by its domain_name
-        """
-        return Domain.get_object(api_token=self.token, domain_name=domain_name)
-
-    def get_all_domains(self):
-        """
-            This method returns a list of Domain object.
-        """
-        data = self.get_data("domains/")
-        domains = list()
-        for jsoned in data['domains']:
-            domain = Domain(**jsoned)
-            domain.token = self.token
-            domains.append(domain)
-        return domains
-
-    def get_droplet(self, droplet_id):
-        """
-            Return a Droplet by its ID.
-        """
-        return Droplet.get_object(api_token=self.token, droplet_id=droplet_id)
+        data = self.get_data("regions/")
+        regions = list()
+        for jsoned in data['regions']:
+            region = Region(**jsoned)
+            region.token = self.token
+            regions.append(region)
+        return regions
 
     def get_all_droplets(self, tag_name=None):
         """
-            This method returns a list of Droplet object.
+            This function returns a list of Droplet object.
         """
         params = dict()
         if tag_name:
@@ -124,33 +84,27 @@ class Manager(BaseAPI):
 
         return droplets
 
-    def get_floating_ip(self, ip):
+    def get_droplet(self, droplet_id):
         """
-            Returns a of FloatingIP object by its IP address.
+            Return a Droplet by its ID.
         """
-        return FloatingIP.get_object(api_token=self.token, ip=ip)
+        return Droplet.get_object(api_token=self.token, droplet_id=droplet_id)
 
-    def get_all_floating_ips(self):
+    def get_all_sizes(self):
         """
-            This method returns a list of FloatingIP objects.
+            This function returns a list of Size object.
         """
-        data = self.get_data("floating_ips")
-        floating_ips = list()
-        for jsoned in data['floating_ips']:
-            floating_ip = FloatingIP(**jsoned)
-            floating_ip.token = self.token
-            floating_ips.append(floating_ip)
-        return floating_ips
-
-    def get_image(self, image_id):
-        """
-            Return a Image by its ID.
-        """
-        return Image.get_object(api_token=self.token, image_id=image_id)
+        data = self.get_data("sizes/")
+        sizes = list()
+        for jsoned in data['sizes']:
+            size = Size(**jsoned)
+            size.token = self.token
+            sizes.append(size)
+        return sizes
 
     def get_images(self, private=False, type=None):
         """
-            This method returns a list of Image object.
+            This function returns a list of Image object.
         """
         params = {}
         if private:
@@ -167,31 +121,29 @@ class Manager(BaseAPI):
 
     def get_all_images(self):
         """
-            This method returns a list of Image objects containing all
+            This function returns a list of Image objects containing all
             available DigitalOcean images, both public and private.
         """
         images = self.get_images()
         return images
 
-    def get_app_images(self):
+    def get_image(self, image_id):
         """
-            This method returns a list of Image objects representing
-            public DigitalOcean 'One-Click' application images.
+            Return a Image by its ID.
         """
-        images = self.get_images(type='application')
-        return images
+        return Image.get_object(api_token=self.token, image_id=image_id)
 
-    def get_distro_images(self):
+    def get_my_images(self):
         """
-            This method returns a list of Image objects representing
-            public base distribution images.
+            This function returns a list of Image objects representing
+            private DigitalOcean images (e.g. snapshots and backups).
         """
-        images = self.get_images(type='distribution')
+        images = self.get_images(private=True)
         return images
 
     def get_global_images(self):
         """
-            This method returns a list of Image objects representing
+            This function returns a list of Image objects representing
             public DigitalOcean images (e.g. base distribution images
             and 'One-Click' applications).
         """
@@ -203,22 +155,90 @@ class Manager(BaseAPI):
                 images.append(i)
         return images
 
-    def get_my_images(self):
+    def get_distro_images(self):
         """
-            This method returns a list of Image objects representing
-            private DigitalOcean images (e.g. snapshots and backups).
+            This function returns a list of Image objects representing
+            public base distribution images.
         """
-        images = self.get_images(private=True)
+        images = self.get_images(type='distribution')
         return images
 
-    def get_load_balancer(self, id):
+    def get_app_images(self):
         """
-            Returns a Load Balancer object by its ID.
+            This function returns a list of Image objectobjects representing
+            public DigitalOcean 'One-Click' application images.
+        """
+        images = self.get_images(type='application')
+        return images
 
-            Args:
-                id (str): Load Balancer ID
+    def get_all_domains(self):
         """
-        return LoadBalancer.get_object(api_token=self.token, id=id)
+            This function returns a list of Domain object.
+        """
+        data = self.get_data("domains/")
+        domains = list()
+        for jsoned in data['domains']:
+            domain = Domain(**jsoned)
+            domain.token = self.token
+            domains.append(domain)
+        return domains
+
+    def get_domain(self, domain_name):
+        """
+            Return a Domain by its domain_name
+        """
+        return Domain.get_object(api_token=self.token, domain_name=domain_name)
+
+    def get_all_sshkeys(self):
+        """
+            This function returns a list of SSHKey object.
+        """
+        data = self.get_data("account/keys/")
+        ssh_keys = list()
+        for jsoned in data['ssh_keys']:
+            ssh_key = SSHKey(**jsoned)
+            ssh_key.token = self.token
+            ssh_keys.append(ssh_key)
+        return ssh_keys
+
+    def get_ssh_key(self, ssh_key_id):
+        """
+            Return a SSHKey object by its ID.
+        """
+        return SSHKey.get_object(api_token=self.token, ssh_key_id=ssh_key_id)
+
+    def get_all_tags(self):
+        """
+            This method returns a list of all tags.
+        """
+        data = self.get_data("tags/")
+        return [
+            Tag(token=self.token, **tag) for tag in data['tags']
+        ]
+
+    def get_action(self, action_id):
+        """
+            Return an Action object by a specific ID.
+        """
+        return Action.get_object(api_token=self.token, action_id=action_id)
+
+    def get_all_floating_ips(self):
+        """
+            This function returns a list of FloatingIP objects.
+        """
+        data = self.get_data("floating_ips")
+        floating_ips = list()
+        for jsoned in data['floating_ips']:
+            floating_ip = FloatingIP(**jsoned)
+            floating_ip.token = self.token
+            floating_ips.append(floating_ip)
+        return floating_ips
+
+    def get_floating_ip(self, ip):
+        """
+            Returns a of FloatingIP object by its IP address.
+        """
+        return FloatingIP.get_object(api_token=self.token, ip=ip)
 
     def get_all_load_balancers(self):
         """
@@ -239,29 +259,36 @@ class Manager(BaseAPI):
             load_balancers.append(load_balancer)
         return load_balancers
 
-    def get_all_regions(self):
+    def get_load_balancer(self, id):
         """
-            This method returns a list of Region object.
-        """
-        data = self.get_data("regions/")
-        regions = list()
-        for jsoned in data['regions']:
-            region = Region(**jsoned)
-            region.token = self.token
-            regions.append(region)
-        return regions
+            Returns a Load Balancer object by its ID.
 
-    def get_all_sizes(self):
+            Args:
+                id (str): Load Balancer ID
         """
-            This method returns a list of Size object.
+        return LoadBalancer.get_object(api_token=self.token, id=id)
+
+    def get_certificate(self, id):
         """
-        data = self.get_data("sizes/")
-        sizes = list()
-        for jsoned in data['sizes']:
-            size = Size(**jsoned)
-            size.token = self.token
-            sizes.append(size)
-        return sizes
+            Returns a Certificate object by its ID.
+
+            Args:
+                id (str): Certificate ID
+        """
+        return Certificate.get_object(api_token=self.token, cert_id=id)
+
+    def get_all_certificates(self):
+        """
+            This function returns a list of Certificate objects.
+        """
+        data = self.get_data("certificates")
+        certificates = list()
+        for jsoned in data['certificates']:
+            cert = Certificate(**jsoned)
+            cert.token = self.token
+            certificates.append(cert)
+
+        return certificates
 
     def get_snapshot(self, snapshot_id):
         """
@@ -301,42 +328,9 @@ class Manager(BaseAPI):
             for snapshot in data['snapshots']
         ]
 
-    def get_all_sshkeys(self):
-        """
-            This method returns a list of SSHKey object.
-        """
-        data = self.get_data("account/keys/")
-        ssh_keys = list()
-        for jsoned in data['ssh_keys']:
-            ssh_key = SSHKey(**jsoned)
-            ssh_key.token = self.token
-            ssh_keys.append(ssh_key)
-        return ssh_keys
-
-    def get_ssh_key(self, ssh_key_id):
-        """
-            Return a SSHKey object by its ID.
-        """
-        return SSHKey.get_object(api_token=self.token, ssh_key_id=ssh_key_id)
-
-    def get_all_tags(self):
-        """
-            This method returns a list of all Tags.
-        """
-        data = self.get_data("tags/")
-        return [
-            Tag(token=self.token, **tag) for tag in data['tags']
-        ]
-
-    def get_volume(self, volume_id):
-        """
-            Returns a Volume object by its ID.
-        """
-        return Volume.get_object(api_token=self.token, volume_id=volume_id)
-
     def get_all_volumes(self):
         """
-            This method returns a list of Volume objects.
+            This function returns a list of Volume objects.
         """
         data = self.get_data("volumes")
         volumes = list()
@@ -345,6 +339,12 @@ class Manager(BaseAPI):
             volume.token = self.token
             volumes.append(volume)
         return volumes
+
+    def get_volume(self, volume_id):
+        """
+            Returns a Volume object by its ID.
+        """
+        return Volume.get_object(api_token=self.token, volume_id=volume_id)
 
     def __str__(self):
         return "<Manager>"

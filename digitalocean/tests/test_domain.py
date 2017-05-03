@@ -65,6 +65,7 @@ class TestDomain(BaseTest):
         self.assertEqual(response['domain_record']['type'], "CNAME")
         self.assertEqual(response['domain_record']['name'], "www")
         self.assertEqual(response['domain_record']['data'], "@")
+        self.assertEqual(response['domain_record']['ttl'], 600)
 
     @responses.activate
     def test_create(self):
@@ -107,6 +108,8 @@ class TestDomain(BaseTest):
         self.assertEqual(records[0].name, "@")
         self.assertEqual(records[4].type, "CNAME")
         self.assertEqual(records[4].name, "example")
+        self.assertEqual(records[4].ttl, 600)
+
 
 if __name__ == '__main__':
     unittest.main()

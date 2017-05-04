@@ -2,10 +2,9 @@
 try:
     from urlparse import urlparse, parse_qs
 except ImportError:
-    from urllib.parse import urlparse, parse_qs
+    from urllib.parse import urlparse, parse_qs                 # noqa
 
 from .baseapi import BaseAPI
-from .baseapi import GET
 from .Account import Account
 from .Action import Action
 from .Certificate import Certificate
@@ -18,6 +17,7 @@ from .LoadBalancer import StickySesions, HealthCheck, ForwardingRule
 from .Region import Region
 from .SSHKey import SSHKey
 from .Size import Size
+from .Snapshot import Snapshot
 from .Tag import Tag
 from .Volume import Volume
 
@@ -163,7 +163,6 @@ class Manager(BaseAPI):
         images = self.get_images(type='distribution')
         return images
 
-
     def get_app_images(self):
         """
             This function returns a list of Image objectobjects representing
@@ -171,7 +170,6 @@ class Manager(BaseAPI):
         """
         images = self.get_images(type='application')
         return images
-
 
     def get_all_domains(self):
         """
@@ -291,6 +289,44 @@ class Manager(BaseAPI):
             certificates.append(cert)
 
         return certificates
+
+    def get_snapshot(self, snapshot_id):
+        """
+            Return a Snapshot by its ID.
+        """
+        return Snapshot.get_object(
+            api_token=self.token, snapshot_id=snapshot_id
+        )
+
+    def get_all_snapshots(self):
+        """
+            This method returns a list of all Snapshots.
+        """
+        data = self.get_data("snapshots/")
+        return [
+            Snapshot(token=self.token, **snapshot)
+            for snapshot in data['snapshots']
+        ]
+
+    def get_droplet_snapshots(self):
+        """
+            This method returns a list of all Snapshots based on Droplets.
+        """
+        data = self.get_data("snapshots?resource_type=droplet")
+        return [
+            Snapshot(token=self.token, **snapshot)
+            for snapshot in data['snapshots']
+        ]
+
+    def get_volume_snapshots(self):
+        """
+            This method returns a list of all Snapshots based on volumes.
+        """
+        data = self.get_data("snapshots?resource_type=volume")
+        return [
+            Snapshot(token=self.token, **snapshot)
+            for snapshot in data['snapshots']
+        ]
 
     def get_all_volumes(self):
         """

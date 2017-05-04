@@ -39,3 +39,5 @@ MANIFEST
 .idea/*
 
 .cache
+
+.venv

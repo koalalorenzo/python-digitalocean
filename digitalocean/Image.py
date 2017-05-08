@@ -17,16 +17,25 @@ class Image(BaseAPI):
         super(Image, self).__init__(*args, **kwargs)
 
     @classmethod
-    def get_object(cls, api_token, image_id):
+    def get_object(cls, api_token, image_id_or_slug, use_slug=False):
         """
             Class method that will return an Image object by ID.
         """
-        image = cls(token=api_token, id=image_id)
-        image.load()
+        if use_slug:
+            image = cls(token=api_token, slug=image_id_or_slug)
+        else:
+            image = cls(token=api_token, id=image_id_or_slug)
+        image.load(use_slug=use_slug)
         return image
 
-    def load(self):
-        data = self.get_data("images/%s" % self.id)
+    def load(self, use_slug=False):
+        """
+            Load slug.
+
+            Loads by id unless use_slug is True.
+        """
+        identifier = self.slug if (use_slug and self.slug) else self.id
+        data = self.get_data("images/%s" % identifier)
         image_dict = data['image']
 
         # Setting the attribute values

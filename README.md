@@ -1,4 +1,4 @@
-#python-digitalocean
+# python-digitalocean
 ##
 
 This library provides easy access to Digital Ocean APIs to deploy droplets, images and more.
@@ -36,7 +36,7 @@ python-digitalocean support all the features provided via digitalocean.com APIs,
 * Restore root password of a Droplet
 
 
-## Examples
+## Examples
 ### Listing the droplets
 
 This example shows how to list all the active droplets:

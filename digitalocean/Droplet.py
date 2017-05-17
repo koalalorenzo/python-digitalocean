@@ -557,6 +557,10 @@ class Droplet(BaseAPI):
             "tags": self.tags,
             "monitoring": bool(self.monitoring),
         }
+        
+        if type(self.image) is int:
+            data["image_i"] = self.image
+            data.pop("image")
 
         if self.user_data:
             data["user_data"] = self.user_data

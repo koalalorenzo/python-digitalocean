@@ -176,6 +176,100 @@ class TestLoadBalancer(BaseTest):
                          str(context.exception))
 
     @responses.activate
+    def test_save(self):
+        data1 = self.load_from_file('loadbalancer/single.json')
+        url = '{0}load_balancers/{1}'.format(self.base_url, self.lb_id)
+        responses.add(responses.GET,
+                      url,
+                      body=data1,
+                      status=200,
+                      content_type='application/json')
+
+        self.lb.load()
+        rules = self.lb.forwarding_rules
+
+        self.assert_get_url_equal(responses.calls[0].request.url, url)
+        self.assertEqual(self.lb.id, self.lb_id)
+        self.assertEqual(self.lb.region['slug'], 'nyc3')
+        self.assertEqual(self.lb.algorithm, 'round_robin')
+        self.assertEqual(self.lb.ip, '104.131.186.241')
+        self.assertEqual(self.lb.name, 'example-lb-01')
+        self.assertEqual(len(rules), 2)
+        self.assertEqual(rules[0].entry_protocol, 'http')
+        self.assertEqual(rules[0].entry_port, 80)
+        self.assertEqual(rules[0].target_protocol, 'http')
+        self.assertEqual(rules[0].target_port, 80)
+        self.assertEqual(rules[0].tls_passthrough, False)
+        self.assertEqual(rules[1].entry_protocol, 'https')
+        self.assertEqual(rules[1].entry_port, 444)
+        self.assertEqual(rules[1].target_protocol, 'https')
+        self.assertEqual(rules[1].target_port, 443)
+        self.assertEqual(rules[1].tls_passthrough, True)
+        self.assertEqual(self.lb.health_check.protocol, 'http')
+        self.assertEqual(self.lb.health_check.port, 80)
+        self.assertEqual(self.lb.health_check.path, '/')
+        self.assertEqual(self.lb.health_check.check_interval_seconds, 10)
+        self.assertEqual(self.lb.health_check.response_timeout_seconds, 5)
+        self.assertEqual(self.lb.health_check.healthy_threshold, 5)
+        self.assertEqual(self.lb.health_check.unhealthy_threshold, 3)
+        self.assertEqual(self.lb.sticky_sessions.type, 'none')
+        self.assertEqual(self.lb.droplet_ids, [3164444, 3164445])
+        self.assertEqual(self.lb.tag, '')
+        self.assertEqual(self.lb.redirect_http_to_https, False)
+
+        data2 = self.load_from_file('loadbalancer/save.json')
+        # PUT requires slash at the end of url
+        url = '{0}load_balancers/{1}/'.format(self.base_url, self.lb_id)
+        responses.add(responses.PUT,
+                      url,
+                      body=data2,
+                      status=202,
+                      content_type='application/json')
+
+        self.lb.algorithm = 'least_connections'
+        self.lb.sticky_sessions.type = 'cookies'
+        self.lb.sticky_sessions.cookie_name = 'DO_LB'
+        self.lb.sticky_sessions.cookie_ttl_seconds = 300
+        self.lb.droplet_ids = [34153248, 34153250]
+        res = self.lb.save()
+
+        lb = digitalocean.LoadBalancer(**res['load_balancer'])
+        lb.health_check = digitalocean.HealthCheck(**res['load_balancer']['health_check'])
+        lb.sticky_sessions = digitalocean.StickySesions(**res['load_balancer']['sticky_sessions'])
+        rules = list()
+        for rule in lb.forwarding_rules:
+            rules.append(digitalocean.ForwardingRule(**rule))
+        self.assertEqual(lb.id, self.lb_id)
+        self.assertEqual(lb.region['slug'], 'nyc3')
+        self.assertEqual(lb.algorithm, 'least_connections')
+        self.assertEqual(lb.ip, '104.131.186.241')
+        self.assertEqual(lb.name, 'example-lb-01')
+        self.assertEqual(len(rules), 2)
+        self.assertEqual(rules[0].entry_protocol, 'http')
+        self.assertEqual(rules[0].entry_port, 80)
+        self.assertEqual(rules[0].target_protocol, 'http')
+        self.assertEqual(rules[0].target_port, 80)
+        self.assertEqual(rules[0].tls_passthrough, False)
+        self.assertEqual(rules[1].entry_protocol, 'https')
+        self.assertEqual(rules[1].entry_port, 444)
+        self.assertEqual(rules[1].target_protocol, 'https')
+        self.assertEqual(rules[1].target_port, 443)
+        self.assertEqual(rules[1].tls_passthrough, True)
+        self.assertEqual(lb.health_check.protocol, 'http')
+        self.assertEqual(lb.health_check.port, 80)
+        self.assertEqual(lb.health_check.path, '/')
+        self.assertEqual(lb.health_check.check_interval_seconds, 10)
+        self.assertEqual(lb.health_check.response_timeout_seconds, 5)
+        self.assertEqual(lb.health_check.healthy_threshold, 5)
+        self.assertEqual(lb.health_check.unhealthy_threshold, 3)
+        self.assertEqual(lb.sticky_sessions.type, 'cookies')
+        self.assertEqual(lb.sticky_sessions.cookie_name, 'DO_LB')
+        self.assertEqual(lb.sticky_sessions.cookie_ttl_seconds, 300)
+        self.assertEqual(lb.droplet_ids, [34153248, 34153250])
+        self.assertEqual(lb.tag, '')
+        self.assertEqual(lb.redirect_http_to_https, False)
+
+    @responses.activate
     def test_destroy(self):
         url = '{0}load_balancers/{1}/'.format(self.base_url, self.lb_id)
         responses.add(responses.DELETE,

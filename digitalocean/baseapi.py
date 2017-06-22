@@ -67,7 +67,7 @@ class BaseAPI(object):
 
         url = urlparse.urljoin(self.end_point, url)
 
-        # lookup table to find out the apropriate requests method,
+        # lookup table to find out the appropriate requests method,
         # headers and payload type (json or query parameters)
         identity = lambda x: x
         json_dumps = lambda x: json.dumps(x)

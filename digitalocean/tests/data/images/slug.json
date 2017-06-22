@@ -1,16 +1,17 @@
 {
   "image":
     {
-      "id": 449676856,
-      "name": "My Snapshot",
+      "id": 449676857,
+      "name": "My Slug Snapshot",
       "distribution": "Ubuntu",
+      "slug": "testslug",
       "public": false,
       "regions": [
         "nyc1",
         "nyc3"
       ],
       "created_at": "2014-08-18T16:35:40Z",
-      "min_disk_size": 20,
+      "min_disk_size": 30,
       "size_gigabytes": 2.34
     }
 }

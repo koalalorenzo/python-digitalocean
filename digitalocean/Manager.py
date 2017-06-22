@@ -127,12 +127,13 @@ class Manager(BaseAPI):
         images = self.get_images()
         return images
 
-    def get_image(self, image_id_or_slug, use_slug=False):
+    def get_image(self, image_id_or_slug):
         """
             Return a Image by its ID/Slug.
         """
         return Image.get_object(
-            self.token, image_id_or_slug, use_slug=use_slug
+            apt_token=self.token,
+            image_id_or_slug=image_id_or_slug,
         )
 
     def get_my_images(self):

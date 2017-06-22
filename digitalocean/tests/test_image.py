@@ -10,7 +10,10 @@ class TestImage(BaseTest):
     def setUp(self):
         super(TestImage, self).setUp()
         self.image = digitalocean.Image(
-            id=449676856, slug='testslug', token=self.token
+            id=449676856,  token=self.token
+        )
+        self.image_with_slug = digitalocean.Image(
+            id=449676857, slug='testslug', token=self.token
         )
 
     @responses.activate
@@ -28,7 +31,6 @@ class TestImage(BaseTest):
 
         self.assert_get_url_equal(responses.calls[0].request.url, url)
         self.assertEqual(self.image.id, 449676856)
-        self.assertEqual(self.image.slug, 'testslug')
         self.assertEqual(self.image.name, 'My Snapshot')
         self.assertEqual(self.image.distribution, 'Ubuntu')
         self.assertEqual(self.image.public, False)
@@ -50,14 +52,14 @@ class TestImage(BaseTest):
         self.image.load(use_slug=True)
 
         self.assert_get_url_equal(responses.calls[0].request.url, url)
-        self.assertEqual(self.image.id, 449676856)
+        self.assertEqual(self.image.id, 449676857)
         self.assertEqual(self.image.slug, 'testslug')
-        self.assertEqual(self.image.name, 'My Snapshot')
+        self.assertEqual(self.image.name, 'My Slug Snapshot')
         self.assertEqual(self.image.distribution, 'Ubuntu')
         self.assertEqual(self.image.public, False)
         self.assertEqual(self.image.created_at, "2014-08-18T16:35:40Z")
         self.assertEqual(self.image.size_gigabytes, 2.34)
-        self.assertEqual(self.image.min_disk_size, 20)
+        self.assertEqual(self.image.min_disk_size, 30)
 
     @responses.activate
     def test_destroy(self):

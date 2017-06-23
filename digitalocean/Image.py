@@ -1,5 +1,32 @@
 # -*- coding: utf-8 -*-
-from .baseapi import BaseAPI, POST, DELETE, PUT
+import re
+
+from .baseapi import BaseAPI, POST, DELETE, PUT, NotFoundError
+
+IMAGE_SERIAL_NO = re.compile('^\d{7}$')
+
+
+def looks_like_image_id(image_id_or_slug, max=10):
+    """
+    Does this resemble an image_id?
+
+    Returns True if it does.
+
+    As of images ids are all 7 digit integers, but these are a quarter used up.
+    A default limit of 10 digits is applied, to allow for edge cases like
+    serial numbers being supplied as slugs.
+
+    Note this is not guaranteed to work, the Digital Ocean REST api
+    enddpoint to get an image is the same whether you use an id or slug,
+    so there are obvious issues with using numbers as slugs.
+    """
+    match = False
+    image_id_or_slug = str(image_id_or_slug)
+    if re.match(
+            IMAGE_SERIAL_NO, image_id_or_slug
+    ) and len(image_id_or_slug) <= max:
+        match = True
+    return match
 
 
 class Image(BaseAPI):
@@ -21,25 +48,27 @@ class Image(BaseAPI):
         """
             Class method that will return an Image object by ID or slug.
         """
-        try:
-            int(image_id_or_slug)
+        if looks_like_image_id(image_id_or_slug):
             image = cls(token=api_token, id=image_id_or_slug)
-        except ValueError:
-            image = cls(token=api_token, slug=image_id_or_slug)
-            image.load(use_slug=use_slug)
+            image.load()
         else:
+            image = cls(token=api_token, slug=image_id_or_slug)
+            image.load(use_slug=True)
         return image
 
     def load(self, use_slug=False):
         """
             Load slug.
 
-            Loads by id unless use_slug is True.
+            Loads by id, or by slug if id is not present or use slug is True.
         """
-        if (use_slug and self.slug):
+        identifier = None
+        if use_slug or not self.id:
             identifier = self.slug
         else:
             identifier = self.id
+        if not identifier:
+            raise NotFoundError("One of self.id or self.slug must be set.")
         data = self.get_data("images/%s" % identifier)
         image_dict = data['image']
 

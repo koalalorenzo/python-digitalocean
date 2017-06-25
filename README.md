@@ -1,5 +1,4 @@
-#python-digitalocean
-##
+# python-digitalocean
 
 This library provides easy access to Digital Ocean APIs to deploy droplets, images and more.
 

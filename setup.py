@@ -15,10 +15,10 @@ if os.path.isfile("DESCRIPTION.rst"):
 
 setup(
     name='python-digitalocean',
-    version='1.11',
+    version='1.12',
     description='digitalocean.com API to manage Droplets and Images',
     author='Lorenzo Setale ( http://who.is.lorenzo.setale.me/? )',
-    author_email='koalalorenzo@gmail.com',
+    author_email='lorenzo@setale.me',
     url='https://github.com/koalalorenzo/python-digitalocean',
     packages=['digitalocean'],
     install_requires=['requests'],

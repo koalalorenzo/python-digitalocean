@@ -1,33 +1,5 @@
 # -*- coding: utf-8 -*-
-import re
-
 from .baseapi import BaseAPI, POST, DELETE, PUT, NotFoundError
-
-IMAGE_SERIAL_NO = re.compile('^\d{7}$')
-
-
-def looks_like_image_id(image_id_or_slug, max=10):
-    """
-    Does this resemble an image_id?
-
-    Returns True if it does.
-
-    As of images ids are all 7 digit integers, but these are a quarter used up.
-    A default limit of 10 digits is applied, to allow for edge cases like
-    serial numbers being supplied as slugs.
-
-    Note this is not guaranteed to work, the Digital Ocean REST api
-    enddpoint to get an image is the same whether you use an id or slug,
-    so there are obvious issues with using numbers as slugs.
-    """
-    match = False
-    image_id_or_slug = str(image_id_or_slug)
-    if re.match(
-            IMAGE_SERIAL_NO, image_id_or_slug
-    ) and len(image_id_or_slug) <= max:
-        match = True
-    return match
-
 
 class Image(BaseAPI):
     def __init__(self, *args, **kwargs):
@@ -47,14 +19,30 @@ class Image(BaseAPI):
     def get_object(cls, api_token, image_id_or_slug):
         """
             Class method that will return an Image object by ID or slug.
+
+            This method is used to validate the type of the image. If it is a
+            number, it will be considered as an Image ID, instead if it is a
+            string, it will considered as slug.
         """
-        if looks_like_image_id(image_id_or_slug):
+        if self._is_string(image_id_or_slug):
             image = cls(token=api_token, id=image_id_or_slug)
             image.load()
         else:
             image = cls(token=api_token, slug=image_id_or_slug)
             image.load(use_slug=True)
         return image
+
+    def _is_string(self, value):
+        """
+            Checks if the value provided is a string (True) or not integer
+            (False) or something else (None).
+        """
+        if type(value) in [type(u''), type('')]:
+            return True
+        elif type(value) in [int, type(2 ** 64)]:
+            return False
+        else:
+            return None
 
     def load(self, use_slug=False):
         """

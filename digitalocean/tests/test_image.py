@@ -111,6 +111,13 @@ class TestImage(BaseTest):
                          self.base_url + 'images/449676856')
         self.assertEqual(res['image']['name'], 'Descriptive name')
 
+    def test_is_string(self):
+        self.assertEqual(self.image._is_string("String"), True)
+        self.assertEqual(self.image._is_string("1234"), True)
+        self.assertEqual(self.image._is_string(123), False)
+        self.assertEqual(self.image._is_string(None), None)
+        self.assertEqual(self.image._is_string(True), None)
+        self.assertEqual(self.image._is_string(False), None)
 
 if __name__ == '__main__':
     unittest.main()

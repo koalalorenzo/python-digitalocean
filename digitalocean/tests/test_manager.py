@@ -10,6 +10,9 @@ class TestManager(BaseTest):
     def setUp(self):
         super(TestManager, self).setUp()
         self.manager = digitalocean.Manager(token=self.token)
+        self.image = digitalocean.Image(
+            id=449676856, slug='testslug', token=self.token
+        )
 
     @responses.activate
     def test_get_account(self):
@@ -175,6 +178,43 @@ class TestManager(BaseTest):
         self.assertEqual(size.price_monthly, 5.0)
         self.assertEqual(size.transfer, 1)
         self.assertEqual(size.regions, ["nyc1", "ams1", "sfo1"])
+
+    @responses.activate
+    def test_get_image(self):
+        """Test get image by id."""
+        data = self.load_from_file('images/single.json')
+        url = "{}images/{}".format(self.base_url, self.image.id)
+
+        responses.add(responses.GET,
+                      url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        self.image.load()
+
+        self.assert_get_url_equal(responses.calls[0].request.url, url)
+        self.assertEqual(self.image.id, 449676856)
+        self.assertEqual(self.image.slug, 'testslug')
+        self.assertEqual(self.image.name, 'My Snapshot')
+
+    @responses.activate
+    def test_get_image_by_slug(self):
+        """Test get image by slug."""
+        data = self.load_from_file('images/single.json')
+        url = "{}images/{}".format(self.base_url, self.image.slug)
+        responses.add(responses.GET,
+                      url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        self.image.load(use_slug=True)
+
+        self.assert_get_url_equal(responses.calls[0].request.url, url)
+        self.assertEqual(self.image.id, 449676856)
+        self.assertEqual(self.image.slug, 'testslug')
+        self.assertEqual(self.image.name, 'My Snapshot')
 
     @responses.activate
     def test_get_all_images(self):

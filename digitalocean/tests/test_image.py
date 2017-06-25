@@ -9,7 +9,12 @@ class TestImage(BaseTest):
 
     def setUp(self):
         super(TestImage, self).setUp()
-        self.image = digitalocean.Image(id=449676856, token=self.token)
+        self.image = digitalocean.Image(
+            id=449676856,  token=self.token
+        )
+        self.image_with_slug = digitalocean.Image(
+            slug='testslug', token=self.token
+        )
 
     @responses.activate
     def test_load(self):
@@ -32,6 +37,32 @@ class TestImage(BaseTest):
         self.assertEqual(self.image.created_at, "2014-08-18T16:35:40Z")
         self.assertEqual(self.image.size_gigabytes, 2.34)
         self.assertEqual(self.image.min_disk_size, 20)
+
+    @responses.activate
+    def test_load_by_slug(self):
+        """Test loading image by slug."""
+        data = self.load_from_file('images/slug.json')
+        url = "{}images/{}".format(self.base_url, self.image_with_slug.slug)
+        responses.add(responses.GET,
+                      url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        self.image_with_slug.load(use_slug=True)
+
+        self.assert_get_url_equal(responses.calls[0].request.url, url)
+        self.assertEqual(self.image_with_slug.id, None)
+        self.assertEqual(self.image_with_slug.slug, 'testslug')
+        self.assertEqual(self.image_with_slug.name, 'My Slug Snapshot')
+        self.assertEqual(self.image_with_slug.distribution, 'Ubuntu')
+        self.assertEqual(self.image_with_slug.public, False)
+        self.assertEqual(
+            self.image_with_slug.created_at,
+            "2014-08-18T16:35:40Z"
+        )
+        self.assertEqual(self.image_with_slug.size_gigabytes, 2.34)
+        self.assertEqual(self.image_with_slug.min_disk_size, 30)
 
     @responses.activate
     def test_destroy(self):

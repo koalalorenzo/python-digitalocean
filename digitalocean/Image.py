@@ -24,15 +24,16 @@ class Image(BaseAPI):
             number, it will be considered as an Image ID, instead if it is a
             string, it will considered as slug.
         """
-        if self._is_string(image_id_or_slug):
-            image = cls(token=api_token, id=image_id_or_slug)
-            image.load()
-        else:
+        if cls._is_string(image_id_or_slug):
             image = cls(token=api_token, slug=image_id_or_slug)
             image.load(use_slug=True)
+        else:
+            image = cls(token=api_token, id=image_id_or_slug)
+            image.load()
         return image
 
-    def _is_string(self, value):
+    @staticmethod
+    def _is_string(value):
         """
             Checks if the value provided is a string (True) or not integer
             (False) or something else (None).

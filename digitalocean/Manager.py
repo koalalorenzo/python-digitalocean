@@ -132,7 +132,7 @@ class Manager(BaseAPI):
             Return a Image by its ID/Slug.
         """
         return Image.get_object(
-            apt_token=self.token,
+            api_token=self.token,
             image_id_or_slug=image_id_or_slug,
         )
 

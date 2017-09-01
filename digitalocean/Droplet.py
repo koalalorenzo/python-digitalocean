@@ -571,7 +571,7 @@ class Droplet(BaseAPI):
 
     def get_events(self):
         """
-            A helper function for backwards compatability.
+            A helper function for backwards compatibility.
             Calls get_actions()
         """
         return self.get_actions()

@@ -21,17 +21,6 @@ class BadSSHKeyFormat(DropletError):
     pass
 
 
-512MB = '512mb'
-1GB = '1gb'
-2GB = '2gb'
-4GB = '4gb'
-8GB = '8gb'
-16GB = '16gb'
-32GB = '32gb'
-48GB = '48gb'
-64GB = '64gb'
-
-
 class Droplet(BaseAPI):
     """"Droplet management
 

@@ -103,12 +103,13 @@ class TestDomain(BaseTest):
         records = self.domain.get_records()
 
         self.assert_get_url_equal(responses.calls[0].request.url, url)
-        self.assertEqual(len(records), 5)
+        self.assertEqual(len(records), 6)
         self.assertEqual(records[0].type, "A")
         self.assertEqual(records[0].name, "@")
         self.assertEqual(records[4].type, "CNAME")
         self.assertEqual(records[4].name, "example")
         self.assertEqual(records[4].ttl, 600)
+        self.assertEqual(records[5].data, "letsencrypt.org.")
 
 
 if __name__ == '__main__':

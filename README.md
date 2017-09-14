@@ -132,7 +132,7 @@ droplet.create()
 ```
 
 ## Getting account requests/hour limits status:
-Each request that returns an object or dictionary will include the rate limit information as attributes:
+Each request will also include the rate limit information:
 
 ```python
 import digitalocean

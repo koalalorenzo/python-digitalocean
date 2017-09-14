@@ -171,7 +171,14 @@ class BaseAPI(object):
             msg = [data[m] for m in ("id", "message") if m in data][1]
             raise DataReadError(msg)
 
-        # If there are more elements available (total) than the elements per 
+        # Add the account requests/hour limit
+        self.ratelimit_limit = req.headers.get('Ratelimit-Limit', None)
+        # Add the account requests remaining
+        self.ratelimit_remaining = req.headers.get('Ratelimit-Remaining', None)
+        # Add the account requests limit reset time
+        self.ratelimit_reset = req.headers.get('Ratelimit-Reset', None)
+
+        # If there are more elements available (total) than the elements per
         # page, try to deal with pagination. Note: Breaking the logic on
         # multiple pages,
         pages = data.get("links", {}).get("pages", {})

@@ -8,7 +8,9 @@
       "priority": null,
       "port": null,
       "ttl": 1800,
-      "weight": null
+      "weight": null,
+      "flags": null,
+      "tag": null
     },
     {
       "id": 2,
@@ -18,7 +20,9 @@
       "priority": null,
       "port": null,
       "ttl": 1800,
-      "weight": null
+      "weight": null,
+      "flags": null,
+      "tag": null
     },
     {
       "id": 3,
@@ -28,7 +32,9 @@
       "priority": null,
       "port": null,
       "ttl": 1800,
-      "weight": null
+      "weight": null,
+      "flags": null,
+      "tag": null
     },
     {
       "id": 4,
@@ -38,7 +44,9 @@
       "priority": null,
       "port": null,
       "ttl": 1800,
-      "weight": null
+      "weight": null,
+      "flags": null,
+      "tag": null
     },
     {
       "id": 5,
@@ -48,7 +56,21 @@
       "priority": null,
       "port": null,
       "ttl": 600,
-      "weight": null
+      "weight": null,
+      "flags": null,
+      "tag": null
+    },
+    {
+      "id": 6,
+      "type": "CAA",
+      "name": "@",
+      "data": "letsencrypt.org.",
+      "priority": null,
+      "port": null,
+      "ttl": 1800,
+      "weight": null,
+      "flags": 0,
+      "tag": "issue"
     }
   ],
   "meta": {

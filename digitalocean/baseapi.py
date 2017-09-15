@@ -122,6 +122,14 @@ class BaseAPI(object):
 
         return all_data
 
+    def __init_ratelimit(self, headers):
+        # Add the account requests/hour limit
+        self.ratelimit_limit = headers.get('Ratelimit-Limit', None)
+        # Add the account requests remaining
+        self.ratelimit_remaining = headers.get('Ratelimit-Remaining', None)
+        # Add the account requests limit reset time
+        self.ratelimit_reset = headers.get('Ratelimit-Reset', None)
+
     def get_timeout(self):
         """
             Checks if any timeout for the requests to DigitalOcean is required.
@@ -171,7 +179,10 @@ class BaseAPI(object):
             msg = [data[m] for m in ("id", "message") if m in data][1]
             raise DataReadError(msg)
 
-        # If there are more elements available (total) than the elements per 
+        # init reqest limits
+        self.__init_ratelimit(req.headers)
+
+        # If there are more elements available (total) than the elements per
         # page, try to deal with pagination. Note: Breaking the logic on
         # multiple pages,
         pages = data.get("links", {}).get("pages", {})

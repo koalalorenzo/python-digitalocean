@@ -131,6 +131,42 @@ droplet = digitalocean.Droplet(token="secretspecialuniquesnowflake",
 droplet.create()
 ```
 
+## Getting account requests/hour limits status:
+Each request will also include the rate limit information:
+
+```python
+import digitalocean
+account = digitalocean.Account(token="secretspecialuniquesnowflake").load()
+# or
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+account = manager.get_account()
+```
+Output:
+```text
+droplet_limit: 25
+email: 'name@domain.me'
+email_verified: True
+end_point: 'https://api.digitalocean.com/v2/'
+floating_ip_limit: 3
+ratelimit_limit: '5000'
+ratelimit_remaining: '4995'
+ratelimit_reset: '1505378973'
+status: 'active'
+status_message: ''
+token:'my_secret_token'
+uuid: 'my_id'
+```
+
+When using the Manager().get_all.. functions, the rate limit will be stored on the manager object:
+ ```python
+import digitalocean
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+domains = manager.get_all_domains()
+
+print(manager.ratelimit_limit) 
+```
+
+
 ## Testing
 
 ### Test using Docker

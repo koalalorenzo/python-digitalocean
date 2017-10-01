@@ -4,6 +4,9 @@ from .baseapi import BaseAPI, POST, DELETE, PUT
 
 class _targets(object):
     """
+    An internal object that both `Sources` and `Destinations` derive from.
+
+    Not for direct use by end users.
     """
     def __init__(self, addresses=[], droplet_ids=[],
                  load_balancer_uids=[], tags=[]):
@@ -14,15 +17,52 @@ class _targets(object):
 
 
 class Sources(_targets):
+    """
+    An object holding information about an InboundRule's sources.
+
+    Args:
+        addresses (obj:`list`): An array of strings containing the IPv4
+            addresses, IPv6 addresses, IPv4 CIDRs, and/or IPv6 CIDRs to which
+            the Firewall will allow traffic.
+        droplet_ids (obj:`list`): An array containing the IDs of the Droplets
+            to which the Firewall will allow traffic.
+        load_balancer_uids (obj:`list`): An array containing the IDs of the
+            Load Balancers to which the Firewall will allow traffic.
+        tags (obj:`list`): An array containing the names of Tags corresponding
+            to groups of Droplets to which the Firewall will allow traffic.
+    """
     pass
 
 
 class Destinations(_targets):
+    """
+    An object holding information about an OutboundRule's destinations.
+
+    Args:
+        addresses (obj:`list`): An array of strings containing the IPv4
+            addresses, IPv6 addresses, IPv4 CIDRs, and/or IPv6 CIDRs to which
+            the Firewall will allow traffic.
+        droplet_ids (obj:`list`): An array containing the IDs of the Droplets
+            to which the Firewall will allow traffic.
+        load_balancer_uids (obj:`list`): An array containing the IDs of the
+            Load Balancers to which the Firewall will allow traffic.
+        tags (obj:`list`): An array containing the names of Tags corresponding
+            to groups of Droplets to which the Firewall will allow traffic.
+    """
     pass
 
 
 class InboundRule(object):
     """
+    An object holding information about a Firewall's inbound rule.
+
+    Args:
+        protocol (str): The type of traffic to be allowed. This may be one
+            of "tcp", "udp", or "icmp".
+        port (str): The ports on which traffic will be allowed specified as a
+            string containing a single port, a range (e.g. "8000-9000"), or
+            "all" to open all ports for a protocol.
+        sources (obj:`list`): A list of `Sources` objects.
     """
     def __init__(self, protocol=None, ports=None, sources=[]):
         self.protocol = protocol
@@ -35,6 +75,15 @@ class InboundRule(object):
 
 class OutboundRule(object):
     """
+    An object holding information about a Firewall's outbound rule.
+
+    Args:
+        protocol (str): The type of traffic to be allowed. This may be one
+            of "tcp", "udp", or "icmp".
+        port (str): The ports on which traffic will be allowed specified as a
+            string containing a single port, a range (e.g. "8000-9000"), or
+            "all" to open all ports for a protocol.
+        destinations (obj:`list`): A list of `Destinations` objects.
     """
     def __init__(self, protocol=None, ports=None, destinations=[]):
         self.protocol = protocol
@@ -46,6 +95,35 @@ class OutboundRule(object):
 
 
 class Firewall(BaseAPI):
+    """
+    An object representing an DigitalOcean Firewall.
+
+    Attributes accepted at creation time:
+
+    Args:
+        name (str): The Firewall's name.
+        droplet_ids (obj:`list` of `int`): A list of Droplet IDs to be assigned
+            to the Firewall.
+        tags (obj:`list` of `str`):  A list Tag names to be assigned to the
+            Firewall.
+        inbound_rules (obj:`list`): A list of `InboundRules` objects
+        outbound_rules (obj:`list`): A list of `OutboundRules` objects
+
+    Attributes returned by API:
+        id (str): A UUID to identify and reference a Firewall.
+        status (str): A status string indicating the current state of the
+            Firewall. This can be "waiting", "succeeded", or "failed".
+        created_at (str): The time at which the Firewall was created.
+        name (str): The Firewall's name.
+        pending_changes (obj:`list`): Details exactly which Droplets are having
+            their security policies updated.
+        droplet_ids (obj:`list` of `int`): A list of Droplet IDs to be assigned
+            to the Firewall.
+        tags (obj:`list` of `str`):  A list Tag names to be assigned to the
+            Firewall.
+        inbound_rules (obj:`list`): A list of `InboundRules` objects
+        outbound_rules (obj:`list`): A list of `OutboundRules` objects
+    """
     def __init__(self, *args, **kwargs):
         self.id = None
         self.status = None

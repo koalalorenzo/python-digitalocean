@@ -2,6 +2,49 @@
 from .baseapi import BaseAPI, POST, DELETE, PUT
 
 
+class _targets(object):
+    """
+    """
+    def __init__(self, addresses=[], droplet_ids=[],
+                 load_balancer_uids=[], tags=[]):
+        self.addresses = addresses
+        self.droplet_ids = droplet_ids
+        self.load_balancer_uids = load_balancer_uids
+        self.tags = tags
+
+
+class Sources(_targets):
+    pass
+
+
+class Destinations(_targets):
+    pass
+
+
+class InboundRule(object):
+    """
+    """
+    def __init__(self, protocol=None, ports=None, sources=[]):
+        self.protocol = protocol
+        self.ports = ports
+        self.sources = []
+
+        for source in sources:
+            self.sources.append(Sources(**sources))
+
+
+class OutboundRule(object):
+    """
+    """
+    def __init__(self, protocol=None, ports=None, destinations=[]):
+        self.protocol = protocol
+        self.ports = ports
+        self.destinations = []
+
+        for destination in destinations:
+            self.destinations.append(Destinations(**destinations))
+
+
 class Firewall(BaseAPI):
     def __init__(self, *args, **kwargs):
         self.id = None
@@ -9,8 +52,8 @@ class Firewall(BaseAPI):
         self.created_at = None
         self.pending_changes = []
         self.name = None
-        self.inbound_rules = None
-        self.outbound_rules = None
+        self.inbound_rules = []
+        self.outbound_rules = []
         self.droplet_ids = None
         self.tags = None
 
@@ -31,7 +74,18 @@ class Firewall(BaseAPI):
 
         # Setting the attribute values
         for attr in firewall_dict.keys():
-            setattr(self, attr, firewall_dict[attr])
+            if attr == 'inbound_rules':
+                rules = list()
+                for rule in firewall_dict['inbound_rules']:
+                    rules.append(InboundRule(**rule))
+                setattr(self, attr, rules)
+            elif attr == 'outbound_rules':
+                rules = list()
+                for rule in firewall_dict['outbound_rules']:
+                    rules.append(OutboundRule(**rule))
+                setattr(self, attr, rules)
+            else:
+                setattr(self, attr, firewall_dict[attr])
 
         return self
 

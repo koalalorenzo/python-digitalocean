@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from .baseapi import BaseAPI, POST, DELETE, PUT
+import jsonpickle
 
 
 class _targets(object):
@@ -62,15 +63,17 @@ class InboundRule(object):
         port (str): The ports on which traffic will be allowed specified as a
             string containing a single port, a range (e.g. "8000-9000"), or
             "all" to open all ports for a protocol.
-        sources (obj:`list`): A list of `Sources` objects.
+        sources (obj): A `Sources` object.
     """
-    def __init__(self, protocol=None, ports=None, sources=[]):
+    def __init__(self, protocol="", ports="", sources=""):
         self.protocol = protocol
         self.ports = ports
-        self.sources = []
 
-        for source in sources:
-            self.sources.append(Sources(**sources))
+        if isinstance(sources, Sources):
+            self.sources = sources
+        else:
+            for source in sources:
+                self.sources = Sources(**sources)
 
 
 class OutboundRule(object):
@@ -83,15 +86,17 @@ class OutboundRule(object):
         port (str): The ports on which traffic will be allowed specified as a
             string containing a single port, a range (e.g. "8000-9000"), or
             "all" to open all ports for a protocol.
-        destinations (obj:`list`): A list of `Destinations` objects.
+        destinations (obj): A `Destinations` object.
     """
-    def __init__(self, protocol=None, ports=None, destinations=[]):
+    def __init__(self, protocol="", ports="", destinations=""):
         self.protocol = protocol
         self.ports = ports
-        self.destinations = []
 
-        for destination in destinations:
-            self.destinations.append(Destinations(**destinations))
+        if isinstance(destinations, Destinations):
+            self.destinations = destinations
+        else:
+            for destination in destinations:
+                self.destinations = Destinations(**destinations)
 
 
 class Firewall(BaseAPI):

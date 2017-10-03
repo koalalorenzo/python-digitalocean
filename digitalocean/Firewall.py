@@ -151,24 +151,29 @@ class Firewall(BaseAPI):
         firewall.load()
         return firewall
 
+    def _set_firewall_attributes(self, data):
+        self.id = data['firewall']['id']
+        self.name = data['firewall']['name']
+        self.status = data['firewall']['status']
+        self.created_at = data['firewall']['created_at']
+        self.pending_changes = data['firewall']['pending_changes']
+        self.droplet_ids = data['firewall']['droplet_ids']
+        self.tags = data['firewall']['tags']
+
+        in_rules = list()
+        for rule in data['firewall']['inbound_rules']:
+            in_rules.append(InboundRule(**rule))
+        self.inbound_rules = in_rules
+
+        out_rules = list()
+        for rule in data['firewall']['outbound_rules']:
+            out_rules.append(OutboundRule(**rule))
+        self.outbound_rules = out_rules
+
     def load(self):
         data = self.get_data("firewalls/%s" % self.id)
-        firewall_dict = data['firewall']
-
-        # Setting the attribute values
-        for attr in firewall_dict.keys():
-            if attr == 'inbound_rules':
-                rules = list()
-                for rule in firewall_dict['inbound_rules']:
-                    rules.append(InboundRule(**rule))
-                setattr(self, attr, rules)
-            elif attr == 'outbound_rules':
-                rules = list()
-                for rule in firewall_dict['outbound_rules']:
-                    rules.append(OutboundRule(**rule))
-                setattr(self, attr, rules)
-            else:
-                setattr(self, attr, firewall_dict[attr])
+        if data:
+            self._set_firewall_attributes(data)
 
         return self
 
@@ -184,23 +189,7 @@ class Firewall(BaseAPI):
         data = self.get_data('firewalls/', type=POST, params=params)
 
         if data:
-            self.id = data['firewall']['id']
-            self.name = data['firewall']['name']
-            self.status = data['firewall']['status']
-            self.created_at = data['firewall']['created_at']
-            self.pending_changes = data['firewall']['pending_changes']
-            self.droplet_ids = data['firewall']['droplet_ids']
-            self.tags = data['firewall']['tags']
-
-            in_rules = list()
-            for rule in data['firewall']['inbound_rules']:
-                in_rules.append(InboundRule(**rule))
-            self.inbound_rules = in_rules
-
-            out_rules = list()
-            for rule in data['firewall']['outbound_rules']:
-                out_rules.append(OutboundRule(**rule))
-            self.outbound_rules = out_rules
+            self._set_firewall_attributes(data)
 
         return self
 

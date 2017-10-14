@@ -9,12 +9,14 @@ class _targets(object):
 
     Not for direct use by end users.
     """
-    def __init__(self, addresses=[], droplet_ids=[],
-                 load_balancer_uids=[], tags=[]):
-        self.addresses = addresses
-        self.droplet_ids = droplet_ids
-        self.load_balancer_uids = load_balancer_uids
-        self.tags = tags
+    def __init__(self, **kwargs):
+        self.addresses = []
+        self.droplet_ids = []
+        self.load_balancer_uids = []
+        self.tags = []
+
+        for attr in kwargs.keys():
+            setattr(self, attr, kwargs[attr])
 
 
 class Sources(_targets):

@@ -41,7 +41,19 @@ class TestFirewall(BaseTest):
         self.assertEqual(f.id, 12345)
         self.assertEqual(f.name, "firewall")
         self.assertEqual(f.status, "succeeded")
-        # TODO: Assert the inbound and outbound rules
+        self.assertEqual(f.inbound_rules[0].ports, "80")
+        self.assertEqual(f.inbound_rules[0].protocol, "tcp")
+        self.assertEqual(f.inbound_rules[0].sources.load_balancer_uids,
+                         ["12345"])
+        self.assertEqual(f.inbound_rules[0].sources.addresses, [])
+        self.assertEqual(f.inbound_rules[0].sources.tags, [])
+        self.assertEqual(f.outbound_rules[0].ports, "80")
+        self.assertEqual(f.outbound_rules[0].protocol, "tcp")
+        self.assertEqual(
+            f.outbound_rules[0].destinations.load_balancer_uids, [])
+        self.assertEqual(f.outbound_rules[0].destinations.addresses,
+                         ["0.0.0.0/0", "::/0"])
+        self.assertEqual(f.outbound_rules[0].destinations.tags, [])
         self.assertEqual(f.created_at, "2017-05-23T21:24:00Z")
         self.assertEqual(f.droplet_ids, [12345])
         self.assertEqual(f.tags, [])

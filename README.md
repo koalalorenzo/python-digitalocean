@@ -131,6 +131,36 @@ droplet = digitalocean.Droplet(token="secretspecialuniquesnowflake",
 droplet.create()
 ```
 
+### Creating a Firewall
+
+This example creates a firewall that only accepts inbound tcp traffic on port 80 from a specific load balancer and allows outbout tcp traffic on all ports to all addresses.
+
+```python
+from digitalocean import Firewall, InboundRule, OutboundRule, Destinations, Sources
+
+inbound_rule = InboundRule(protocol="tcp", ports="80",
+                           sources=Sources(
+                               load_balancer_uids=[
+                                   "4de7ac8b-495b-4884-9a69-1050c6793cd6"]
+                               )
+                           )
+
+outbound_rule = OutboundRule(protocol="tcp", ports="all",
+                             destinations=Destinations(
+                               addresses=[
+                                   "0.0.0.0/0",
+                                   "::/0"]
+                                 )
+                             )
+
+firewall = Firewall(token="secretspecialuniquesnowflake",
+                    name="new-firewall",
+                    inbound_rules=[inbound_rule],
+                    outbound_rules=[outbound_rule],
+                    droplet_ids=[8043964, 8043972])
+firewall.create()
+```
+
 ## Getting account requests/hour limits status:
 Each request will also include the rate limit information:
 

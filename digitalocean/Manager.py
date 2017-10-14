@@ -11,7 +11,7 @@ from .Certificate import Certificate
 from .Domain import Domain
 from .Droplet import Droplet
 from .FloatingIP import FloatingIP
-from .Firewall import Firewall
+from .Firewall import Firewall, InboundRule, OutboundRule
 from .Image import Image
 from .LoadBalancer import LoadBalancer
 from .LoadBalancer import StickySesions, HealthCheck, ForwardingRule
@@ -359,6 +359,14 @@ class Manager(BaseAPI):
         for jsoned in data['firewalls']:
             firewall = Firewall(**jsoned)
             firewall.token = self.token
+            in_rules = list()
+            for rule in jsoned['inbound_rules']:
+                in_rules.append(InboundRule(**rule))
+            firewall.inbound_rules = in_rules
+            out_rules = list()
+            for rule in jsoned['outbound_rules']:
+                out_rules.append(OutboundRule(**rule))
+            firewall.outbound_rules = out_rules
             firewalls.append(firewall)
         return firewalls
 

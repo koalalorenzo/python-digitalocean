@@ -1,14 +1,12 @@
-<center>
-<h1>python-digitalocean</h1>
-<p>Easy access to Digital Ocean APIs to deploy droplets, images and more.</p>
-</center>
+<h1 align="center">python-digitalocean</h1>
+<p align="center">Easy access to Digital Ocean APIs to deploy droplets, images and more.</p>
 
-<center>
-[![](https://travis-ci.org/koalalorenzo/python-digitalocean.svg)](https://travis-ci.org/koalalorenzo/python-digitalocean)
-[![](https://img.shields.io/github/forks/badges/shields.svg?style=social&label=Fork)](https://travis-ci.org/koalalorenzo/python-digitalocean)
-[![](https://img.shields.io/github/stars/badges/shields.svg?style=social&label=Star)](https://travis-ci.org/koalalorenzo/python-digitalocean)
-[![](https://img.shields.io/github/watchers/badges/shields.svg?style=social&label=Watch)](https://travis-ci.org/koalalorenzo/python-digitalocean)
-</center> 
+<p align="center">
+<a href="https://travis-ci.org/koalalorenzo/python-digitalocean"><img src="https://travis-ci.org/koalalorenzo/python-digitalocean.svg" alt="Build Status"></a>
+<a href="https://travis-ci.org/koalalorenzo/python-digitalocean"><img src="https://img.shields.io/github/forks/badges/shields.svg?style=social&label=Fork"></a>
+<a href="https://travis-ci.org/koalalorenzo/python-digitalocean"><img src="https://img.shields.io/github/stars/badges/shields.svg?style=social&label=Star"></a>
+<a href="https://travis-ci.org/koalalorenzo/python-digitalocean"><img src="https://img.shields.io/github/watchers/badges/shields.svg?style=social&label=Watch"></a>
+</p>
 
 ## Table of Contents
 

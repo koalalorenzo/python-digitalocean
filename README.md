@@ -58,7 +58,7 @@ python-digitalocean support all the features provided via digitalocean.com APIs,
 
 **[⬆ back to top](#table-of-contents)**
 
-## Examples
+## Examples
 ### Listing the droplets
 
 This example shows how to list all the active droplets:

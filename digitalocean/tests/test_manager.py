@@ -562,5 +562,42 @@ class TestManager(BaseTest):
         self.assertEqual(volume_snapshots[0].resource_type, 'volume')
         self.assertEqual(len(volume_snapshots[0].regions), 1)
 
+    @responses.activate
+    def test_get_firewalls(self):
+        data = self.load_from_file('firewalls/all.json')
+
+        url = self.base_url + "firewalls"
+        responses.add(responses.GET,
+                      url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        firewalls = self.manager.get_all_firewalls()
+        f = firewalls[0]
+
+        self.assert_get_url_equal(responses.calls[0].request.url, url)
+        self.assertEqual(f.id, "12345")
+        self.assertEqual(f.name, "firewall")
+        self.assertEqual(f.status, "succeeded")
+        self.assertEqual(f.inbound_rules[0].ports, "80")
+        self.assertEqual(f.inbound_rules[0].protocol, "tcp")
+        self.assertEqual(f.inbound_rules[0].sources.load_balancer_uids,
+                         ["12345"])
+        self.assertEqual(f.inbound_rules[0].sources.addresses, [])
+        self.assertEqual(f.inbound_rules[0].sources.tags, [])
+        self.assertEqual(f.outbound_rules[0].ports, "80")
+        self.assertEqual(f.outbound_rules[0].protocol, "tcp")
+        self.assertEqual(
+            f.outbound_rules[0].destinations.load_balancer_uids, [])
+        self.assertEqual(f.outbound_rules[0].destinations.addresses,
+                         ["0.0.0.0/0", "::/0"])
+        self.assertEqual(f.outbound_rules[0].destinations.tags, [])
+        self.assertEqual(f.created_at, "2017-05-23T21:24:00Z")
+        self.assertEqual(f.droplet_ids, [12345])
+        self.assertEqual(f.tags, [])
+        self.assertEqual(f.pending_changes, [])
+
+
 if __name__ == '__main__':
     unittest.main()

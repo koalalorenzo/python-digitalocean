@@ -1,12 +1,34 @@
-# python-digitalocean
+<center>
+<h1>python-digitalocean</h1>
+<p>Easy access to Digital Ocean APIs to deploy droplets, images and more.</p>
+</center>
 
-This library provides easy access to Digital Ocean APIs to deploy droplets, images and more.
-
+<center>
 [![](https://travis-ci.org/koalalorenzo/python-digitalocean.svg)](https://travis-ci.org/koalalorenzo/python-digitalocean)
-
 [![](https://img.shields.io/github/forks/badges/shields.svg?style=social&label=Fork)](https://travis-ci.org/koalalorenzo/python-digitalocean)
 [![](https://img.shields.io/github/stars/badges/shields.svg?style=social&label=Star)](https://travis-ci.org/koalalorenzo/python-digitalocean)
 [![](https://img.shields.io/github/watchers/badges/shields.svg?style=social&label=Watch)](https://travis-ci.org/koalalorenzo/python-digitalocean)
+</center> 
+
+## Table of Contents
+
+- [How to install](#how-to-install)
+- [Features](#Features)
+- [Examples](#Examples)
+   - [Listing the droplets](#listing-the-droplets)
+   - [Listing the droplets by tags](#listing-the-droplets-by-tags)
+   - [Add a tag to a droplet](#add-a-tag-to-a-droplet)
+   - [Shutdown all droplets](#shutdown-all-droplets)
+   - [Creating a Droplet and checking its status](#creating-a-droplet-and-checking-its-status)
+   - [Checking the status of the droplet](#checking-the-status-of-the-droplet)
+   - [Add SSHKey into DigitalOcean Account](#add-sshkey-into-digitalocean-account)
+   - [Creating a new droplet with all your SSH keys](#creating-a-new-droplet-with-all-your-ssh-keys)
+   - [Creating a Firewall](#creating-a-firewall)
+- [Getting account requests/hour limits status](#getting-account-requests-hour-limits-status)
+- [Testing](#testing)
+   - [Test using Docker](#test-using-docker)
+   - [Testing using pytest manually](#testing-using-pytest-manually)
+- [Links](#links)
 
 ## How to install
 
@@ -17,6 +39,8 @@ You can install python-digitalocean using **pip**
 or via sources:
 
     python setup.py install
+
+**[⬆ back to top](#table-of-contents)**
 
 ## Features
 python-digitalocean support all the features provided via digitalocean.com APIs, such as:
@@ -34,8 +58,9 @@ python-digitalocean support all the features provided via digitalocean.com APIs,
 * Enable/Disable automatic Backups
 * Restore root password of a Droplet
 
+**[⬆ back to top](#table-of-contents)**
 
-## Examples
+## Examples
 ### Listing the droplets
 
 This example shows how to list all the active droplets:
@@ -46,6 +71,8 @@ manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
 my_droplets = manager.get_all_droplets()
 print(my_droplets)
 ```
+
+**[⬆ back to top](#table-of-contents)**
 
 ### Listing the droplets by tags
 
@@ -58,6 +85,8 @@ my_droplets = manager.get_all_droplets(tag_name="awesome")
 print(my_droplets)
 ```
 
+**[⬆ back to top](#table-of-contents)**
+
 ### Add a tag to a droplet
 
 This example shows how to list all the active droplets:
@@ -68,6 +97,8 @@ tag = digitalocean.Tag(token="secretspecialuniquesnowflake", name="tag_name")
 tag.create() # create tag if not already created
 tag.add_droplets(["DROPLET_ID"])
 ```
+
+**[⬆ back to top](#table-of-contents)**
 
 ### Shutdown all droplets
 
@@ -80,6 +111,8 @@ my_droplets = manager.get_all_droplets()
 for droplet in my_droplets:
     droplet.shutdown()
 ```
+
+**[⬆ back to top](#table-of-contents)**
 
 ### Creating a Droplet and checking its status
 
@@ -96,6 +129,8 @@ droplet = digitalocean.Droplet(token="secretspecialuniquesnowflake",
 droplet.create()
 ```
 
+**[⬆ back to top](#table-of-contents)**
+
 ### Checking the status of the droplet
 ```python
 actions = droplet.get_actions()
@@ -104,6 +139,8 @@ for action in actions:
     # Once it shows complete, droplet is up and running
     print action.status
 ```
+
+**[⬆ back to top](#table-of-contents)**
 
 ### Add SSHKey into DigitalOcean Account
 ```python
@@ -115,6 +152,8 @@ key = SSHKey(token='secretspecialuniquesnowflake',
              public_key=user_ssh_key)
 key.create()
 ```
+
+**[⬆ back to top](#table-of-contents)**
 
 ### Creating a new droplet with all your SSH keys
 ```python
@@ -131,7 +170,41 @@ droplet = digitalocean.Droplet(token="secretspecialuniquesnowflake",
 droplet.create()
 ```
 
-## Getting account requests/hour limits status:
+**[⬆ back to top](#table-of-contents)**
+
+### Creating a Firewall
+
+This example creates a firewall that only accepts inbound tcp traffic on port 80 from a specific load balancer and allows outbout tcp traffic on all ports to all addresses.
+
+```python
+from digitalocean import Firewall, InboundRule, OutboundRule, Destinations, Sources
+
+inbound_rule = InboundRule(protocol="tcp", ports="80",
+                           sources=Sources(
+                               load_balancer_uids=[
+                                   "4de7ac8b-495b-4884-9a69-1050c6793cd6"]
+                               )
+                           )
+
+outbound_rule = OutboundRule(protocol="tcp", ports="all",
+                             destinations=Destinations(
+                               addresses=[
+                                   "0.0.0.0/0",
+                                   "::/0"]
+                                 )
+                             )
+
+firewall = Firewall(token="secretspecialuniquesnowflake",
+                    name="new-firewall",
+                    inbound_rules=[inbound_rule],
+                    outbound_rules=[outbound_rule],
+                    droplet_ids=[8043964, 8043972])
+firewall.create()
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+## Getting account requests/hour limits status
 Each request will also include the rate limit information:
 
 ```python
@@ -166,6 +239,7 @@ domains = manager.get_all_domains()
 print(manager.ratelimit_limit) 
 ```
 
+**[⬆ back to top](#table-of-contents)**
 
 ## Testing
 
@@ -180,6 +254,8 @@ Then you can run all the tests (for both python 2 and python 3)
 
 **Note**: This will use Ubuntu 14.04 as base and use your repository to run tests. So every time you edit some files, please run these commands to perform tests on your changes.
 
+**[⬆ back to top](#table-of-contents)**
+
 ### Testing using pytest manually
 Use [pytest](http://pytest.org/) to perform testing. It is recommended to use a dedicated virtualenv to perform tests, using these commands:
 
@@ -191,6 +267,7 @@ To run all the tests manually use py.test command:
 
     $ python -m pytest
 
+**[⬆ back to top](#table-of-contents)**
 
 ## Links
 
@@ -198,3 +275,5 @@ To run all the tests manually use py.test command:
   * PyPI page: [https://pypi.python.org/pypi/python-digitalocean/](https://pypi.python.org/pypi/python-digitalocean/)
   * Author Website: [http://who.is.lorenzo.setale.me/?](http://setale.me/)
   * Author Blog: [http://blog.setale.me/](http://blog.setale.me/)
+
+**[⬆ back to top](#table-of-contents)**

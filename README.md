@@ -11,7 +11,7 @@
 ## Table of Contents
 
 - [How to install](#how-to-install)
-- [Features](#features)
+- [Features](#features)  
 - [Examples](#examples)
    - [Listing the droplets](#listing-the-droplets)
    - [Listing the droplets by tags](#listing-the-droplets-by-tags)

@@ -179,7 +179,7 @@ class BaseAPI(object):
             msg = [data[m] for m in ("id", "message") if m in data][1]
             raise DataReadError(msg)
 
-        # init reqest limits
+        # init request limits
         self.__init_ratelimit(req.headers)
 
         # If there are more elements available (total) than the elements per

@@ -487,7 +487,7 @@ class TestManager(BaseTest):
     def test_get_all_tags(self):
         data = self.load_from_file('tags/all.json')
 
-        url = self.base_url + 'tags/'
+        url = self.base_url + 'tags'
         responses.add(responses.GET, url,
                       body=data,
                       status=200,

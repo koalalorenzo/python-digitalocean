@@ -90,7 +90,13 @@ class Tag(BaseAPI):
         for a_droplet in data:
             res = {}
 
-            if isinstance(a_droplet, str) or isinstance(a_droplet, unicode) or isinstance(a_droplet, int):
+            try:
+                if isinstance(a_droplet, unicode):
+                    res = {"resource_id": a_droplet, "resource_type": "droplet"}
+            except NameError:
+                pass
+
+            if isinstance(a_droplet, str) or isinstance(a_droplet, int):
                 res = {"resource_id": a_droplet, "resource_type": "droplet"}
             elif isinstance(a_droplet, Droplet):
                 res = {"resource_id": a_droplet.id, "resource_type": "droplet"}

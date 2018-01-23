@@ -51,6 +51,16 @@ class BaseAPI(object):
 
         for attr in kwargs.keys():
             setattr(self, attr, kwargs[attr])
+            
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        # The logger is not pickleable due to using thread.lock
+        del state['_log']
+        return state
+    
+    def __setstate__(self, state):
+        self.__dict__ = state
+        self._log = logging.getLogger(__name__)
 
     def __perform_request(self, url, type=GET, params=None):
         """

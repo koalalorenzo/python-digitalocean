@@ -69,7 +69,7 @@ class InboundRule(object):
     """
     def __init__(self, protocol="", ports="", sources=""):
         self.protocol = protocol
-        self.ports = ports
+        self.ports = ports if ports != "0" else "all"
 
         if isinstance(sources, Sources):
             self.sources = sources
@@ -92,7 +92,7 @@ class OutboundRule(object):
     """
     def __init__(self, protocol="", ports="", destinations=""):
         self.protocol = protocol
-        self.ports = ports
+        self.ports = ports if ports != "0" else "all"
 
         if isinstance(destinations, Destinations):
             self.destinations = destinations
@@ -189,6 +189,22 @@ class Firewall(BaseAPI):
                   'tags': self.tags}
 
         data = self.get_data('firewalls/', type=POST, params=params)
+
+        if data:
+            self._set_firewall_attributes(data)
+
+        return self
+
+    def update(self, *args, **kwargs):
+        inbound = jsonpickle.encode(self.inbound_rules, unpicklable=False)
+        outbound = jsonpickle.encode(self.outbound_rules, unpicklable=False)
+        params = {'name': self.name,
+                  'droplet_ids': self.droplet_ids,
+                  'inbound_rules': jsonpickle.decode(inbound),
+                  'outbound_rules': jsonpickle.decode(outbound),
+                  'tags': self.tags}
+
+        data = self.get_data('firewalls/%s' % self.id, type=PUT, params=params)
 
         if data:
             self._set_firewall_attributes(data)

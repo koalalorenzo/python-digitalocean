@@ -87,7 +87,7 @@ print(my_droplets)
 
 ### Add a tag to a droplet
 
-This example shows how to list all the active droplets:
+This example shows how to add a tag to a droplet:
 
 ```python
 import digitalocean

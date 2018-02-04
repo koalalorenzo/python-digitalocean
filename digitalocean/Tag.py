@@ -97,9 +97,9 @@ class Tag(BaseAPI):
                 pass
 
             if isinstance(a_droplet, str) or isinstance(a_droplet, int):
-                res = {"resource_id": a_droplet, "resource_type": "droplet"}
+                res = {"resource_id": str(a_droplet), "resource_type": "droplet"}
             elif isinstance(a_droplet, Droplet):
-                res = {"resource_id": a_droplet.id, "resource_type": "droplet"}
+                res = {"resource_id": str(a_droplet.id), "resource_type": "droplet"}
 
             if len(res) > 0:
                 resources.append(res)

@@ -53,6 +53,27 @@ class TestVolume(BaseTest):
         self.assertEqual(volume.size_gigabytes, 100)
 
     @responses.activate
+    def test_create_from_snapshot(self):
+        data = self.load_from_file('volumes/single.json')
+
+        url = self.base_url + "volumes/"
+        responses.add(responses.POST,
+                      url,
+                      body=data,
+                      status=201,
+                      content_type='application/json')
+
+        volume = digitalocean.Volume(droplet_id=12345,
+                                     snapshot_id='234234qwer',
+                                     size_gigabytes=100,
+                                     token=self.token).create()
+
+        self.assertEqual(responses.calls[0].request.url,
+                         self.base_url + "volumes/")
+        self.assertEqual(volume.id, "506f78a4-e098-11e5-ad9f-000f53306ae1")
+        self.assertEqual(volume.size_gigabytes, 100)
+
+    @responses.activate
     def test_destroy(self):
         volume_path = "volumes/506f78a4-e098-11e5-ad9f-000f53306ae1/"
         url = self.base_url + volume_path

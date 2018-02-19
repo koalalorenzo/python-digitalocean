@@ -195,6 +195,62 @@ class Firewall(BaseAPI):
 
         return self
 
+    def add_inbound(self, inbound_rule):
+        """
+            Add inbound rule to this Firewall.
+        """
+        if type(inbound_rule) is not list:
+            inbound_rule = [inbound_rule]
+        inbound = jsonpickle.encode(inbound_rule, unpicklable=False)
+
+        return self.get_data(
+            "firewalls/%s/rules" % self.id,
+            type=POST,
+            params={"inbound_rules": jsonpickle.decode(inbound)}
+        )
+
+    def add_outbound(self, outbound_rule):
+        """
+            Add outbound rule to this Firewall.
+        """
+        if type(outbound_rule) is not list:
+            outbound_rule = [outbound_rule]
+        outbound = jsonpickle.encode(outbound_rule, unpicklable=False)
+
+        return self.get_data(
+            "firewalls/%s/rules" % self.id,
+            type=POST,
+            params={"outbound_rules": jsonpickle.decode(outbound)}
+        )
+
+    def remove_inbound(self, inbound_rule):
+        """
+            Remove inbound rule from this Firewall.
+        """
+        if type(inbound_rule) is not list:
+            inbound_rule = [inbound_rule]
+        inbound = jsonpickle.encode(inbound_rule, unpicklable=False)
+
+        return self.get_data(
+            "firewalls/%s/rules" % self.id,
+            type=DELETE,
+            params={"inbound_rules": jsonpickle.decode(inbound)}
+        )
+
+    def remove_outbound(self, outbound_rule):
+        """
+            Remove outbound rule from this Firewall.
+        """
+        if type(outbound_rule) is not list:
+            outbound_rule = [outbound_rule]
+        outbound = jsonpickle.encode(outbound_rule, unpicklable=False)
+
+        return self.get_data(
+            "firewalls/%s/rules" % self.id,
+            type=DELETE,
+            params={"outbound_rules": jsonpickle.decode(outbound)}
+        )
+
     def add_droplets(self, droplet_ids):
         """
             Add droplets to this Firewall.

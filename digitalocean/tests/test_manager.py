@@ -466,6 +466,17 @@ class TestManager(BaseTest):
             'dfcc9f57d86bf58e321c2c6c31c7a971be244ac7')
         self.assertEqual(certs[0].not_after, '2017-02-22T00:23:00Z')
         self.assertEqual(certs[0].created_at, '2017-02-08T16:02:37Z')
+        self.assertEqual(certs[0].type, 'custom')
+        self.assertEqual(certs[0].state, 'verified')
+
+        self.assertEqual(certs[1].id, 'ba9b9c18-6c59-46c2-99df-70da170a42ba')
+        self.assertEqual(certs[1].name, 'web-cert-02')
+        self.assertEqual(certs[1].sha1_fingerprint,
+            '479c82b5c63cb6d3e6fac4624d58a33b267e166c')
+        self.assertEqual(certs[1].not_after, '2018-06-07T17:44:12Z')
+        self.assertEqual(certs[1].created_at, '2018-03-09T18:44:11Z')
+        self.assertEqual(certs[1].type, 'lets_encrypt')
+        self.assertEqual(certs[1].state, 'pending')
 
     @responses.activate
     def test_get_all_volumes(self):

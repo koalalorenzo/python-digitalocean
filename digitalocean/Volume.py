@@ -12,6 +12,8 @@ class Volume(BaseAPI):
         self.size_gigabytes = None
         self.created_at = None
         self.snapshot_id = None
+        self.filesystem_type = None
+        self.filesystem_label = None
 
         super(Volume, self).__init__(*args, **kwargs)
 
@@ -45,6 +47,10 @@ class Volume(BaseAPI):
             name: string - a name for the volume
             region: string - slug identifier for the region
             size_gigabytes: int - size of the Block Storage volume in GiB
+            filesystem_type: string, optional - name of the filesystem type the
+                volume will be formated with ('ext4' or 'xfs')
+            filesystem_label: string, optional - the label to be applied to the
+                filesystem, only used in conjunction with filesystem_type
 
         Optional Args:
             description: string - text field to describe a volume
@@ -54,7 +60,10 @@ class Volume(BaseAPI):
                              params={'name': self.name,
                                      'region': self.region,
                                      'size_gigabytes': self.size_gigabytes,
-                                     'description': self.description})
+                                     'description': self.description,
+                                     'filesystem_type': self.filesystem_type,
+                                     'filesystem_label': self.filesystem_label
+                                     })
 
         if data:
             self.id = data['volume']['id']
@@ -73,6 +82,10 @@ class Volume(BaseAPI):
             name: string - a name for the volume
             snapshot_id: string - unique identifier for the volume snapshot
             size_gigabytes: int - size of the Block Storage volume in GiB
+            filesystem_type: string, optional - name of the filesystem type the
+                volume will be formated with ('ext4' or 'xfs')
+            filesystem_label: string, optional - the label to be applied to the
+                filesystem, only used in conjunction with filesystem_type
 
         Optional Args:
             description: string - text field to describe a volume
@@ -81,8 +94,12 @@ class Volume(BaseAPI):
                              type=POST,
                              params={'name': self.name,
                                      'snapshot_id': self.snapshot_id,
+                                     'region': self.region,
                                      'size_gigabytes': self.size_gigabytes,
-                                     'description': self.description})
+                                     'description': self.description,
+                                     'filesystem_type': self.filesystem_type,
+                                     'filesystem_label': self.filesystem_label
+                                     })
 
         if data:
             self.id = data['volume']['id']

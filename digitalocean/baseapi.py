@@ -3,6 +3,7 @@ import os
 import json
 import logging
 import requests
+from . import __name__, __version__
 try:
     import urlparse
 except ImportError:
@@ -51,13 +52,13 @@ class BaseAPI(object):
 
         for attr in kwargs.keys():
             setattr(self, attr, kwargs[attr])
-            
+
     def __getstate__(self):
         state = self.__dict__.copy()
         # The logger is not pickleable due to using thread.lock
         del state['_log']
         return state
-    
+
     def __setstate__(self, state):
         self.__dict__ = state
         self._log = logging.getLogger(__name__)
@@ -93,7 +94,12 @@ class BaseAPI(object):
         }
 
         requests_method, headers, payload, transform = lookup[type]
-        headers.update({'Authorization': 'Bearer ' + self.token})
+        agent = "{0}/{1} {2}/{3}".format('python-digitalocean',
+                                         __version__,
+                                         requests.__name__,
+                                         requests.__version__)
+        headers.update({'Authorization': 'Bearer ' + self.token,
+                        'User-Agent': agent})
         kwargs = {'headers': headers, payload: transform(params)}
 
         timeout = self.get_timeout()

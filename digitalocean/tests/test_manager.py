@@ -493,6 +493,7 @@ class TestManager(BaseTest):
 
         self.assertEqual(volumes[0].id, "506f78a4-e098-11e5-ad9f-000f53306ae1")
         self.assertEqual(volumes[0].region['slug'], 'nyc1')
+        self.assertEqual(volumes[0].filesystem_type, "ext4")
 
     @responses.activate
     def test_get_all_tags(self):

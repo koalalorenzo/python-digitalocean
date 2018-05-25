@@ -1,3 +1,4 @@
+import json
 import unittest
 import responses
 import digitalocean
@@ -494,6 +495,26 @@ class TestManager(BaseTest):
         self.assertEqual(volumes[0].id, "506f78a4-e098-11e5-ad9f-000f53306ae1")
         self.assertEqual(volumes[0].region['slug'], 'nyc1')
         self.assertEqual(volumes[0].filesystem_type, "ext4")
+        self.assertEqual(len(volumes), 2)
+
+    @responses.activate
+    def test_get_per_region_volumes(self):
+        data = json.loads(self.load_from_file('volumes/all.json'))
+        data["volumes"] = [
+            volume for volume in data["volumes"]
+            if volume["region"]["slug"] == "nyc1"]
+
+        url = self.base_url + "volumes?region=nyc1"
+        responses.add(responses.GET,
+                      url,
+                      body=json.dumps(data),
+                      status=200,
+                      content_type='application/json')
+        volumes = self.manager.get_all_volumes("nyc1")
+
+        self.assertEqual(volumes[0].id, "506f78a4-e098-11e5-ad9f-000f53306ae1")
+        self.assertEqual(volumes[0].region['slug'], 'nyc1')
+        self.assertEqual(len(volumes), 1)
 
     @responses.activate
     def test_get_all_tags(self):

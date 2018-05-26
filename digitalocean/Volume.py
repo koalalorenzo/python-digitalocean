@@ -55,6 +55,9 @@ class Volume(BaseAPI):
         Optional Args:
             description: string - text field to describe a volume
         """
+        for attr in kwargs.keys():
+            setattr(self, attr, kwargs[attr])
+            
         data = self.get_data('volumes/',
                              type=POST,
                              params={'name': self.name,

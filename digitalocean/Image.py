@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 from .baseapi import BaseAPI, POST, DELETE, PUT, NotFoundError
 
+
 class Image(BaseAPI):
+    """
+    An object representing an DigitalOcean Image.
+    """
     def __init__(self, *args, **kwargs):
         self.id = None
         self.name = None
@@ -12,6 +16,12 @@ class Image(BaseAPI):
         self.regions = []
         self.created_at = None
         self.size_gigabytes = None
+        self.description = None
+        self.status = None
+        self.tags = []
+        self.error_message = None
+        self.url = None
+        self.region = None
 
         super(Image, self).__init__(*args, **kwargs)
 
@@ -44,6 +54,26 @@ class Image(BaseAPI):
             return False
         else:
             return None
+
+    def create(self):
+        """
+        Creates a new custom DigitalOcean Image from the Linux virtual machine
+        image located at the provided `url`.
+        """
+        params = {'name': self.name,
+                  'region': self.region,
+                  'url': self.url,
+                  'distribution': self.distribution,
+                  'description': self.description,
+                  'tags': self.tags}
+
+        data = self.get_data('images', type=POST, params=params)
+
+        if data:
+            for attr in data['image'].keys():
+                setattr(self, attr, data['image'][attr])
+
+        return self
 
     def load(self, use_slug=False):
         """

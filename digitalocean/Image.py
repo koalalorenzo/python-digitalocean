@@ -5,6 +5,41 @@ from .baseapi import BaseAPI, POST, DELETE, PUT, NotFoundError
 class Image(BaseAPI):
     """
     An object representing an DigitalOcean Image.
+
+    Attributes accepted at creation time:
+
+    Args:
+        name (str): The name to be given to an image.
+        url (str): A URL from which the virtual machine image may be retrieved.
+        region (str): The slug of the region where the image will be available.
+        distribution (str, optional): The name of the image's distribution.
+        description (str, optional): Free-form text field to describe an image.
+        tags (obj:`list` of `str`, optional): List of tag names to apply to
+            the image.
+
+    Attributes returned by API:
+
+        id (int): A unique number to identify and reference a image.
+        name (str): The display name given to an image.
+        type (str): The kind of image. This will be either "snapshot",
+            "backup", or "custom".
+        distribution (str): The name of the image's distribution.
+        slug (str): A uniquely identifying string that is associated with each
+            of the DigitalOcean-provided public images.
+        public (bool): Indicates whether the image is public or not.
+        regions (obj:`list` of `str`): A list of the slugs of the regions where
+            the image is available for use.
+        created_at (str): A time value given in ISO8601 combined date and time
+            format that represents when the image was created.
+        min_disk_size (int): The minimum disk size in GB required for a Droplet
+            to use this image.
+        size_gigabytes (int): The size of the image in gigabytes.
+        description (str): Free-form text field to describing an image.
+        tags (obj:`list` of `str`): List of tag names to applied to the image.
+        status (str): Indicates the state of a custom image. This may be "NEW",
+            "available", "pending", or "deleted".
+        error_message (str): Information about errors that may occur when
+            importing a custom image.
     """
     def __init__(self, *args, **kwargs):
         self.id = None

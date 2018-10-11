@@ -45,7 +45,7 @@ class TestTags(BaseTest):
         droplet_tag.create()
 
         self.assertEqual(responses.calls[0].request.url,
-                         self.base_url + "tags/")
+                         self.base_url + "tags")
         self.assertEqual(droplet_tag.name, "awesome")
 
 

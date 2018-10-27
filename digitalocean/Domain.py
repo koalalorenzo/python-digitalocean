@@ -73,6 +73,42 @@ class Domain(BaseAPI):
             params=data
         )
 
+    def update_domain_record(self, *args, **kwargs):
+        """
+            Args:
+                type: The record type (A, MX, CNAME, etc).
+                name: The host name, alias, or service being defined by the record
+                data: Variable data depending on record type.
+                priority: The priority of the host
+                port: The port that the service is accessible on
+                weight: The weight of records with the same priority
+        """
+        data = {
+            'id': kwargs.get("id", None),
+            'domain': kwargs.get("domain", None)
+        }
+
+        if kwargs.get("data", None):
+            data['data'] = kwargs.get("data", None)
+
+        if kwargs.get("type", None):
+            data['type'] = kwargs.get("type", None)
+
+        if kwargs.get("name", None):
+            data['name'] = kwargs.get("name", None)
+
+        if kwargs.get("port", None):
+            data['port'] = kwargs.get("port", None)
+
+        if kwargs.get("weight", None):
+            data['weight'] = kwargs.get("weight", None)
+
+        return self.get_data(
+            "domains/%s/records/%s" % (data['domain'], data['id']),
+            type=PUT,
+            params=data
+        )
+
     def create(self):
         """
             Create new doamin

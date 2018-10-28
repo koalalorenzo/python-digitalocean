@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from .Record import Record
-from .baseapi import BaseAPI, GET, POST, DELETE
+from .baseapi import BaseAPI, GET, POST, DELETE, PUT
 
 
 class Domain(BaseAPI):

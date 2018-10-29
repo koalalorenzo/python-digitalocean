@@ -51,7 +51,7 @@ class Action(BaseAPI):
             for attr in action.keys():
                 setattr(self, attr, action[attr])
 
-    def wait(self, update_every_seconds=1):
+    def wait(self, update_every_seconds=1, repeat=20):
         """
             Wait until the action is marked as completed or with an error.
             It will return True in case of success, otherwise False.
@@ -60,9 +60,13 @@ class Action(BaseAPI):
                 update_every_seconds - int : number of seconds to wait before
                     checking if the action is completed.
         """
+        counter = 0
         while self.status == u'in-progress':
             sleep(update_every_seconds)
             self.load()
+            counter += 1
+            if counter > repeat:
+                break
 
         return self.status == u'completed'
 

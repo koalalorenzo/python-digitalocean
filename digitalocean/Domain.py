@@ -67,6 +67,9 @@ class Domain(BaseAPI):
         if kwargs.get("weight", None):
             data['weight'] = kwargs.get("weight", None)
 
+        if self.ttl:
+            data['ttl'] = self.ttl
+
         return self.get_data(
             "domains/%s/records" % self.name,
             type=POST,
@@ -107,6 +110,17 @@ class Domain(BaseAPI):
             "domains/%s/records/%s" % (data['domain'], data['id']),
             type=PUT,
             params=data
+        )
+
+    def delete_domain_record(self, *args, **kwargs):
+
+        data = {
+            'id': kwargs.get("id", None)
+        }
+
+        return self.get_data(
+            "domains/%s/records/%s" % (self.name, data['id']),
+            type=DELETE
         )
 
     def create(self):

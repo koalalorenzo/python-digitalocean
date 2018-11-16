@@ -3,6 +3,7 @@ from .baseapi import BaseAPI, POST, DELETE
 
 
 class Certificate(BaseAPI):
+    
     """
     An object representing an SSL Certificate stored on DigitalOcean.
 
@@ -67,10 +68,12 @@ class Certificate(BaseAPI):
         return certificate
 
     def load(self):
+        
         """
             Load the Certificate object from DigitalOcean.
 
             Requires self.id to be set.
+            
         """
         data = self.get_data("certificates/%s" % self.id)
         certificate = data["certificate"]

@@ -7,22 +7,22 @@ __author_email__ = "lorenzo@setale.me"
 __license__ = "LGPL v3"
 __copyright__ = "Copyright (c) 2012, 2013, 2014, 2015, 2016, 2017, 2018 Lorenzo Setale"
 
-import Manager
-import Droplet
-import Region
-import Size
-import Image
-import Action
-import Account
-import Domain
-import Record
-import SSHKey
-import Kernel
-import FloatingIP
-import Volume
-import baseapi
-import Tag
-import LoadBalancer
-import Certificate
-import Snapshot
-import Firewall
+import digitalocean.Manager
+import digitalocean.Droplet
+import digitalocean.Region
+import digitalocean.Size
+import digitalocean.Image
+import digitalocean.Action
+import digitalocean.Account
+import digitalocean.Domain
+import digitalocean.Record
+import digitalocean.SSHKey
+import digitalocean.Kernel
+import digitalocean.FloatingIP
+import digitalocean.Volume
+import digitalocean.baseapi
+import digitalocean.Tag
+import digitalocean.LoadBalancer
+import digitalocean.Certificate
+import digitalocean.Snapshot
+import digitalocean.Firewall

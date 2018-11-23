@@ -22,7 +22,7 @@ class TestTags(BaseTest):
                       status=200,
                       content_type='application/json')
 
-        droplet_tag = digitalocean.Tag(name='awesome', token=self.token)
+        droplet_tag = digitalocean.Tag.Tag(name='awesome', token=self.token)
         droplet_tag.load()
 
         self.assert_get_url_equal(responses.calls[0].request.url, url)
@@ -41,7 +41,7 @@ class TestTags(BaseTest):
                       status=201,
                       content_type='application/json')
 
-        droplet_tag = digitalocean.Tag(name='awesome', token=self.token)
+        droplet_tag = digitalocean.Tag.Tag(name='awesome', token=self.token)
         droplet_tag.create()
 
         self.assertEqual(responses.calls[0].request.url,
@@ -57,7 +57,7 @@ class TestTags(BaseTest):
                       status=204,
                       content_type='application/json')
 
-        droplet_tag = digitalocean.Tag(name='awesome', token=self.token)
+        droplet_tag = digitalocean.Tag.Tag(name='awesome', token=self.token)
         droplet_tag.delete()
 
         self.assertEqual(responses.calls[0].request.url,
@@ -78,7 +78,7 @@ class TestTags(BaseTest):
 
         resource_id = json.loads(data)["resources"][0]["resource_id"]
 
-        droplet_tag = digitalocean.Tag(name='awesome', token=self.token)
+        droplet_tag = digitalocean.Tag.Tag(name='awesome', token=self.token)
         droplet_tag.add_droplets([resource_id])
 
         self.assertEqual(responses.calls[0].request.url,
@@ -98,7 +98,7 @@ class TestTags(BaseTest):
 
         resource_id = json.loads(data)["resources"][0]["resource_id"]
 
-        droplet_tag = digitalocean.Tag(name='awesome', token=self.token)
+        droplet_tag = digitalocean.Tag.Tag(name='awesome', token=self.token)
         droplet_tag.remove_droplets([resource_id])
 
         self.assertEqual(responses.calls[0].request.url,

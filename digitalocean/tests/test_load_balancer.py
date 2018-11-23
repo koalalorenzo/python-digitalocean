@@ -11,7 +11,7 @@ class TestLoadBalancer(BaseTest):
     def setUp(self):
         super(TestLoadBalancer, self).setUp()
         self.lb_id = '4de7ac8b-495b-4884-9a69-1050c6793cd6'
-        self.lb = digitalocean.LoadBalancer(id=self.lb_id, token=self.token)
+        self.lb = digitalocean.LoadBalancer.LoadBalancer(id=self.lb_id, token=self.token)
 
     @responses.activate
     def test_load(self):
@@ -55,18 +55,18 @@ class TestLoadBalancer(BaseTest):
                       status=201,
                       content_type='application/json')
 
-        rule1 = digitalocean.ForwardingRule(entry_port=80,
+        rule1 = digitalocean.LoadBalancer.ForwardingRule(entry_port=80,
                                             entry_protocol='http',
                                             target_port=80,
                                             target_protocol='http')
-        rule2 = digitalocean.ForwardingRule(entry_port=443,
+        rule2 = digitalocean.LoadBalancer.ForwardingRule(entry_port=443,
                                             entry_protocol='https',
                                             target_port=443,
                                             target_protocol='https',
                                             tls_passthrough=True)
-        check = digitalocean.HealthCheck()
-        sticky = digitalocean.StickySesions(type='none')
-        lb = digitalocean.LoadBalancer(name='example-lb-01', region='nyc3',
+        check = digitalocean.LoadBalancer.HealthCheck()
+        sticky = digitalocean.LoadBalancer.StickySesions(type='none')
+        lb = digitalocean.LoadBalancer.LoadBalancer(name='example-lb-01', region='nyc3',
                                        algorithm='round_robin',
                                        forwarding_rules=[rule1, rule2],
                                        health_check=check,
@@ -103,18 +103,18 @@ class TestLoadBalancer(BaseTest):
                       status=201,
                       content_type='application/json')
 
-        rule1 = digitalocean.ForwardingRule(entry_port=80,
+        rule1 = digitalocean.LoadBalancer.ForwardingRule(entry_port=80,
                                             entry_protocol='http',
                                             target_port=80,
                                             target_protocol='http')
-        rule2 = digitalocean.ForwardingRule(entry_port=443,
+        rule2 = digitalocean.LoadBalancer.ForwardingRule(entry_port=443,
                                             entry_protocol='https',
                                             target_port=443,
                                             target_protocol='https',
                                             tls_passthrough=True)
-        check = digitalocean.HealthCheck()
-        sticky = digitalocean.StickySesions(type='none')
-        lb = digitalocean.LoadBalancer(name='example-lb-01', region='nyc3',
+        check = digitalocean.LoadBalancer.HealthCheck()
+        sticky = digitalocean.LoadBalancer.StickySesions(type='none')
+        lb = digitalocean.LoadBalancer.LoadBalancer(name='example-lb-01', region='nyc3',
                                        algorithm='round_robin',
                                        forwarding_rules=[rule1, rule2],
                                        health_check=check,
@@ -153,13 +153,13 @@ class TestLoadBalancer(BaseTest):
                       status=201,
                       content_type='application/json')
 
-        rule = digitalocean.ForwardingRule(entry_port=80,
+        rule = digitalocean.LoadBalancer.ForwardingRule(entry_port=80,
                                            entry_protocol='http',
                                            target_port=80,
                                            target_protocol='http')
-        check = digitalocean.HealthCheck()
-        sticky = digitalocean.StickySesions(type='none')
-        lb = digitalocean.LoadBalancer(name='example-lb-01', region='nyc3',
+        check = digitalocean.LoadBalancer.HealthCheck()
+        sticky = digitalocean.LoadBalancer.StickySesions(type='none')
+        lb = digitalocean.LoadBalancer.LoadBalancer(name='example-lb-01', region='nyc3',
                                        algorithm='round_robin',
                                        forwarding_rules=[rule],
                                        health_check=check,
@@ -233,12 +233,12 @@ class TestLoadBalancer(BaseTest):
         self.lb.droplet_ids = [34153248, 34153250]
         res = self.lb.save()
 
-        lb = digitalocean.LoadBalancer(**res['load_balancer'])
-        lb.health_check = digitalocean.HealthCheck(**res['load_balancer']['health_check'])
-        lb.sticky_sessions = digitalocean.StickySesions(**res['load_balancer']['sticky_sessions'])
+        lb = digitalocean.LoadBalancer.LoadBalancer(**res['load_balancer'])
+        lb.health_check = digitalocean.LoadBalancer.HealthCheck(**res['load_balancer']['health_check'])
+        lb.sticky_sessions = digitalocean.LoadBalancer.StickySesions(**res['load_balancer']['sticky_sessions'])
         rules = list()
         for rule in lb.forwarding_rules:
-            rules.append(digitalocean.ForwardingRule(**rule))
+            rules.append(digitalocean.LoadBalancer.ForwardingRule(**rule))
         self.assertEqual(lb.id, self.lb_id)
         self.assertEqual(lb.region['slug'], 'nyc3')
         self.assertEqual(lb.algorithm, 'least_connections')
@@ -322,7 +322,7 @@ class TestLoadBalancer(BaseTest):
                       status=204,
                       content_type='application/json')
 
-        rule = digitalocean.ForwardingRule(entry_port=3306,
+        rule = digitalocean.LoadBalancer.ForwardingRule(entry_port=3306,
                                            entry_protocol='tcp',
                                            target_port=3306,
                                            target_protocol='tcp')
@@ -355,7 +355,7 @@ class TestLoadBalancer(BaseTest):
                       status=204,
                       content_type='application/json')
 
-        rule = digitalocean.ForwardingRule(entry_port=3306,
+        rule = digitalocean.LoadBalancer.ForwardingRule(entry_port=3306,
                                            entry_protocol='tcp',
                                            target_port=3306,
                                            target_protocol='tcp')

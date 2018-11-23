@@ -9,7 +9,7 @@ class TestBaseAPI(BaseTest):
 
     def setUp(self):
         super(TestBaseAPI, self).setUp()
-        self.manager = digitalocean.Manager(token=self.token)
+        self.manager = digitalocean.Manager.Manager(token=self.token)
         self.user_agent = "{0}/{1} {2}/{3}".format('python-digitalocean',
                                                    digitalocean.__version__,
                                                    requests.__name__,

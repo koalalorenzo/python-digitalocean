@@ -11,7 +11,7 @@ class TestCertificate(BaseTest):
     def setUp(self):
         super(TestCertificate, self).setUp()
         self.cert_id = '892071a0-bb95-49bc-8021-3afd67a210bf'
-        self.cert = digitalocean.Certificate(id=self.cert_id, token=self.token)
+        self.cert = digitalocean.Certificate.Certificate(id=self.cert_id, token=self.token)
 
     @responses.activate
     def test_load(self):
@@ -45,7 +45,7 @@ class TestCertificate(BaseTest):
                       status=201,
                       content_type='application/json')
 
-        cert = digitalocean.Certificate(name='web-cert-01',
+        cert = digitalocean.Certificate.Certificate(name='web-cert-01',
                                         private_key="a-b-c",
                                         leaf_certificate="e-f-g",
                                         certificate_chain="a-b-c\ne-f-g",
@@ -72,7 +72,7 @@ class TestCertificate(BaseTest):
                       status=201,
                       content_type='application/json')
 
-        cert = digitalocean.Certificate(name='web-cert-02',
+        cert = digitalocean.Certificate.Certificate(name='web-cert-02',
                                         dns_names=["www.example.com",
                                                    "example.com"],
                                         type="lets_encrpyt",

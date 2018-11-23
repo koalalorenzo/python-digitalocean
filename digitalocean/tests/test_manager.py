@@ -10,8 +10,8 @@ class TestManager(BaseTest):
 
     def setUp(self):
         super(TestManager, self).setUp()
-        self.manager = digitalocean.Manager(token=self.token)
-        self.image = digitalocean.Image(
+        self.manager = digitalocean.Manager.Manager(token=self.token)
+        self.image = digitalocean.Image.Image(
             id=449676856, slug='testslug', token=self.token
         )
 
@@ -44,7 +44,7 @@ class TestManager(BaseTest):
                       status=401,
                       content_type='application/json')
 
-        bad_token = digitalocean.Manager(token='thisisnotagoodtoken')
+        bad_token = digitalocean.Manager.Manager(token='thisisnotagoodtoken')
         with self.assertRaises(Exception) as error:
             bad_token.get_all_regions()
 
@@ -106,7 +106,7 @@ class TestManager(BaseTest):
                       status=200,
                       content_type="application/json")
 
-        manager = digitalocean.Manager(token=self.token)
+        manager = digitalocean.Manager.Manager(token=self.token)
         droplets = manager.get_all_droplets(tag_name="awesome")
 
         droplet = droplets[0]

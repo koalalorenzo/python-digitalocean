@@ -9,7 +9,7 @@ class TestSnapshot(BaseTest):
 
     def setUp(self):
         super(TestSnapshot, self).setUp()
-        self.snapshot = digitalocean.Snapshot(id="fbe805e8-866b-11e6-96bf-000f53315a41", token=self.token)
+        self.snapshot = digitalocean.Snapshot.Snapshot(id="fbe805e8-866b-11e6-96bf-000f53315a41", token=self.token)
 
     @responses.activate
     def test_load(self):

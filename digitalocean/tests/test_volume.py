@@ -9,7 +9,7 @@ class TestVolume(BaseTest):
 
     def setUp(self):
         super(TestVolume, self).setUp()
-        self.volume = digitalocean.Volume(
+        self.volume = digitalocean.Volume.Volume(
             id='506f78a4-e098-11e5-ad9f-000f53306ae1', token=self.token)
 
     @responses.activate
@@ -42,7 +42,7 @@ class TestVolume(BaseTest):
                       status=201,
                       content_type='application/json')
 
-        volume = digitalocean.Volume(droplet_id=12345,
+        volume = digitalocean.Volume.Volume(droplet_id=12345,
                                      region='nyc1',
                                      size_gigabytes=100,
                                      filesystem_type='ext4',
@@ -66,7 +66,7 @@ class TestVolume(BaseTest):
                       status=201,
                       content_type='application/json')
 
-        volume = digitalocean.Volume(droplet_id=12345,
+        volume = digitalocean.Volume.Volume(droplet_id=12345,
                                      snapshot_id='234234qwer',
                                      region='nyc1',
                                      size_gigabytes=100,

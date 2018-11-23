@@ -9,10 +9,10 @@ class TestImage(BaseTest):
 
     def setUp(self):
         super(TestImage, self).setUp()
-        self.image = digitalocean.Image(
+        self.image = digitalocean.Image.Image(
             id=449676856,  token=self.token
         )
-        self.image_with_slug = digitalocean.Image(
+        self.image_with_slug = digitalocean.Image.Image(
             slug='testslug', token=self.token
         )
 
@@ -75,7 +75,7 @@ class TestImage(BaseTest):
                       status=202,
                       content_type='application/json')
 
-        image = digitalocean.Image(name='ubuntu-18.04-minimal',
+        image = digitalocean.Image.Image(name='ubuntu-18.04-minimal',
                                    url='https://www.example.com/cloud.img',
                                    distribution='Ubuntu',
                                    region='nyc3',

@@ -21,7 +21,7 @@ class TestFirewall(BaseTest):
                       status=200,
                       content_type='application/json')
 
-        self.firewall = digitalocean.Firewall(id=12345, token=self.token).load()
+        self.firewall = digitalocean.Firewall.Firewall(id=12345, token=self.token).load()
 
     @responses.activate
     def test_load(self):
@@ -34,7 +34,7 @@ class TestFirewall(BaseTest):
                       status=200,
                       content_type='application/json')
 
-        firewall = digitalocean.Firewall(id=12345, token=self.token)
+        firewall = digitalocean.Firewall.Firewall(id=12345, token=self.token)
         f = firewall.load()
 
         self.assert_get_url_equal(responses.calls[0].request.url, url)
@@ -88,7 +88,7 @@ class TestFirewall(BaseTest):
         droplet_id = json.loads(data)["droplet_ids"][0]
         self.firewall.remove_droplets([droplet_id])
 
-        self.assertEqual(responses.calls[0].request.url, url)    
+        self.assertEqual(responses.calls[0].request.url, url)
 
     @responses.activate
     def test_add_tags(self):

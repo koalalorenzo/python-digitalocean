@@ -10,7 +10,7 @@ class TestAction(BaseTest):
 
     def setUp(self):
         super(TestAction, self).setUp()
-        self.action = digitalocean.Action(id=39388122, token=self.token)
+        self.action = digitalocean.Action.Action(id=39388122, token=self.token)
 
     @responses.activate
     def test_load_directly(self):

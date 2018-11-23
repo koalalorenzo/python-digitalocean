@@ -9,7 +9,7 @@ class TestFloatingIP(BaseTest):
 
     def setUp(self):
         super(TestFloatingIP, self).setUp()
-        self.fip = digitalocean.FloatingIP(ip='45.55.96.47', token=self.token)
+        self.fip = digitalocean.FloatingIP.FloatingIP(ip='45.55.96.47', token=self.token)
 
     @responses.activate
     def test_load(self):
@@ -39,7 +39,7 @@ class TestFloatingIP(BaseTest):
                       status=201,
                       content_type='application/json')
 
-        fip = digitalocean.FloatingIP(droplet_id=12345,
+        fip = digitalocean.FloatingIP.FloatingIP(droplet_id=12345,
                                       token=self.token).create()
 
         self.assertEqual(responses.calls[0].request.url,
@@ -58,7 +58,7 @@ class TestFloatingIP(BaseTest):
                       status=201,
                       content_type='application/json')
 
-        fip = digitalocean.FloatingIP(region_slug='nyc3',
+        fip = digitalocean.FloatingIP.FloatingIP(region_slug='nyc3',
                                       token=self.token).reserve()
 
         self.assertEqual(responses.calls[0].request.url,

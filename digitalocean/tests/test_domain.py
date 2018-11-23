@@ -11,7 +11,7 @@ class TestDomain(BaseTest):
 
     def setUp(self):
         super(TestDomain, self).setUp()
-        self.domain = digitalocean.Domain(name='example.com', token=self.token)
+        self.domain = digitalocean.Domain.Domain(name='example.com', token=self.token)
 
     @responses.activate
     def test_load(self):
@@ -24,7 +24,7 @@ class TestDomain(BaseTest):
                       status=200,
                       content_type='application/json')
 
-        domain = digitalocean.Domain(name='example.com', token=self.token)
+        domain = digitalocean.Domain.Domain(name='example.com', token=self.token)
         domain.load()
 
         self.assert_get_url_equal(responses.calls[0].request.url, url)
@@ -78,7 +78,7 @@ class TestDomain(BaseTest):
                       status=201,
                       content_type='application/json')
 
-        domain = digitalocean.Domain(name="example.com",
+        domain = digitalocean.Domain.Domain(name="example.com",
                                      ip_address="1.1.1.1",
                                      token=self.token).create()
 

@@ -21,7 +21,7 @@ class TestDroplet(BaseTest):
                       body=data,
                       status=200,
                       content_type='application/json')
-        self.droplet = digitalocean.Droplet(id='12345', token=self.token).load()
+        self.droplet = digitalocean.Droplet.Droplet(id='12345', token=self.token).load()
 
     @responses.activate
     def test_load(self):
@@ -34,7 +34,7 @@ class TestDroplet(BaseTest):
                       status=200,
                       content_type='application/json')
 
-        droplet = digitalocean.Droplet(id='12345', token=self.token)
+        droplet = digitalocean.Droplet.Droplet(id='12345', token=self.token)
         d = droplet.load()
 
         self.assert_get_url_equal(responses.calls[0].request.url, url)
@@ -752,7 +752,7 @@ class TestDroplet(BaseTest):
                       status=201,
                       content_type='application/json')
 
-        response = self.droplet.change_kernel(digitalocean.Kernel(id=123))
+        response = self.droplet.change_kernel(digitalocean.Droplet.Kernel(id=123))
 
         self.assert_url_query_equal(responses.calls[0].request.url,
                                     self.actions_url)
@@ -773,7 +773,7 @@ class TestDroplet(BaseTest):
                       status=201,
                       content_type='application/json')
 
-        response = self.droplet.change_kernel(digitalocean.Kernel(id=123),
+        response = self.droplet.change_kernel(digitalocean.Droplet.Kernel(id=123),
                                               return_dict=False)
 
         self.assert_url_query_equal(responses.calls[0].request.url,
@@ -797,7 +797,7 @@ class TestDroplet(BaseTest):
                       status=202,
                       content_type='application/json')
 
-        droplet = digitalocean.Droplet(name="example.com",
+        droplet = digitalocean.Droplet.Droplet(name="example.com",
                                        size_slug="512mb",
                                        image="ubuntu-14-04-x64",
                                        region="nyc3",
@@ -835,7 +835,7 @@ class TestDroplet(BaseTest):
                       content_type='application/json')
 
 
-        droplets = digitalocean.Droplet.create_multiple(names=["example.com",
+        droplets = digitalocean.Droplet.Droplet.create_multiple(names=["example.com",
                                                                "example2.com"],
                                                         size_slug="512mb",
                                                         image="ubuntu-14-04-x64",

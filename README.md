@@ -11,7 +11,7 @@
 ## Table of Contents
 
 - [How to install](#how-to-install)
-- [Features](#features)  
+- [Features](#features)
 - [Examples](#examples)
    - [Listing the droplets](#listing-the-droplets)
    - [Listing the droplets by tags](#listing-the-droplets-by-tags)
@@ -55,6 +55,8 @@ python-digitalocean support all the features provided via digitalocean.com APIs,
 * Perform Snapshot
 * Enable/Disable automatic Backups
 * Restore root password of a Droplet
+* Work with Load Balancers
+* Manage your firewalls
 
 **[⬆ back to top](#table-of-contents)**
 
@@ -65,7 +67,7 @@ This example shows how to list all the active droplets:
 
 ```python
 import digitalocean
-manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+manager = digitalocean.Manager.Manager(token="secretspecialuniquesnowflake")
 my_droplets = manager.get_all_droplets()
 print(my_droplets)
 ```
@@ -78,7 +80,7 @@ This example shows how to list all the active droplets:
 
 ```python
 import digitalocean
-manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+manager = digitalocean.Manager.Manager(token="secretspecialuniquesnowflake")
 my_droplets = manager.get_all_droplets(tag_name="awesome")
 print(my_droplets)
 ```
@@ -91,7 +93,7 @@ This example shows how to add a tag to a droplet:
 
 ```python
 import digitalocean
-tag = digitalocean.Tag(token="secretspecialuniquesnowflake", name="tag_name")
+tag = digitalocean.Tag.Tag(token="secretspecialuniquesnowflake", name="tag_name")
 tag.create() # create tag if not already created
 tag.add_droplets(["DROPLET_ID"])
 ```
@@ -104,7 +106,7 @@ This example shows how to shutdown all the active droplets:
 
 ```python
 import digitalocean
-manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+manager = digitalocean.Manager.Manager(token="secretspecialuniquesnowflake")
 my_droplets = manager.get_all_droplets()
 for droplet in my_droplets:
     droplet.shutdown()
@@ -118,7 +120,7 @@ This example shows how to create a droplet and how to check its status
 
 ```python
 import digitalocean
-droplet = digitalocean.Droplet(token="secretspecialuniquesnowflake",
+droplet = digitalocean.Droplet.Droplet(token="secretspecialuniquesnowflake",
                                name='Example',
                                region='nyc2', # New York 2
                                image='ubuntu-14-04-x64', # Ubuntu 14.04 x64
@@ -145,7 +147,7 @@ for action in actions:
 from digitalocean import SSHKey
 
 user_ssh_key = open('/home/<$USER>/.ssh/id_rsa.pub').read()
-key = SSHKey(token='secretspecialuniquesnowflake',
+key = SSHKey.SSHKey(token='secretspecialuniquesnowflake',
              name='uniquehostname',
              public_key=user_ssh_key)
 key.create()
@@ -155,7 +157,7 @@ key.create()
 
 ### Creating a new droplet with all your SSH keys
 ```python
-manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+manager = digitalocean.Manager.Manager(token="secretspecialuniquesnowflake")
 keys = manager.get_all_sshkeys()
 
 droplet = digitalocean.Droplet(token="secretspecialuniquesnowflake",
@@ -175,7 +177,7 @@ droplet.create()
 This example creates a firewall that only accepts inbound tcp traffic on port 80 from a specific load balancer and allows outbout tcp traffic on all ports to all addresses.
 
 ```python
-from digitalocean import Firewall, InboundRule, OutboundRule, Destinations, Sources
+from digitalocean.LoadBalancer import Firewall, InboundRule, OutboundRule, Destinations, Sources
 
 inbound_rule = InboundRule(protocol="tcp", ports="80",
                            sources=Sources(
@@ -208,9 +210,9 @@ Each request will also include the rate limit information:
 
 ```python
 import digitalocean
-account = digitalocean.Account(token="secretspecialuniquesnowflake").load()
+account = digitalocean.Account.Account(token="secretspecialuniquesnowflake").load()
 # or
-manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+manager = digitalocean.Manager.Manager(token="secretspecialuniquesnowflake")
 account = manager.get_account()
 ```
 Output:
@@ -232,7 +234,7 @@ uuid: 'my_id'
 When using the Manager().get_all.. functions, the rate limit will be stored on the manager object:
  ```python
 import digitalocean
-manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+manager = digitalocean.Manager.Manager(token="secretspecialuniquesnowflake")
 domains = manager.get_all_domains()
 
 print(manager.ratelimit_limit)

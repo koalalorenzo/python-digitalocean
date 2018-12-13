@@ -505,8 +505,8 @@ class TestManager(BaseTest):
             if volume["region"]["slug"] == "nyc1"]
 
         url = self.base_url + "volumes?region=nyc1&per_page=200"
-        responses.add(responses.GET,
-                      url,
+        responses.add(responses.GET, url,
+                      match_querystring=True,
                       body=json.dumps(data),
                       status=200,
                       content_type='application/json')

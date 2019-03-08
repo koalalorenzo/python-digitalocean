@@ -64,6 +64,7 @@
         }
       ]
     },
+    "vpc_uuid": "08187eaa-90eb-40d6-a8f0-0222b28ded72",
     "region": {
       "name": "New York 3",
       "slug": "nyc3",

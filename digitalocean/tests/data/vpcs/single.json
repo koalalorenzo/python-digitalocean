@@ -1,0 +1,12 @@
+{
+  "vpc": {
+    "id": "5a4981aa-9653-4bd1-bef5-d6bff52042e4",
+    "urn": "do:vpc:5a4981aa-9653-4bd1-bef5-d6bff52042e4",
+    "name": "my-new-vpc",
+    "description": "",
+    "region": "nyc1",
+    "ip_range": "10.10.10.0/24",
+    "created_at": "2020-03-13T18:48:45Z",
+    "default": false
+  }
+}

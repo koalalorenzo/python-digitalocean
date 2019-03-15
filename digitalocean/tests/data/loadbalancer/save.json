@@ -71,6 +71,7 @@
       34153248,
       34153250
     ],
-    "redirect_http_to_https": false
+    "redirect_http_to_https": false,
+    "vpc_uuid": "08187eaa-90eb-40d6-a8f0-0222b28ded72"
   }
 }

@@ -105,6 +105,7 @@ class LoadBalancer(BaseAPI):
             exclusive with 'tag')
         tag (str): A string representing a DigitalOcean Droplet tag \
             (mutually exclusive with 'droplet_ids')
+        vpc_uuid (str): ID of a VPC in which the Load Balancer will be created
 
     Attributes returned by API:
         * name (str): The Load Balancer's name
@@ -125,6 +126,7 @@ class LoadBalancer(BaseAPI):
         * tag (str): A string representing a DigitalOcean Droplet tag
         * status (string): An indication the current state of the LoadBalancer
         * created_at (str): The date and time when the LoadBalancer was created
+        * vpc_uuid (str): ID of a VPC which the Load Balancer is assigned to
     """
     def __init__(self, *args, **kwargs):
         self.id = None
@@ -139,6 +141,7 @@ class LoadBalancer(BaseAPI):
         self.tag = None
         self.status = None
         self.created_at = None
+        self.vpc_uuid = None
 
         super(LoadBalancer, self).__init__(*args, **kwargs)
 
@@ -206,12 +209,15 @@ class LoadBalancer(BaseAPI):
                 exclusive with 'tag')
             tag (str): A string representing a DigitalOcean Droplet tag
                 (mutually exclusive with 'droplet_ids')
+            vpc_uuid (str): ID of a Load Balancer in which the Droplet will be
+                created
         """
         rules_dict = [rule.__dict__ for rule in self.forwarding_rules]
 
         params = {'name': self.name, 'region': self.region,
                   'forwarding_rules': rules_dict,
-                  'redirect_http_to_https': self.redirect_http_to_https}
+                  'redirect_http_to_https': self.redirect_http_to_https,
+                  'vpc_uuid': self.vpc_uuid}
 
         if self.droplet_ids and self.tag:
             raise ValueError('droplet_ids and tag are mutually exclusive args')
@@ -240,6 +246,7 @@ class LoadBalancer(BaseAPI):
             self.droplet_ids = data['load_balancer']['droplet_ids']
             self.status = data['load_balancer']['status']
             self.created_at = data['load_balancer']['created_at']
+            self.vpc_uuid = data['load_balancer']['vpc_uuid']
 
         return self
 
@@ -253,7 +260,8 @@ class LoadBalancer(BaseAPI):
             'name': self.name,
             'region': self.region['slug'],
             'forwarding_rules': forwarding_rules,
-            'redirect_http_to_https': self.redirect_http_to_https
+            'redirect_http_to_https': self.redirect_http_to_https,
+            'vpc_uuid': self.vpc_uuid
         }
 
         if self.tag:

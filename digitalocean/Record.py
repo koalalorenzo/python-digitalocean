@@ -122,5 +122,30 @@ class Record(BaseAPI):
             for attr in record.keys():
                 setattr(self, attr, record[attr])
 
+    def update(self):
+        """
+            Update existing record
+        """
+
+        data = {
+            "id": self.id,
+            "type": self.type,
+            "data": self.data,
+            "name": self.name,
+            "priority": self.priority,
+            "port": self.port,
+            "ttl": self.ttl,
+            "weight": self.weight,
+            "flags": self.flags,
+            "tags": self.tags
+        }
+
+        url = "domains/%s/records/%s" % (self.domain, self.id)
+        return self.get_data(
+            url=url,
+            type=PUT,
+            params=data
+        )
+
     def __str__(self):
         return "<Record: %s %s>" % (self.id, self.domain)

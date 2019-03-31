@@ -29,3 +29,15 @@ class TestBaseAPI(BaseTest):
 
         self.assertEqual(responses.calls[0].request.headers['User-Agent'],
                          self.user_agent)
+
+    @responses.activate
+    def test_customize_session(self):
+        data = self.load_from_file('account/account.json')
+        url = self.base_url + 'account/'
+        responses.add(responses.GET, url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        self.manager._session.proxies['https'] = 'https://127.0.0.1:3128'
+        self.manager.get_account()

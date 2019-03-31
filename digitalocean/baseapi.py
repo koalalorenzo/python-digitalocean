@@ -50,6 +50,8 @@ class BaseAPI(object):
         self.end_point = "https://api.digitalocean.com/v2/"
         self._log = logging.getLogger(__name__)
 
+        self._session = requests.Session()
+
         for attr in kwargs.keys():
             setattr(self, attr, kwargs[attr])
 
@@ -83,12 +85,12 @@ class BaseAPI(object):
         identity = lambda x: x
         json_dumps = lambda x: json.dumps(x)
         lookup = {
-            GET: (requests.get, {}, 'params', identity),
-            POST: (requests.post, {'Content-type': 'application/json'}, 'data',
+            GET: (self._session.get, {}, 'params', identity),
+            POST: (self._session.post, {'Content-type': 'application/json'}, 'data',
                    json_dumps),
-            PUT: (requests.put, {'Content-type': 'application/json'}, 'data',
+            PUT: (self._session.put, {'Content-type': 'application/json'}, 'data',
                   json_dumps),
-            DELETE: (requests.delete,
+            DELETE: (self._session.delete,
                      {'content-type': 'application/json'},
                      'data', json_dumps),
         }

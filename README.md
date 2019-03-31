@@ -22,7 +22,8 @@
    - [Add SSHKey into DigitalOcean Account](#add-sshkey-into-digitalocean-account)
    - [Creating a new droplet with all your SSH keys](#creating-a-new-droplet-with-all-your-ssh-keys)
    - [Creating a Firewall](#creating-a-firewall)
-- [Getting account requests/hour limits status](#getting-account-requests-hour-limits-status)
+- [Getting account requests/hour limits status](#getting-account-requestshour-limits-status)
+- [Session customization](#session-customization)
 - [Testing](#testing)
    - [Test using Docker](#test-using-docker)
    - [Testing using pytest manually](#testing-using-pytest-manually)
@@ -237,6 +238,48 @@ domains = manager.get_all_domains()
 
 print(manager.ratelimit_limit)
 ```
+
+**[⬆ back to top](#table-of-contents)**
+
+## Session customization
+
+You can take advandtage of the [requests](http://docs.python-requests.org/en/master/) library and configure the HTTP client under python-digitalocean.
+
+### Configure retries in case of connection error
+
+This example shows how to configure your client to retry 3 times in case of `ConnectionError`:
+```python
+import digitalocean
+import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
+
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+retry = Retry(connect=3)
+adapter = HTTPAdapter(max_retries=retry)
+manager._session.mount('https://', adapter)
+```
+
+See [`Retry`](https://urllib3.readthedocs.io/en/latest/reference/urllib3.util.html#urllib3.util.retry.Retry) object reference to get more details about all retries options.
+
+### Configure a hook on specified answer
+
+This example shows how to launch custom actions if a HTTP 500 occurs:
+
+```python
+import digitalocean
+
+def handle_response(response, *args, **kwargs):
+    if response.status_code == 500:
+        # Make a lot things from the raw response
+        pass
+    return response
+
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+manager._session.hooks['response'].append(handle_response)
+```
+
+See [event hooks documentation](http://docs.python-requests.org/en/master/user/advanced/?highlight=HTTPAdapter#event-hooks) to get more details about this feature.
 
 **[⬆ back to top](#table-of-contents)**
 

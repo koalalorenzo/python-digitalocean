@@ -39,12 +39,15 @@ class Action(BaseAPI):
                 setattr(self, attr, action[attr])
 
     def load(self):
-        action = self.get_data(
-            "droplets/%s/actions/%s" % (
-                self.droplet_id,
-                self.id
+        if not self.droplet_id:
+            action = self.load_directly()
+        else:
+            action = self.get_data(
+                "droplets/%s/actions/%s" % (
+                    self.droplet_id,
+                    self.id
+                )
             )
-        )
         if action:
             action = action[u'action']
             # Loading attributes

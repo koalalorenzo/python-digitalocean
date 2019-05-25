@@ -46,7 +46,7 @@ class BaseAPI(object):
     end_point = "https://api.digitalocean.com/v2/"
 
     def __init__(self, *args, **kwargs):
-        self.token = ""
+        self.token = os.getenv("DIGITALOCEAN_ACCESS_TOKEN", "")
         self.end_point = "https://api.digitalocean.com/v2/"
         self._log = logging.getLogger(__name__)
 

@@ -1,5 +1,6 @@
 from .baseapi import BaseAPI
 from .Droplet import Droplet
+from .Snapshot import Snapshot
 
 class Tag(BaseAPI):
     def __init__(self, *args, **kwargs):
@@ -61,7 +62,7 @@ class Tag(BaseAPI):
 
     def __add_resources(self, resources):
         """
-            Add to the resources to this tag.
+            Add the resources to this tag.
 
             Attributes accepted at creation time:
                 resources: array - See API.
@@ -79,29 +80,33 @@ class Tag(BaseAPI):
         return self.__get_resources(resources, method='DELETE')
 
 
-    def __extract_resources_from_droplets(self, data):
+    def __build_resources(self, data, object_class: str, resource_type: str):
         """
-            Private method to extract from a value, the resources.
+            Private method to build the `resources` field used to tag/untag 
+            objects.
             It will check the type of object in the array provided and build
             the right structure for the API.
+            The 2nd and 3rd arguments specify the object class and the latter 
+            takes the resource type as required by DO API.
         """
         resources = []
         if not isinstance(data, list): return data
-        for a_droplet in data:
+        for obj in data:
             res = {}
 
             try:
-                if isinstance(a_droplet, unicode):
-                    res = {"resource_id": a_droplet, "resource_type": "droplet"}
+                if isinstance(obj, unicode):
+                    res = {"resource_id": obj}
             except NameError:
                 pass
 
-            if isinstance(a_droplet, str) or isinstance(a_droplet, int):
-                res = {"resource_id": str(a_droplet), "resource_type": "droplet"}
-            elif isinstance(a_droplet, Droplet):
-                res = {"resource_id": str(a_droplet.id), "resource_type": "droplet"}
+            if isinstance(obj, str) or isinstance(obj, int):
+                res = {"resource_id": str(obj)}
+            elif isinstance(obj, object_class):
+                res = {"resource_id": str(obj.id)}
 
             if len(res) > 0:
+                res.resource_type = resource_type
                 resources.append(res)
 
         return resources
@@ -119,7 +124,7 @@ class Tag(BaseAPI):
             droplets = [droplet]
 
         # Extracting data from the Droplet object
-        resources = self.__extract_resources_from_droplets(droplets)
+        resources = self.__build_resources(droplets, Droplet, "droplet")
         if len(resources) > 0:
             return self.__add_resources(resources)
 
@@ -137,9 +142,45 @@ class Tag(BaseAPI):
         if not isinstance(droplets, list):
             droplets = [droplet]
 
-        # Extracting data from the Droplet object
-        resources = self.__extract_resources_from_droplets(droplets)
+        # Build resources field from the Droplet objects
+        resources = self.__build_resources(droplets, Droplet, "droplet")
         if len(resources) > 0:
             return self.__remove_resources(resources)
 
         return False
+
+
+    def add_snapshots(self, snapshots):
+        """
+            Add the Tag to the Snapshot.
+
+            Attributes accepted at creation time:
+                snapshots: array of string or array of int or array of Snapshot.
+        """
+        
+        if not isinstance(snapshots, list):
+            snapshots = [snapshots]
+
+        resources = self.__build_resources(snapshots, Snapshot, "volume_snapshot")
+        if len(resources) > 0:
+            return self.__add_resources(resources)
+        
+        return False
+
+
+    def remove_snapshots(self, snapshots):
+        """
+            remove the Tag from the Snapshot.
+
+            Attributes accepted at creation time:
+                snapshots: array of string or array of int or array of Snapshot.
+        """
+        if not isinstance(snapshots, list):
+            snapshots = [snapshots]
+
+        resources = self.__build_resources(snapshots, Snapshot, "volume_snapshot")
+        if len(resources) > 0:
+            return self.__remove_resources(resources)
+        
+        return False
+

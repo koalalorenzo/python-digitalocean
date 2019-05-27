@@ -80,7 +80,7 @@ class Tag(BaseAPI):
         return self.__get_resources(resources, method='DELETE')
 
 
-    def __build_resources(self, data, object_class: str, resource_type: str):
+    def __build_resources(self, data, object_class, resource_type):
         """
             Private method to build the `resources` field used to tag/untag 
             objects.
@@ -106,7 +106,7 @@ class Tag(BaseAPI):
                 res = {"resource_id": str(obj.id)}
 
             if len(res) > 0:
-                res.resource_type = resource_type
+                res["resource_type"] = resource_type
                 resources.append(res)
 
         return resources

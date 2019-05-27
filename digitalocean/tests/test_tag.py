@@ -105,5 +105,35 @@ class TestTags(BaseTest):
                          self.base_url + "tags/awesome/resources")
 
 
+    @responses.activate
+    def test_add_volume_snapshots(self):
+        url = self.base_url + "tags/awesome/resources"
+        responses.add(responses.POST,
+                      url,
+                      status=204,
+                      content_type='application/json')
+
+        tag = digitalocean.Tag(name='awesome', token=self.token)
+        tag.add_snapshots(["9569411"])
+
+        self.assertEqual(responses.calls[0].request.url,
+                         self.base_url + "tags/awesome/resources")
+
+
+    @responses.activate
+    def test_remove_volume_snapshots(self):
+        url = self.base_url + "tags/awesome/resources"
+        responses.add(responses.DELETE,
+                      url,
+                      status=204,
+                      content_type='application/json')
+
+        tag = digitalocean.Tag(name='awesome', token=self.token)
+        tag.remove_snapshots(["9569411"])
+
+        self.assertEqual(responses.calls[0].request.url,
+                         self.base_url + "tags/awesome/resources")
+
+
 if __name__ == '__main__':
     unittest.main()

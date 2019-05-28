@@ -67,19 +67,14 @@ class TestTags(BaseTest):
 
     @responses.activate
     def test_add_droplets(self):
-        data = self.load_from_file('tags/resources.json')
-
         url = self.base_url + "tags/awesome/resources"
         responses.add(responses.POST,
                       url,
-                      body=data,
                       status=204,
                       content_type='application/json')
 
-        resource_id = json.loads(data)["resources"][0]["resource_id"]
-
         droplet_tag = digitalocean.Tag(name='awesome', token=self.token)
-        droplet_tag.add_droplets([resource_id])
+        droplet_tag.add_droplets(["9569411"])
 
         self.assertEqual(responses.calls[0].request.url,
                          self.base_url + "tags/awesome/resources")
@@ -87,19 +82,44 @@ class TestTags(BaseTest):
 
     @responses.activate
     def test_remove_droplets(self):
-        data = self.load_from_file('tags/resources.json')
-
         url = self.base_url + "tags/awesome/resources"
         responses.add(responses.DELETE,
                       url,
-                      body=data,
-                      status=201,
+                      status=204,
                       content_type='application/json')
 
-        resource_id = json.loads(data)["resources"][0]["resource_id"]
-
         droplet_tag = digitalocean.Tag(name='awesome', token=self.token)
-        droplet_tag.remove_droplets([resource_id])
+        droplet_tag.remove_droplets(["9569411"])
+
+        self.assertEqual(responses.calls[0].request.url,
+                         self.base_url + "tags/awesome/resources")
+
+
+    @responses.activate
+    def test_add_volume_snapshots(self):
+        url = self.base_url + "tags/awesome/resources"
+        responses.add(responses.POST,
+                      url,
+                      status=204,
+                      content_type='application/json')
+
+        tag = digitalocean.Tag(name='awesome', token=self.token)
+        tag.add_snapshots(["9569411"])
+
+        self.assertEqual(responses.calls[0].request.url,
+                         self.base_url + "tags/awesome/resources")
+
+
+    @responses.activate
+    def test_remove_volume_snapshots(self):
+        url = self.base_url + "tags/awesome/resources"
+        responses.add(responses.DELETE,
+                      url,
+                      status=204,
+                      content_type='application/json')
+
+        tag = digitalocean.Tag(name='awesome', token=self.token)
+        tag.remove_snapshots(["9569411"])
 
         self.assertEqual(responses.calls[0].request.url,
                          self.base_url + "tags/awesome/resources")

@@ -1,5 +1,6 @@
 from .baseapi import BaseAPI
 from .Droplet import Droplet
+from .Snapshot import Snapshot
 
 class Tag(BaseAPI):
     def __init__(self, *args, **kwargs):
@@ -61,7 +62,7 @@ class Tag(BaseAPI):
 
     def __add_resources(self, resources):
         """
-            Add to the resources to this tag.
+            Add the resources to this tag.
 
             Attributes accepted at creation time:
                 resources: array - See API.
@@ -79,32 +80,39 @@ class Tag(BaseAPI):
         return self.__get_resources(resources, method='DELETE')
 
 
-    def __extract_resources_from_droplets(self, data):
+    def __build_resources_field(self, resources_to_tag, object_class, resource_type):
         """
-            Private method to extract from a value, the resources.
-            It will check the type of object in the array provided and build
-            the right structure for the API.
+            Private method to build the `resources` field used to tag/untag 
+            DO resources. Returns an array of objects containing two fields: 
+            resource_id and resource_type.
+            It checks the type of objects in the 1st argument and build the
+            right structure for the API. It accepts array of strings, array
+            of ints and array of the object type defined by object_class arg.
+            The 3rd argument specify the resource type as defined by DO API
+            (like droplet, image, volume or volume_snapshot).
+            See: https://developers.digitalocean.com/documentation/v2/#tag-a-resource
         """
-        resources = []
-        if not isinstance(data, list): return data
-        for a_droplet in data:
+        resources_field = []
+        if not isinstance(resources_to_tag, list): return resources_to_tag
+        for resource_to_tag in resources_to_tag:
             res = {}
 
             try:
-                if isinstance(a_droplet, unicode):
-                    res = {"resource_id": a_droplet, "resource_type": "droplet"}
+                if isinstance(resource_to_tag, unicode):
+                    res = {"resource_id": resource_to_tag}
             except NameError:
                 pass
 
-            if isinstance(a_droplet, str) or isinstance(a_droplet, int):
-                res = {"resource_id": str(a_droplet), "resource_type": "droplet"}
-            elif isinstance(a_droplet, Droplet):
-                res = {"resource_id": str(a_droplet.id), "resource_type": "droplet"}
+            if isinstance(resource_to_tag, str) or isinstance(resource_to_tag, int):
+                res = {"resource_id": str(resource_to_tag)}
+            elif isinstance(resource_to_tag, object_class):
+                res = {"resource_id": str(resource_to_tag.id)}
 
             if len(res) > 0:
-                resources.append(res)
+                res["resource_type"] = resource_type
+                resources_field.append(res)
 
-        return resources
+        return resources_field
 
 
     def add_droplets(self, droplet):
@@ -119,7 +127,7 @@ class Tag(BaseAPI):
             droplets = [droplet]
 
         # Extracting data from the Droplet object
-        resources = self.__extract_resources_from_droplets(droplets)
+        resources = self.__build_resources_field(droplets, Droplet, "droplet")
         if len(resources) > 0:
             return self.__add_resources(resources)
 
@@ -137,9 +145,45 @@ class Tag(BaseAPI):
         if not isinstance(droplets, list):
             droplets = [droplet]
 
-        # Extracting data from the Droplet object
-        resources = self.__extract_resources_from_droplets(droplets)
+        # Build resources field from the Droplet objects
+        resources = self.__build_resources_field(droplets, Droplet, "droplet")
         if len(resources) > 0:
             return self.__remove_resources(resources)
 
         return False
+
+
+    def add_snapshots(self, snapshots):
+        """
+            Add the Tag to the Snapshot.
+
+            Attributes accepted at creation time:
+                snapshots: array of string or array of int or array of Snapshot.
+        """
+        
+        if not isinstance(snapshots, list):
+            snapshots = [snapshots]
+
+        resources = self.__build_resources_field(snapshots, Snapshot, "volume_snapshot")
+        if len(resources) > 0:
+            return self.__add_resources(resources)
+        
+        return False
+
+
+    def remove_snapshots(self, snapshots):
+        """
+            remove the Tag from the Snapshot.
+
+            Attributes accepted at creation time:
+                snapshots: array of string or array of int or array of Snapshot.
+        """
+        if not isinstance(snapshots, list):
+            snapshots = [snapshots]
+
+        resources = self.__build_resources_field(snapshots, Snapshot, "volume_snapshot")
+        if len(resources) > 0:
+            return self.__remove_resources(resources)
+        
+        return False
+

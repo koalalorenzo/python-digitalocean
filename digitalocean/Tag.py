@@ -80,36 +80,39 @@ class Tag(BaseAPI):
         return self.__get_resources(resources, method='DELETE')
 
 
-    def __build_resources(self, data, object_class, resource_type):
+    def __build_resources_field(self, resources_to_tag, object_class, resource_type):
         """
             Private method to build the `resources` field used to tag/untag 
-            objects.
-            It will check the type of object in the array provided and build
-            the right structure for the API.
-            The 2nd and 3rd arguments specify the object class and the latter 
-            takes the resource type as required by DO API.
+            DO resources. Returns an array of objects containing two fields: 
+            resource_id and resource_type.
+            It checks the type of objects in the 1st argument and build the
+            right structure for the API. It accepts array of strings, array
+            of ints and array of the object type defined by object_class arg.
+            The 3rd argument specify the resource type as defined by DO API
+            (like droplet, image, volume or volume_snapshot).
+            See: https://developers.digitalocean.com/documentation/v2/#tag-a-resource
         """
-        resources = []
-        if not isinstance(data, list): return data
-        for obj in data:
+        resources_field = []
+        if not isinstance(resources_to_tag, list): return resources_to_tag
+        for resource_to_tag in resources_to_tag:
             res = {}
 
             try:
-                if isinstance(obj, unicode):
-                    res = {"resource_id": obj}
+                if isinstance(resource_to_tag, unicode):
+                    res = {"resource_id": resource_to_tag}
             except NameError:
                 pass
 
-            if isinstance(obj, str) or isinstance(obj, int):
-                res = {"resource_id": str(obj)}
-            elif isinstance(obj, object_class):
-                res = {"resource_id": str(obj.id)}
+            if isinstance(resource_to_tag, str) or isinstance(resource_to_tag, int):
+                res = {"resource_id": str(resource_to_tag)}
+            elif isinstance(resource_to_tag, object_class):
+                res = {"resource_id": str(resource_to_tag.id)}
 
             if len(res) > 0:
                 res["resource_type"] = resource_type
-                resources.append(res)
+                resources_field.append(res)
 
-        return resources
+        return resources_field
 
 
     def add_droplets(self, droplet):
@@ -124,7 +127,7 @@ class Tag(BaseAPI):
             droplets = [droplet]
 
         # Extracting data from the Droplet object
-        resources = self.__build_resources(droplets, Droplet, "droplet")
+        resources = self.__build_resources_field(droplets, Droplet, "droplet")
         if len(resources) > 0:
             return self.__add_resources(resources)
 
@@ -143,7 +146,7 @@ class Tag(BaseAPI):
             droplets = [droplet]
 
         # Build resources field from the Droplet objects
-        resources = self.__build_resources(droplets, Droplet, "droplet")
+        resources = self.__build_resources_field(droplets, Droplet, "droplet")
         if len(resources) > 0:
             return self.__remove_resources(resources)
 
@@ -161,7 +164,7 @@ class Tag(BaseAPI):
         if not isinstance(snapshots, list):
             snapshots = [snapshots]
 
-        resources = self.__build_resources(snapshots, Snapshot, "volume_snapshot")
+        resources = self.__build_resources_field(snapshots, Snapshot, "volume_snapshot")
         if len(resources) > 0:
             return self.__add_resources(resources)
         
@@ -178,7 +181,7 @@ class Tag(BaseAPI):
         if not isinstance(snapshots, list):
             snapshots = [snapshots]
 
-        resources = self.__build_resources(snapshots, Snapshot, "volume_snapshot")
+        resources = self.__build_resources_field(snapshots, Snapshot, "volume_snapshot")
         if len(resources) > 0:
             return self.__remove_resources(resources)
         

@@ -1,0 +1,12 @@
+{
+  "domain_record": {
+    "id": 17,
+    "type": "SRV",
+    "name": "service",
+    "data": "service",
+    "priority": 0,
+    "port": 53,
+    "ttl": 600,
+    "weight": 0
+  }
+}

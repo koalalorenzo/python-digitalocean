@@ -58,13 +58,13 @@ class Domain(BaseAPI):
         }
 
         #  Optional Args
-        if kwargs.get("priority", None):
+        if kwargs.get("priority", None) != None:
             data['priority'] = kwargs.get("priority", None)
 
         if kwargs.get("port", None):
             data['port'] = kwargs.get("port", None)
 
-        if kwargs.get("weight", None):
+        if kwargs.get("weight", None) != None:
             data['weight'] = kwargs.get("weight", None)
 
         return self.get_data(

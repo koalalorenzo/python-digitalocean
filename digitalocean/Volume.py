@@ -14,6 +14,7 @@ class Volume(BaseAPI):
         self.snapshot_id = None
         self.filesystem_type = None
         self.filesystem_label = None
+        self.tags = None
 
         super(Volume, self).__init__(*args, **kwargs)
 
@@ -54,6 +55,7 @@ class Volume(BaseAPI):
 
         Optional Args:
             description: string - text field to describe a volume
+            tags: List[string], optional - the tags to be applied to the volume
         """
         data = self.get_data('volumes/',
                              type=POST,
@@ -62,7 +64,8 @@ class Volume(BaseAPI):
                                      'size_gigabytes': self.size_gigabytes,
                                      'description': self.description,
                                      'filesystem_type': self.filesystem_type,
-                                     'filesystem_label': self.filesystem_label
+                                     'filesystem_label': self.filesystem_label,
+                                     'tags': self.tags,
                                      })
 
         if data:
@@ -89,6 +92,7 @@ class Volume(BaseAPI):
 
         Optional Args:
             description: string - text field to describe a volume
+            tags: List[string], optional - the tags to be applied to the volume
         """
         data = self.get_data('volumes/',
                              type=POST,
@@ -98,7 +102,8 @@ class Volume(BaseAPI):
                                      'size_gigabytes': self.size_gigabytes,
                                      'description': self.description,
                                      'filesystem_type': self.filesystem_type,
-                                     'filesystem_label': self.filesystem_label
+                                     'filesystem_label': self.filesystem_label,
+                                     'tags': self.tags,
                                      })
 
         if data:

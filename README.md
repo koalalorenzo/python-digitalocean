@@ -237,7 +237,7 @@ for r in records:
 
 ### Creating a domain record
 
-This example shows how to list all records of a domain:
+This example shows how to create new domain record (sub.example.com):
 
 ```python
 import digitalocean

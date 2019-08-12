@@ -25,6 +25,7 @@
    - [Listing the domains](#listing-the-domains)
    - [Listing records of a domain](#listing-records-of-a-domain)   
    - [Creating a domain record](#creating-a-domain-record)
+   - [Update a domain record](#update-a-domain-record)
 - [Getting account requests/hour limits status](#getting-account-requestshour-limits-status)
 - [Session customization](#session-customization)
 - [Testing](#testing)
@@ -252,6 +253,24 @@ print(new_record)
 ```
 
 **[⬆ back to top](#table-of-contents)**
+
+### Update a domain record
+
+This example shows how to create new domain record (sub.example.com):
+
+```python
+import digitalocean
+TOKEN="secretspecialuniquesnowflake"
+domain = digitalocean.Domain(token=TOKEN, name="example.com")
+records = domain.get_records()
+id = None
+for r in records:
+    if r.name == 'usb':
+        r.data = '1.1.1.1'
+        r.save()
+```
+
+**[⬆ back to top](#table-of-contents)**   
 
 ## Getting account requests/hour limits status
 

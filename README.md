@@ -22,6 +22,10 @@
    - [Add SSHKey into DigitalOcean Account](#add-sshkey-into-digitalocean-account)
    - [Creating a new droplet with all your SSH keys](#creating-a-new-droplet-with-all-your-ssh-keys)
    - [Creating a Firewall](#creating-a-firewall)
+   - [Listing the domains](#listing-the-domains)
+   - [Listing records of a domain](#listing-records-of-a-domain)   
+   - [Creating a domain record](#creating-a-domain-record)
+   - [Update a domain record](#update-a-domain-record)
 - [Getting account requests/hour limits status](#getting-account-requestshour-limits-status)
 - [Session customization](#session-customization)
 - [Testing](#testing)
@@ -202,6 +206,71 @@ firewall.create()
 ```
 
 **[⬆ back to top](#table-of-contents)**
+
+### Listing the domains
+
+This example shows how to list all the active domains:
+
+```python
+import digitalocean
+TOKEN="secretspecialuniquesnowflake"
+manager = digitalocean.Manager(token=TOKEN)
+my_domains = manager.get_all_domains()
+print(my_domains)
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Listing records of a domain
+
+This example shows how to list all records of a domain:
+
+```python
+import digitalocean
+TOKEN="secretspecialuniquesnowflake"
+domain = digitalocean.Domain(token=TOKEN, name="example.com")
+records = domain.get_records()
+for r in records:
+    print(r.name, r.domain, r.type, r.data)
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Creating a domain record
+
+This example shows how to create new domain record (sub.example.com):
+
+```python
+import digitalocean
+TOKEN="secretspecialuniquesnowflake"
+domain = digitalocean.Domain(token=TOKEN, name="example.com")
+new_record =  domain.create_new_domain_record(
+                type='A',
+                name='sub',
+                data='93.184.216.34'
+                )
+print(new_record)
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Update a domain record
+
+This example shows how to create new domain record (sub.example.com):
+
+```python
+import digitalocean
+TOKEN="secretspecialuniquesnowflake"
+domain = digitalocean.Domain(token=TOKEN, name="example.com")
+records = domain.get_records()
+id = None
+for r in records:
+    if r.name == 'usb':
+        r.data = '1.1.1.1'
+        r.save()
+```
+
+**[⬆ back to top](#table-of-contents)**   
 
 ## Getting account requests/hour limits status
 

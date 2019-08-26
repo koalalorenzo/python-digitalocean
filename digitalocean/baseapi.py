@@ -85,7 +85,7 @@ class BaseAPI(object):
         identity = lambda x: x
         json_dumps = lambda x: json.dumps(x)
         lookup = {
-            GET: (self._session.get, {}, 'params', identity),
+            GET: (self._session.get, {'Content-type': 'application/json'}, 'params', identity),
             POST: (self._session.post, {'Content-type': 'application/json'}, 'data',
                    json_dumps),
             PUT: (self._session.put, {'Content-type': 'application/json'}, 'data',

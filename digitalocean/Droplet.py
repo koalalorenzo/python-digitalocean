@@ -6,6 +6,7 @@ from .Image import Image
 from .Kernel import Kernel
 from .baseapi import BaseAPI, Error, GET, POST, DELETE
 from .SSHKey import SSHKey
+from .Volume import Volume
 
 
 class DropletError(Error):
@@ -638,6 +639,21 @@ class Droplet(BaseAPI):
                 break
 
         return kernels
+
+    def update_volumes_data(self):
+        """
+           Trigger volume objects list refresh.
+           When called on a droplet instance, it will take
+           all volumes ids(gathered in initial droplet details
+           collection) and will create list of object of Volume
+           types. Each volume is a separate api call.
+        """
+        self.volumes = list()
+
+        for volume_id in self.volume_ids:
+            volume = Volume().get_object(self.token, volume_id)
+            self.volumes.append(volume)
+
 
     def __str__(self):
         return "<Droplet: %s %s>" % (self.id, self.name)

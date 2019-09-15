@@ -50,6 +50,10 @@ class Domain(BaseAPI):
                 priority: The priority of the host
                 port: The port that the service is accessible on
                 weight: The weight of records with the same priority
+                ttl: This value is the time to live for the record, in seconds.
+                flags: An unsigned integer between 0-255 used for CAA records.
+                tag: The parameter tag for CAA records. Valid values are "issue",
+                    "issuewild", or "iodef".
         """
         data = {
             "type": kwargs.get("type", None),
@@ -66,6 +70,15 @@ class Domain(BaseAPI):
 
         if kwargs.get("weight", None) != None:
             data['weight'] = kwargs.get("weight", None)
+
+        if kwargs.get("ttl", None):
+            data['ttl'] = kwargs.get("ttl", 1800)
+
+        if kwargs.get("flags", None) != None:
+            data['flags'] = kwargs.get("flags", None)
+
+        if kwargs.get("tag", None):
+            data['tag'] = kwargs.get("tag", "issue")
 
         return self.get_data(
             "domains/%s/records" % self.name,

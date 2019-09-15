@@ -91,6 +91,30 @@ class TestDomain(BaseTest):
         self.assertEqual(response['domain_record']['weight'], 0)
 
     @responses.activate
+    def test_create_new_caa_record_zero_flags(self):
+        data = self.load_from_file('domains/create_caa_record.json')
+
+        url = self.base_url + "domains/example.com/records"
+        responses.add(responses.POST,
+                      url,
+                      body=data,
+                      status=201,
+                      content_type='application/json')
+
+        response = self.domain.create_new_domain_record(
+            type="CAA", name="@", data="letsencrypt.org.", ttl=1800, flags=0, tag="issue")
+
+        self.assert_url_query_equal(
+            responses.calls[0].request.url,
+            self.base_url + "domains/example.com/records")
+        self.assertEqual(response['domain_record']['type'], "CAA")
+        self.assertEqual(response['domain_record']['name'], "@")
+        self.assertEqual(response['domain_record']['data'], "letsencrypt.org.")
+        self.assertEqual(response['domain_record']['ttl'], 1800)
+        self.assertEqual(response['domain_record']['flags'], 0)
+        self.assertEqual(response['domain_record']['tag'], "issue")
+
+    @responses.activate
     def test_create(self):
         data = self.load_from_file('domains/create.json')
 

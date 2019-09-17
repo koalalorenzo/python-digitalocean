@@ -244,7 +244,7 @@ class Droplet(BaseAPI):
 
     def shutdown(self, return_dict=True):
         """
-            shutdown the droplet
+            (gracefully) shutdown the droplet
 
             Optional Args:
                 return_dict (bool): Return a dict when True (default),
@@ -268,7 +268,7 @@ class Droplet(BaseAPI):
 
     def power_cycle(self, return_dict=True):
         """
-            restart the droplet
+            power cycle the droplet
 
             Optional Args:
                 return_dict (bool): Return a dict when True (default),
@@ -280,7 +280,7 @@ class Droplet(BaseAPI):
 
     def power_off(self, return_dict=True):
         """
-            restart the droplet
+            power down the droplet
 
             Optional Args:
                 return_dict (bool): Return a dict when True (default),

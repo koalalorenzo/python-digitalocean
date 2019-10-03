@@ -1,3 +1,9 @@
+import os
+try:
+    import mock
+except ImportError:
+    from unittest import mock
+
 import responses
 import requests
 import digitalocean
@@ -41,3 +47,21 @@ class TestBaseAPI(BaseTest):
 
         self.manager._session.proxies['https'] = 'https://127.0.0.1:3128'
         self.manager.get_account()
+
+    def test_custom_endpoint(self):
+        custom_endpoint = 'http://example.com/'
+
+        with mock.patch.dict(os.environ,
+                            {'DIGITALOCEAN_END_POINT': custom_endpoint},
+                            clear=True):
+            base_api = digitalocean.baseapi.BaseAPI()
+            
+            self.assertEqual(base_api.end_point, custom_endpoint)
+
+    def test_invalid_custom_endpoint(self):
+        custom_endpoint = 'not a valid endpoint'
+
+        with mock.patch.dict(os.environ,
+                            {'DIGITALOCEAN_END_POINT': custom_endpoint},
+                            clear=True):
+            self.assertRaises(digitalocean.EndPointError, digitalocean.baseapi.BaseAPI)

@@ -14,7 +14,7 @@ class StickySessions(object):
         cookie_ttl_seconds (int, optional): The number of seconds until the
             cookie expires
     """
-    def __init__(self, type='none', cookie_name='', cookie_ttl_seconds=None, cookie_ttl=None):
+    def __init__(self, type='none', cookie_name='', cookie_ttl_seconds=None, **kwargs):
         self.type = type
         if type is 'cookies':
             self.cookie_name = 'DO-LB'

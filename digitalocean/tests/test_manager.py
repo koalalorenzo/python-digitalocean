@@ -631,6 +631,30 @@ class TestManager(BaseTest):
         self.assertEqual(f.tags, [])
         self.assertEqual(f.pending_changes, [])
 
+    @responses.activate
+    def test_get_all_projects(self):
+        data = self.load_from_file('projects/all.json')
+
+        url = self.base_url + 'projects'
+        responses.add(responses.GET,
+                      url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        projects = self.manager.get_all_projects()
+        p = projects[0]
+
+        self.assertEqual(p.id, '4e1bfbc3-dc3e-41f2-a18f-1b4d7ba71679')
+        self.assertEqual(p.owner_uuid, '99525febec065ca37b2ffe4f852fd2b2581895e7')
+        self.assertEqual(p.owner_id, 2)
+        self.assertEqual(p.name, 'my-web-api-1')
+        self.assertEqual(p.description, 'My website API 1')
+        self.assertEqual(p.purpose, 'Service or API')
+        self.assertEqual(p.environment, 'Production')
+        self.assertEqual(p.is_default, False)
+        self.assertEqual(p.created_at, '2018-09-27T20:10:35Z')
+        self.assertEqual(p.updated_at, '2018-09-27T20:10:35Z')
 
 if __name__ == '__main__':
     unittest.main()

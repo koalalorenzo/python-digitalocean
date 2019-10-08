@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+from digitalocean.Project import Project
+
 try:
     from urlparse import urlparse, parse_qs
 except ImportError:
-    from urllib.parse import urlparse, parse_qs                 # noqa
+    from urllib.parse import urlparse, parse_qs  # noqa
 
 from .baseapi import BaseAPI
 from .Account import Account
@@ -382,6 +384,14 @@ class Manager(BaseAPI):
             api_token=self.token,
             firewall_id=firewall_id,
         )
+
+    def get_all_projects(self):
+        data = self.get_data('projects')
+        projects = list()
+        for jsoned in data['projects']:
+            project = Project(**jsoned)
+            projects.append(project)
+        return projects
 
     def __str__(self):
         return "<Manager>"

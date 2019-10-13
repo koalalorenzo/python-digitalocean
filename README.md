@@ -11,6 +11,7 @@
 ## Table of Contents
 
 - [How to install](#how-to-install)
+- [Configurations](#configurations)
 - [Features](#features)  
 - [Examples](#examples)
    - [Listing the droplets](#listing-the-droplets)
@@ -45,6 +46,14 @@ or via sources:
 
 **[⬆ back to top](#table-of-contents)**
 
+## Configurations
+
+Specify a custom provider using environment variable
+
+    export DIGITALOCEAN_END_POINT=http://example.com/
+
+**[⬆ back to top](#table-of-contents)**
+
 ## Features
 python-digitalocean support all the features provided via digitalocean.com APIs, such as:
 
@@ -73,6 +82,13 @@ import digitalocean
 manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
 my_droplets = manager.get_all_droplets()
 print(my_droplets)
+```
+
+This example shows how to specify custom provider's end point URL:
+
+```python
+import digitalocean
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake", end_point="http://example.com/")
 ```
 
 **[⬆ back to top](#table-of-contents)**

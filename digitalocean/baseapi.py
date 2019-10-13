@@ -38,6 +38,10 @@ class NotFoundError(Error):
     pass
 
 
+class EndPointError(Error):
+    pass
+
+
 class BaseAPI(object):
     """
         Basic api class for
@@ -47,13 +51,20 @@ class BaseAPI(object):
 
     def __init__(self, *args, **kwargs):
         self.token = os.getenv("DIGITALOCEAN_ACCESS_TOKEN", "")
-        self.end_point = "https://api.digitalocean.com/v2/"
+        self.end_point = os.getenv("DIGITALOCEAN_END_POINT", "https://api.digitalocean.com/v2/")
         self._log = logging.getLogger(__name__)
 
         self._session = requests.Session()
 
         for attr in kwargs.keys():
             setattr(self, attr, kwargs[attr])
+        
+        parsed_url = urlparse.urlparse(self.end_point)
+        if not parsed_url.scheme or not parsed_url.netloc:
+            raise EndPointError("Provided end point is not a valid URL. Please use a valid URL")
+
+        if not parsed_url.path:
+            self.end_point += '/'
 
     def __getstate__(self):
         state = self.__dict__.copy()

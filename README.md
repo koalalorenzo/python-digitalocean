@@ -10,28 +10,32 @@
 
 ## Table of Contents
 
+- [Table of Contents](#table-of-contents)
 - [How to install](#how-to-install)
 - [Configurations](#configurations)
-- [Features](#features)  
+- [Features](#features)
 - [Examples](#examples)
-   - [Listing the droplets](#listing-the-droplets)
-   - [Listing the droplets by tags](#listing-the-droplets-by-tags)
-   - [Add a tag to a droplet](#add-a-tag-to-a-droplet)
-   - [Shutdown all droplets](#shutdown-all-droplets)
-   - [Creating a Droplet and checking its status](#creating-a-droplet-and-checking-its-status)
-   - [Checking the status of the droplet](#checking-the-status-of-the-droplet)
-   - [Add SSHKey into DigitalOcean Account](#add-sshkey-into-digitalocean-account)
-   - [Creating a new droplet with all your SSH keys](#creating-a-new-droplet-with-all-your-ssh-keys)
-   - [Creating a Firewall](#creating-a-firewall)
-   - [Listing the domains](#listing-the-domains)
-   - [Listing records of a domain](#listing-records-of-a-domain)   
-   - [Creating a domain record](#creating-a-domain-record)
-   - [Update a domain record](#update-a-domain-record)
+  - [Listing the droplets](#listing-the-droplets)
+  - [Listing the droplets by tags](#listing-the-droplets-by-tags)
+  - [Add a tag to a droplet](#add-a-tag-to-a-droplet)
+  - [Shutdown all droplets](#shutdown-all-droplets)
+  - [Creating a Droplet and checking its status](#creating-a-droplet-and-checking-its-status)
+  - [Checking the status of the droplet](#checking-the-status-of-the-droplet)
+  - [Add SSHKey into DigitalOcean Account](#add-sshkey-into-digitalocean-account)
+  - [Creating a new droplet with all your SSH keys](#creating-a-new-droplet-with-all-your-ssh-keys)
+  - [Creating a Firewall](#creating-a-firewall)
+  - [Get, create, list and destroy database clusters](#get-create-list-and-destroy-database-clusters)
+  - [Listing the domains](#listing-the-domains)
+  - [Listing records of a domain](#listing-records-of-a-domain)
+  - [Creating a domain record](#creating-a-domain-record)
+  - [Update a domain record](#update-a-domain-record)
 - [Getting account requests/hour limits status](#getting-account-requestshour-limits-status)
 - [Session customization](#session-customization)
+  - [Configure retries in case of connection error](#configure-retries-in-case-of-connection-error)
+  - [Configure a hook on specified answer](#configure-a-hook-on-specified-answer)
 - [Testing](#testing)
-   - [Test using Docker](#test-using-docker)
-   - [Testing using pytest manually](#testing-using-pytest-manually)
+  - [Test using Docker](#test-using-docker)
+  - [Testing using pytest manually](#testing-using-pytest-manually)
 - [Links](#links)
 
 ## How to install
@@ -69,6 +73,7 @@ python-digitalocean support all the features provided via digitalocean.com APIs,
 * Perform Snapshot
 * Enable/Disable automatic Backups
 * Restore root password of a Droplet
+* Get, create, list, and destroy database clusters
 
 **[⬆ back to top](#table-of-contents)**
 
@@ -222,6 +227,42 @@ firewall.create()
 ```
 
 **[⬆ back to top](#table-of-contents)**
+
+### Get, create, list and destroy database clusters
+
+This example shows how to get, create, list and destroy database clusters, replicas, databases, and database users:
+
+```python
+from digitalocean import Database
+
+db = Database(token=TOKEN)
+
+# Create a database cluster
+print(db.create.cluster(name='test-db', engine='mysql', size='db-s-1vcpu-1gb', region='nyc1', num_nodes=1))
+
+# Get a single database clusters
+print(db.get.cluster('1e7a4056-9b2c-4ac0-96b1-6119f5ee9f10'))
+
+# List all database clusters
+print(db.list.clusters())
+
+# Destroy a database cluster
+print(db.destroy.cluster('1e7a4056-9b2c-4ac0-96b1-6119f5ee9f10'))
+
+# Create a database replica
+print(db.create.replica('test-db-replica', 'db-s-1vcpu-1gb'))
+
+# Get a database replica
+print(db.get.replica('1e7a4056-9b2c-4ac0-96b1-6119f5ee9f10', 'test-db-replica'))
+
+# List all database replicas
+print(db.list.replicas('1e7a4056-9b2c-4ac0-96b1-6119f5ee9f10'))
+
+# Destroy a database cluster
+print(db.destroy.cluster('1e7a4056-9b2c-4ac0-96b1-6119f5ee9f10', 'test-db-replica'))
+
+# Additionally, you can do the same functionality with databases within a cluster and database users among other features
+```
 
 ### Listing the domains
 

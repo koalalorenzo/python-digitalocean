@@ -62,7 +62,7 @@ class InboundRule(object):
     Args:
         protocol (str): The type of traffic to be allowed. This may be one
             of "tcp", "udp", or "icmp".
-        port (str): The ports on which traffic will be allowed specified as a
+        ports (str): The ports on which traffic will be allowed specified as a
             string containing a single port, a range (e.g. "8000-9000"), or
             "all" to open all ports for a protocol.
         sources (obj): A `Sources` object.
@@ -85,7 +85,7 @@ class OutboundRule(object):
     Args:
         protocol (str): The type of traffic to be allowed. This may be one
             of "tcp", "udp", or "icmp".
-        port (str): The ports on which traffic will be allowed specified as a
+        ports (str): The ports on which traffic will be allowed specified as a
             string containing a single port, a range (e.g. "8000-9000"), or
             "all" to open all ports for a protocol.
         destinations (obj): A `Destinations` object.

@@ -45,11 +45,13 @@ class Manager(BaseAPI):
             regions.append(region)
         return regions
 
-    def get_all_droplets(self, tag_name=None):
+    def get_all_droplets(self, params=None, tag_name=None):
         """
             This function returns a list of Droplet object.
         """
-        params = dict()
+        if params is None:
+            params = dict()
+
         if tag_name:
             params["tag_name"] = tag_name
 

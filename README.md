@@ -50,6 +50,8 @@ my_projects = manager.get_all_projects()
 print(my_projects)
 ```
 
+### Create a resource for specific project
+
 
 ### Listing the droplets
 

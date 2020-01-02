@@ -106,5 +106,11 @@ class Project(BaseAPI):
         for i in project_resources:
             self.resources.append(i['urn'])
 
+    def assign_resource(self, resources:list):
+        data = {
+            'resources': resources
+        }
+        return self.get_data("projects/%s/resources" % self.id, type=POST, params=data)
+
     def __str__(self):
         return "<Project: " + self.name + "> " + self.id

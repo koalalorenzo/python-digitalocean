@@ -76,7 +76,7 @@ class Project(BaseAPI):
          - Operational / Developer tooling
          - Other 
         """
-        
+
         if kwargs.get("purpose", None):
             data['purpose'] = kwargs.get("purpose", self.purpose)
         """

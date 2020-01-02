@@ -50,8 +50,23 @@ my_projects = manager.get_all_projects()
 print(my_projects)
 ```
 
-### Create a resource for specific project
+### Assign a resource for specific project
 
+```python
+import digitalocean
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+my_projects = manager.get_all_projects()
+my_projects[0].assign_resource(["do:droplet:<Droplet Number>"])
+```
+
+### List all the resources of a project
+```python
+import digitalocean
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+my_projects = manager.get_all_projects()
+resources = my_projects[0].get_all_resources()
+print(resources)
+```
 
 ### Listing the droplets
 

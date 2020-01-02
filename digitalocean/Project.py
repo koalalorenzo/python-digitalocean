@@ -12,6 +12,7 @@ class Project(BaseAPI):
         self.owner_id = None
         self.created_at = None
         self.updated_at = None
+        self.resources = None
 
         super(Project,self).__init__(*args, **kwargs)
 
@@ -89,6 +90,21 @@ class Project(BaseAPI):
             data['environment'] = kwargs.get("environment", self.environment)
 
         return self.get_data("projects/%s" % self.id, type=PUT, params=data)
+
+    def get_all_resources(self):
+        project_resources_response = self.get_data("projects/%s/resources" % self.id)
+        project_resources = project_resources_response['resources']
+        self.resources = []
+        for i in project_resources:
+            self.resources.append(i['urn'])
+        return self.resources
+
+    def load_resources(self):
+        project_resources_response = self.get_data("projects/%s/resources" % self.id)
+        project_resources = project_resources_response['resources']
+        self.resources = []
+        for i in project_resources:
+            self.resources.append(i['urn'])
 
     def __str__(self):
         return "<Project: " + self.name + "> " + self.id

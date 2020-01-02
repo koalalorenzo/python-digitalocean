@@ -106,7 +106,7 @@ class Project(BaseAPI):
         for i in project_resources:
             self.resources.append(i['urn'])
 
-    def assign_resource(self, resources:list):
+    def assign_resource(self, resources):
         data = {
             'resources': resources
         }

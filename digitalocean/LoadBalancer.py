@@ -16,7 +16,7 @@ class StickySesions(object):
     """
     def __init__(self, type='none', cookie_name='', cookie_ttl_seconds=None):
         self.type = type
-        if type is 'cookies':
+        if type == 'cookies':
             self.cookie_name = 'DO-LB'
             self.cookie_ttl_seconds = 300
         self.cookie_name = cookie_name

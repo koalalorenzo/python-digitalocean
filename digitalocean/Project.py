@@ -48,6 +48,9 @@ class Project(BaseAPI):
         project = self.get_data("projects/%s" % self.id, type=PUT, params=data)
         return project
 
+    def create_project(self):
+        pass
+
     def update_project(self, **kwargs):
 
         data = {

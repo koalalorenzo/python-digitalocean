@@ -1,8 +1,5 @@
-import json
 import unittest
-
 import responses
-
 import digitalocean
 from .BaseTest import BaseTest
 
@@ -12,23 +9,37 @@ class TestProject(BaseTest):
     def setUp(self):
         super(TestProject, self).setUp()
         self.project = digitalocean.Project(
-            id='4e1bfbc3-dc3e-41f2-a18f-1b4d7ba71679', token=self.token , owner_id='99525febec065ca37b2ffe4f852fd2b2581895e7')
+            id='4e1bfbc3-dc3e-41f2-a18f-1b4d7ba71679',
+            token=self.token)
 
     @responses.activate
     def test_load(self):
-        data = self.load_from_file('volumes/single.json')
-        volume_path = "volumes/506f78a4-e098-11e5-ad9f-000f53306ae1"
+        data = self.load_from_file('projects/retrieve.json')
+        project_path = "projects/4e1bfbc3-dc3e-41f2-a18f-1b4d7ba71679"
 
-        url = self.base_url + volume_path
+        url = self.base_url + project_path
         responses.add(responses.GET,
                       url,
                       body=data,
                       status=200,
                       content_type='application/json')
-
-        self.volume.load()
-
+        self.project.load()
         self.assert_get_url_equal(responses.calls[0].request.url, url)
-        self.assertEqual(self.volume.id,
-                         "506f78a4-e098-11e5-ad9f-000f53306ae1")
-        self.assertEqual(self.volume.size_gigabytes, 100)
+        self.assertEqual(self.project.id, '4e1bfbc3-dc3e-41f2-a18f-1b4d7ba71679')
+        self.assertEqual(self.project.owner_uuid, "99525febec065ca37b2ffe4f852fd2b2581895e7")
+        self.assertEqual(self.project.owner_id, 2)
+        self.assertEqual(self.project.name, "my-web-api")
+        self.assertEqual(self.project.description, "My website API")
+        self.assertEqual(self.project.purpose, "Service or API")
+        self.assertEqual(self.project.environment, "Production")
+        self.assertEqual(self.project.is_default, False)
+        self.assertEqual(self.project.updated_at, "2018-09-27T20:10:35Z")
+        self.assertEqual(self.project.created_at, "2018-09-27T20:10:35Z")
+
+    def test_create_new_project(self):
+        pass
+
+
+
+if __name__ == '__main__':
+    unittest.main()

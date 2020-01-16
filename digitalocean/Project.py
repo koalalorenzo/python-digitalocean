@@ -48,11 +48,56 @@ class Project(BaseAPI):
         project = self.get_data("projects/%s" % self.id, type=PUT, params=data)
         return project
 
-    def create_project(self):
-        pass
+    @classmethod
+    def create_project(cls,**kwargs):
+
+        """Creating Project with the following arguments
+        Args:
+            api_token (str): token
+            "name": Name of the Project - Required
+            "description": Description of the Project - Optional
+            "purpose": Purpose of the project - Required
+            "environment": Related Environment of  Project - Optional
+                         - Development
+                         - Stating
+                         - Production
+            kwargs (str): project id or project name
+        """
+        token = kwargs['token']
+        data = {}
+        if 'description' in kwargs.keys():
+            data['description'] = kwargs['description']
+        else:
+            data['description'] = ""
+        if 'environment' in kwargs.keys():
+            data['environment'] = kwargs['environment']
+        else:
+            data['environment'] = "Production"
+
+        data['name'] = kwargs['name']
+        data['purpose'] = kwargs['purpose']
+        project = cls(token=token)
+        data = project.get_data("projects", type=POST, params=data)
+
+        print(data)
+        if data:
+            project.id = data['project']['id']
+            project.owner_uuid  = data['project']['owner_uuid']
+            project.owner_id = data['project']['id']
+            project.name = data['project']['name']
+            project.description = data['project']['description']
+            project.purpose = data['project']['purpose']
+            project.environment = data['project']['environment']
+            project.is_default = data['project']['is_default']
+            project.created_at = data['project']['created_at']
+            project.updated_at = data['project']['updated_at']
+        return project
+
+    def delete_project(self):
+        data = {}
+        return self.get_data("projects/%s" % self.id, type=DELETE, params=data)
 
     def update_project(self, **kwargs):
-
         data = {
             "name": self.name,
             "description": self.description,

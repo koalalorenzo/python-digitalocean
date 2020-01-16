@@ -13,7 +13,6 @@ class Project(BaseAPI):
         self.created_at = None
         self.updated_at = None
         self.resources = None
-
         super(Project,self).__init__(*args, **kwargs)
 
     @classmethod
@@ -48,7 +47,7 @@ class Project(BaseAPI):
         project = self.get_data("projects/%s" % self.id, type=PUT, params=data)
         return project
 
-    def create_project(self,**kwargs):
+    def create_project(self):
 
         """Creating Project with the following arguments
         Args:
@@ -60,11 +59,8 @@ class Project(BaseAPI):
                          - Development
                          - Stating
                          - Production
-            kwargs (str): project id or project name
         """
 
-        for attr in kwargs.keys():
-            setattr(self, attr, kwargs[attr])
         data = {
             "name": self.name,
             "purpose": self.purpose
@@ -73,7 +69,9 @@ class Project(BaseAPI):
             data['description'] = self.description
         if self.environment:
             data['environment'] = self.environment
+
         data = self.get_data("projects", type=POST, params=data)
+
         if data:
             self.id = data['project']['id']
             self.owner_uuid  = data['project']['owner_uuid']
@@ -85,7 +83,6 @@ class Project(BaseAPI):
             self.is_default = data['project']['is_default']
             self.created_at = data['project']['created_at']
             self.updated_at = data['project']['updated_at']
-        return self
 
 
     def delete_project(self):

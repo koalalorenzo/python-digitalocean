@@ -36,6 +36,7 @@ class TestProject(BaseTest):
         self.assertEqual(self.project.updated_at, "2018-09-27T20:10:35Z")
         self.assertEqual(self.project.created_at, "2018-09-27T20:10:35Z")
 
+    @responses.activate
     def test_create_new_project(self):
         data = self.load_from_file('projects/create.json')
         project_path = "projects"
@@ -46,22 +47,22 @@ class TestProject(BaseTest):
                       body=data,
                       status=201,
                       content_type='application/json')
-        self.project = digitalocean.Project(token=self.token,name="my-web-api",
+        project = digitalocean.Project(token=self.token, name="my-web-api",
                                                            purpose="Service or API",
                                                            description="My website API",
                                                            environment="Production")
-        self.project.create_project()
-        self.assert_get_url_equal(responses.calls[0].request.url, url)
-        self.assertEqual(self.project.id, '4e1bfbc3-dc3e-41f2-a18f-1b4d7ba71679')
-        self.assertEqual(self.project.owner_uuid, "99525febec065ca37b2ffe4f852fd2b2581895e7")
-        self.assertEqual(self.project.owner_id, 2)
-        self.assertEqual(self.project.name, "my-web-api")
-        self.assertEqual(self.project.description, "My website API")
-        self.assertEqual(self.project.purpose, "Service or API")
-        self.assertEqual(self.project.environment, "Production")
-        self.assertEqual(self.project.is_default, False)
-        self.assertEqual(self.project.updated_at, "2018-09-27T20:10:35Z")
-        self.assertEqual(self.project.created_at, "2018-09-27T20:10:35Z")
+        project.create_project()
+
+        self.assertEqual(project.id, "4e1bfbc3-dc3e-41f2-a18f-1b4d7ba71679")
+        self.assertEqual(project.owner_uuid, "99525febec065ca37b2ffe4f852fd2b2581895e7")
+        self.assertEqual(project.owner_id, 2)
+        self.assertEqual(project.name, "my-web-api")
+        self.assertEqual(project.description, "My website API")
+        self.assertEqual(project.purpose, "Service or API")
+        self.assertEqual(project.environment, "Production")
+        self.assertEqual(project.is_default, False)
+        self.assertEqual(project.updated_at, "2018-09-27T20:10:35Z")
+        self.assertEqual(project.created_at, "2018-09-27T20:10:35Z")
 
 
 if __name__ == '__main__':

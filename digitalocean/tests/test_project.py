@@ -37,7 +37,7 @@ class TestProject(BaseTest):
         self.assertEqual(self.project.created_at, "2018-09-27T20:10:35Z")
 
     def test_create_new_project(self):
-        data = self.load_from_file('projects/retrieve.json')
+        data = self.load_from_file('projects/create.json')
         project_path = "projects"
 
         url = self.base_url + project_path
@@ -46,11 +46,11 @@ class TestProject(BaseTest):
                       body=data,
                       status=201,
                       content_type='application/json')
-        self.project = digitalocean.Project.create_project(token=self.token,name="my-web-api",
+        self.project = digitalocean.Project(token=self.token,name="my-web-api",
                                                            purpose="Service or API",
                                                            description="My website API",
                                                            environment="Production")
-        
+        self.project.create_project()
         self.assert_get_url_equal(responses.calls[0].request.url, url)
         self.assertEqual(self.project.id, '4e1bfbc3-dc3e-41f2-a18f-1b4d7ba71679')
         self.assertEqual(self.project.owner_uuid, "99525febec065ca37b2ffe4f852fd2b2581895e7")

@@ -48,8 +48,7 @@ class Project(BaseAPI):
         project = self.get_data("projects/%s" % self.id, type=PUT, params=data)
         return project
 
-    @classmethod
-    def create_project(cls,**kwargs):
+    def create_project(self,**kwargs):
 
         """Creating Project with the following arguments
         Args:
@@ -63,35 +62,31 @@ class Project(BaseAPI):
                          - Production
             kwargs (str): project id or project name
         """
-        token = kwargs['token']
-        data = {}
-        if 'description' in kwargs.keys():
-            data['description'] = kwargs['description']
-        else:
-            data['description'] = ""
-        if 'environment' in kwargs.keys():
-            data['environment'] = kwargs['environment']
-        else:
-            data['environment'] = "Production"
 
-        data['name'] = kwargs['name']
-        data['purpose'] = kwargs['purpose']
-        project = cls(token=token)
-        data = project.get_data("projects", type=POST, params=data)
-
-        print(data)
+        for attr in kwargs.keys():
+            setattr(self, attr, kwargs[attr])
+        data = {
+            "name": self.name,
+            "purpose": self.purpose
+        }
+        if self.description:
+            data['description'] = self.description
+        if self.environment:
+            data['environment'] = self.environment
+        data = self.get_data("projects", type=POST, params=data)
         if data:
-            project.id = data['project']['id']
-            project.owner_uuid  = data['project']['owner_uuid']
-            project.owner_id = data['project']['id']
-            project.name = data['project']['name']
-            project.description = data['project']['description']
-            project.purpose = data['project']['purpose']
-            project.environment = data['project']['environment']
-            project.is_default = data['project']['is_default']
-            project.created_at = data['project']['created_at']
-            project.updated_at = data['project']['updated_at']
-        return project
+            self.id = data['project']['id']
+            self.owner_uuid  = data['project']['owner_uuid']
+            self.owner_id = data['project']['id']
+            self.name = data['project']['name']
+            self.description = data['project']['description']
+            self.purpose = data['project']['purpose']
+            self.environment = data['project']['environment']
+            self.is_default = data['project']['is_default']
+            self.created_at = data['project']['created_at']
+            self.updated_at = data['project']['updated_at']
+        return self
+
 
     def delete_project(self):
         data = {}

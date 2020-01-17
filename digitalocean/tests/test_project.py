@@ -39,7 +39,7 @@ class TestProject(BaseTest):
     @responses.activate
     def test_create_new_project(self):
         data = self.load_from_file('projects/create.json')
-        project_path = "projects"
+        project_path = "projects/"
 
         url = self.base_url + project_path
         responses.add(responses.POST,
@@ -52,17 +52,16 @@ class TestProject(BaseTest):
                                                            description="My website API",
                                                            environment="Production")
         project.create_project()
-
-        self.assertEqual(project.id, "4e1bfbc3-dc3e-41f2-a18f-1b4d7ba71679")
-        self.assertEqual(project.owner_uuid, "99525febec065ca37b2ffe4f852fd2b2581895e7")
-        self.assertEqual(project.owner_id, 2)
+        self.assertEqual(responses.calls[0].request.url, url)
+        self.assertEqual(project.id, '4e1bfbc3-dc3e-41f2-a18f-1b4d7ba71679')
+        self.assertEqual(project.owner_uuid, '99525febec065ca37b2ffe4f852fd2b2581895e7')
+        self.assertEqual(project.is_default, False)
         self.assertEqual(project.name, "my-web-api")
         self.assertEqual(project.description, "My website API")
         self.assertEqual(project.purpose, "Service or API")
         self.assertEqual(project.environment, "Production")
-        self.assertEqual(project.is_default, False)
-        self.assertEqual(project.updated_at, "2018-09-27T20:10:35Z")
-        self.assertEqual(project.created_at, "2018-09-27T20:10:35Z")
+        self.assertEqual(project.updated_at, "2018-09-27T15:52:48Z")
+        self.assertEqual(project.created_at, "2018-09-27T15:52:48Z")
 
 
 if __name__ == '__main__':

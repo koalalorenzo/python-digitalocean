@@ -70,12 +70,12 @@ class Project(BaseAPI):
         if self.environment:
             data['environment'] = self.environment
 
-        data = self.get_data("projects", type=POST, params=data)
+        data = self.get_data("projects/", type=POST, params=data)
 
         if data:
             self.id = data['project']['id']
-            self.owner_uuid  = data['project']['owner_uuid']
-            self.owner_id = data['project']['id']
+            self.owner_uuid = data['project']['owner_uuid']
+            self.owner_id = data['project']['owner_id']
             self.name = data['project']['name']
             self.description = data['project']['description']
             self.purpose = data['project']['purpose']
@@ -86,7 +86,7 @@ class Project(BaseAPI):
 
 
     def delete_project(self):
-        data = {}
+        data = dict()
         return self.get_data("projects/%s" % self.id, type=DELETE, params=data)
 
     def update_project(self, **kwargs):

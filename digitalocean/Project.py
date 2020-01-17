@@ -71,7 +71,7 @@ class Project(BaseAPI):
         if self.environment:
             data['environment'] = self.environment
 
-        data = self.get_data("projects/", type=POST, params=data)
+        data = self.get_data("projects", type=POST, params=data)
 
         if data:
             self.id = data['project']['id']
@@ -85,26 +85,15 @@ class Project(BaseAPI):
             self.created_at = data['project']['created_at']
             self.updated_at = data['project']['updated_at']
 
-
     def delete_project(self):
         data = dict()
         return self.get_data("projects/%s" % self.id, type=DELETE, params=data)
 
     def update_project(self, **kwargs):
-        data = {
-            "name": self.name,
-            "description": self.description,
-            "purpose": self.purpose,
-            "environment": self.environment,
-            "is_default": self.is_default
-        }
-
-        if kwargs.get("name", None):
-            data['name'] = kwargs.get("name", self.name)
-
-        if kwargs.get("description", None):
-            data['description'] = kwargs.get("description", self.description)
-
+        data = dict()
+        data['name'] = kwargs.get("name", self.name)
+        data['description'] = kwargs.get("description", self.description)
+        data['purpose'] = kwargs.get("purpose", self.purpose)
         """
         Options for Purpose by Digital Ocean
          - Just Trying out DigitalOcean
@@ -118,19 +107,17 @@ class Project(BaseAPI):
          - Operational / Developer tooling
          - Other 
         """
-
-        if kwargs.get("purpose", None):
-            data['purpose'] = kwargs.get("purpose", self.purpose)
+        data['environment'] = kwargs.get("environment", self.environment)
         """
         Options for Environment by Digital Ocean
          - Development
          - Stating
          - Production
         """
-        if kwargs.get("environment", None):
-            data['environment'] = kwargs.get("environment", self.environment)
-
-        return self.get_data("projects/%s" % self.id, type=PUT, params=data)
+        data['is_default'] = kwargs.get("is_default", self.is_default)
+        update_response = self.get_data("projects/%s" % self.id, type=PUT, params=data)
+        for attr in update_response['project'].keys():
+            setattr(self, attr, update_response['project'][attr])
 
     def get_all_resources(self):
         project_resources_response = self.get_data("projects/%s/resources" % self.id)

@@ -23,6 +23,8 @@ or via sources:
 python-digitalocean support all the features provided via digitalocean.com APIs, such as:
 
 * Get user's Projects
+* Assign a resource to a user project
+* List the resources of user's project
 * Get user's Droplets
 * Get user's Images (Snapshot and Backups)
 * Get public Images

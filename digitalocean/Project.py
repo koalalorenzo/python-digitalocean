@@ -1,4 +1,5 @@
-from .baseapi import BaseAPI, GET, POST, DELETE , PUT
+from .baseapi import BaseAPI, GET, POST, DELETE, PUT
+
 
 class Project(BaseAPI):
     def __init__(self,*args, **kwargs):

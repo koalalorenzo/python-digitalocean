@@ -92,11 +92,79 @@ class TestProject(BaseTest):
 
     @responses.activate
     def test_get_all_resources(self):
-        pass
+        data = self.load_from_file('projects/project_resources.json')
+        resource_project = digitalocean.Project(token=self.token,
+                                                id="4e1bfbc3-dc3e-41f2-a18f-1b4d7ba71679")
+        url = self.base_url + 'projects/' + resource_project.id + "/resources"
+        responses.add(responses.GET, url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        all_resources = resource_project.get_all_resources()
+        self.assertEqual(len(all_resources), 1)
+        self.assertEqual(all_resources[0], "do:droplet:1")
+
+    @responses.activate
+    def test_delete(self):
+        url = self.base_url + "projects/4e1bfbc3-dc3e-41f2-a18f-1b4d7ba71679"
+        responses.add(responses.DELETE,
+                      url,
+                      status=204,
+                      content_type='application/json')
+
+        project_to_be_deleted = digitalocean.Project(token=self.token,
+                                                     id="4e1bfbc3-dc3e-41f2-a18f-1b4d7ba71679")
+        project_to_be_deleted.delete_project()
+        self.assertEqual(responses.calls[0].request.url, url)
+
+    @responses.activate
+    def test_update_default_project(self):
+        data = self.load_from_file('projects/update.json')
+        project = digitalocean.Project(token=self.token,
+                                       id="default")
+
+        project_path = "projects/" + project.id
+        url = self.base_url + project_path
+        responses.add(responses.PUT,
+                      url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        project.update_project(name="my-web-api",
+                               description="My website API",
+                               purpose="Service or API",
+                               environment="Staging",
+                               is_default=False)
+
+        self.assertEqual(responses.calls[0].request.url, url)
+        self.assertEqual(project.is_default, False)
+        self.assertEqual(project.name, "my-web-api")
+        self.assertEqual(project.description, "My website API")
+        self.assertEqual(project.purpose, "Service or API")
+        self.assertEqual(project.environment, "Staging")
 
     @responses.activate
     def test_assign_resource(self):
-        pass
+        data = self.load_from_file('projects/assign_resources.json')
+        resource_project = digitalocean.Project(token=self.token,
+                                                id="4e1bfbc3-dc3e-41f2-a18f-1b4d7ba71679")
+        url = self.base_url + 'projects/' + resource_project.id + "/resources"
+
+        responses.add(responses.POST, url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+        add_resources = {
+            "resources": ["do:droplet:1", "do:floatingip:192.168.99.100"]
+        }
+
+        result_resources = resource_project.assign_resource(add_resources)
+        self.assertEqual(len(result_resources['resources']), 2)
+        self.assertEqual(result_resources['resources'][0]['urn'], "do:droplet:1")
+        self.assertEqual(result_resources['resources'][1]['urn'],
+                         "do:floatingip:192.168.99.100")
 
 
 if __name__ == '__main__':

@@ -166,6 +166,42 @@ class TestProject(BaseTest):
         self.assertEqual(result_resources['resources'][1]['urn'],
                          "do:floatingip:192.168.99.100")
 
+    @responses.activate
+    def test_list_default_project_resources(self):
+        data = self.load_from_file('projects/project_resources.json')
+        resource_project = digitalocean.Project(token=self.token,
+                                                id="default")
+        url = self.base_url + 'projects/' + resource_project.id + "/resources"
+        responses.add(responses.GET, url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        all_resources = resource_project.get_all_resources()
+        self.assertEqual(len(all_resources), 1)
+        self.assertEqual(all_resources[0], "do:droplet:1")
+
+    @responses.activate
+    def test_assign_resource_to_default_project(self):
+        data = self.load_from_file('projects/assign_resources.json')
+        resource_project = digitalocean.Project(token=self.token,
+                                                id="default")
+        url = self.base_url + 'projects/' + resource_project.id + "/resources"
+
+        responses.add(responses.POST, url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+        add_resources = {
+            "resources": ["do:droplet:1", "do:floatingip:192.168.99.100"]
+        }
+
+        result_resources = resource_project.assign_resource(add_resources)
+        self.assertEqual(len(result_resources['resources']), 2)
+        self.assertEqual(result_resources['resources'][0]['urn'], "do:droplet:1")
+        self.assertEqual(result_resources['resources'][1]['urn'],
+                         "do:floatingip:192.168.99.100")
+
 
 if __name__ == '__main__':
     unittest.main()

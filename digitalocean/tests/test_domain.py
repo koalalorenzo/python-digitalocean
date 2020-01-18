@@ -69,7 +69,7 @@ class TestDomain(BaseTest):
 
     @responses.activate
     def test_create(self):
-        data = self.load_from_file('domains/create.json')
+        data = self.load_from_file( 'domains/create.json')
 
         url = self.base_url + "domains"
         responses.add(responses.POST,
@@ -86,6 +86,8 @@ class TestDomain(BaseTest):
             responses.calls[0].request.url, self.base_url + "domains")
         self.assertEqual(json.loads(responses.calls[0].request.body),
                          {'ip_address': '1.1.1.1', 'name': 'example.com'})
+        print("The domain")
+        print(domain)
         self.assertEqual(domain['domain']['name'], "example.com")
         self.assertEqual(domain['domain']['ttl'], 1800)
 

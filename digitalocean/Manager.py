@@ -14,7 +14,7 @@ from .FloatingIP import FloatingIP
 from .Firewall import Firewall, InboundRule, OutboundRule
 from .Image import Image
 from .LoadBalancer import LoadBalancer
-from .LoadBalancer import StickySesions, HealthCheck, ForwardingRule
+from .LoadBalancer import StickySessions, HealthCheck, ForwardingRule
 from .Region import Region
 from .SSHKey import SSHKey
 from .Size import Size
@@ -257,7 +257,7 @@ class Manager(BaseAPI):
             load_balancer = LoadBalancer(**jsoned)
             load_balancer.token = self.token
             load_balancer.health_check = HealthCheck(**jsoned['health_check'])
-            load_balancer.sticky_sessions = StickySesions(**jsoned['sticky_sessions'])
+            load_balancer.sticky_sessions = StickySessions(**jsoned['sticky_sessions'])
             forwarding_rules = list()
             for rule in jsoned['forwarding_rules']:
                 forwarding_rules.append(ForwardingRule(**rule))

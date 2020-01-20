@@ -2,7 +2,7 @@
 from .baseapi import BaseAPI, GET, POST, PUT, DELETE
 
 
-class StickySesions(object):
+class StickySessions(object):
     """
     An object holding information on a LoadBalancer's sticky sessions settings.
 
@@ -14,7 +14,7 @@ class StickySesions(object):
         cookie_ttl_seconds (int, optional): The number of seconds until the
             cookie expires
     """
-    def __init__(self, type='none', cookie_name='', cookie_ttl_seconds=None):
+    def __init__(self, type='none', cookie_name='', cookie_ttl_seconds=None, **kwargs):
         self.type = type
         if type == 'cookies':
             self.cookie_name = 'DO-LB'
@@ -170,7 +170,7 @@ class LoadBalancer(BaseAPI):
                 health_check = HealthCheck(**load_balancer['health_check'])
                 setattr(self, attr, health_check)
             elif attr == 'sticky_sessions':
-                sticky_ses = StickySesions(**load_balancer['sticky_sessions'])
+                sticky_ses = StickySessions(**load_balancer['sticky_sessions'])
                 setattr(self, attr, sticky_ses)
             elif attr == 'forwarding_rules':
                 rules = list()
@@ -235,7 +235,7 @@ class LoadBalancer(BaseAPI):
             self.algorithm = data['load_balancer']['algorithm']
             self.health_check = HealthCheck(
                 **data['load_balancer']['health_check'])
-            self.sticky_sessions = StickySesions(
+            self.sticky_sessions = StickySessions(
                 **data['load_balancer']['sticky_sessions'])
             self.droplet_ids = data['load_balancer']['droplet_ids']
             self.status = data['load_balancer']['status']

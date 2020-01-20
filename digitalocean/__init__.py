@@ -23,7 +23,7 @@ from .Volume import Volume
 from .baseapi import Error, EndPointError, TokenError, DataReadError
 from .Tag import Tag
 from .LoadBalancer import LoadBalancer
-from .LoadBalancer import StickySesions, ForwardingRule, HealthCheck
+from .LoadBalancer import StickySessions, ForwardingRule, HealthCheck
 from .Certificate import Certificate
 from .Snapshot import Snapshot
 from .Firewall import Firewall, InboundRule, OutboundRule, Destinations, Sources

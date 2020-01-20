@@ -52,6 +52,12 @@ Specify a custom provider using environment variable
 
     export DIGITALOCEAN_END_POINT=http://example.com/
 
+Specify the DIGITALOCEAN_ACCESS_TOKEN using environment variable
+
+    export DIGITALOCEAN_ACCESS_TOKEN='xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+
+Note: Probably want to add the export line above to your `.bashrc` file.
+
 **[⬆ back to top](#table-of-contents)**
 
 ## Features

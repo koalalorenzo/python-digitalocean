@@ -49,7 +49,7 @@ class Volume(BaseAPI):
             region: string - slug identifier for the region
             size_gigabytes: int - size of the Block Storage volume in GiB
             filesystem_type: string, optional - name of the filesystem type the
-                volume will be formated with ('ext4' or 'xfs')
+                volume will be formatted with ('ext4' or 'xfs')
             filesystem_label: string, optional - the label to be applied to the
                 filesystem, only used in conjunction with filesystem_type
 
@@ -86,7 +86,7 @@ class Volume(BaseAPI):
             snapshot_id: string - unique identifier for the volume snapshot
             size_gigabytes: int - size of the Block Storage volume in GiB
             filesystem_type: string, optional - name of the filesystem type the
-                volume will be formated with ('ext4' or 'xfs')
+                volume will be formatted with ('ext4' or 'xfs')
             filesystem_label: string, optional - the label to be applied to the
                 filesystem, only used in conjunction with filesystem_type
 

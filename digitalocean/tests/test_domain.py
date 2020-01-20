@@ -69,7 +69,7 @@ class TestDomain(BaseTest):
 
     @responses.activate
     def test_create(self):
-        data = self.load_from_file('domains/create.json')
+        data = self.load_from_file( 'domains/create.json')
 
         url = self.base_url + "domains"
         responses.add(responses.POST,

@@ -162,6 +162,7 @@ class BaseAPI(object):
 
         try:
             data = req.json()
+
         except ValueError as e:
             raise JSONReadError(
                 'Read failed from DigitalOcean: %s' % str(e)

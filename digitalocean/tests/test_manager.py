@@ -562,5 +562,52 @@ class TestManager(BaseTest):
         self.assertEqual(volume_snapshots[0].resource_type, 'volume')
         self.assertEqual(len(volume_snapshots[0].regions), 1)
 
+    @responses.activate
+    def test_get_all_projects(self):
+        data = self.load_from_file('projects/all_projects_list.json')
+        url = self.base_url + 'projects'
+        responses.add(responses.GET, url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        all_projects = self.manager.get_all_projects()
+
+        self.assertEqual(len(all_projects), 1)
+        self.assertEqual(all_projects[0].id, "4e1bfbc3-dc3e-41f2-a18f-1b4d7ba71679")
+        self.assertEqual(all_projects[0].owner_uuid, "99525febec065ca37b2ffe4f852fd2b2581895e7")
+        self.assertEqual(all_projects[0].owner_id, 2)
+        self.assertEqual(all_projects[0].name, "my-web-api")
+        self.assertEqual(all_projects[0].description, "My website API")
+        self.assertEqual(all_projects[0].purpose, "Service or API")
+        self.assertEqual(all_projects[0].environment, "Production")
+        self.assertEqual(all_projects[0].is_default, False)
+        self.assertEqual(all_projects[0].created_at, "2018-09-27T20:10:35Z")
+        self.assertEqual(all_projects[0].updated_at, "2018-09-27T20:10:35Z")
+
+    @responses.activate
+    def test_get_default_project(self):
+        data = self.load_from_file('projects/default_project.json')
+        url = self.base_url + 'projects' + "/default"
+        responses.add(responses.GET, url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        default_project = self.manager.get_default_project()
+
+        self.assertEqual(default_project.id, "4e1bfbc3-dc3e-41f2-a18f-1b4d7ba71679")
+        self.assertEqual(default_project.owner_uuid, "99525febec065ca37b2ffe4f852fd2b2581895e7")
+        self.assertEqual(default_project.owner_id, 2)
+        self.assertEqual(default_project.name, "my-web-api")
+        self.assertEqual(default_project.description, "My website API")
+        self.assertEqual(default_project.purpose, "Service or API")
+        self.assertEqual(default_project.environment, "Production")
+        self.assertEqual(default_project.is_default, True)
+        self.assertEqual(default_project.created_at, "2018-09-27T20:10:35Z")
+        self.assertEqual(default_project.updated_at, "2018-09-27T20:10:35Z")
+
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -26,3 +26,4 @@ from .LoadBalancer import LoadBalancer
 from .LoadBalancer import StickySesions, ForwardingRule, HealthCheck
 from .Certificate import Certificate
 from .Snapshot import Snapshot
+from .Project import Project

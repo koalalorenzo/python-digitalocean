@@ -22,6 +22,9 @@ or via sources:
 ## Features
 python-digitalocean support all the features provided via digitalocean.com APIs, such as:
 
+* Get user's Projects
+* Assign a resource to a user project
+* List the resources of user's project
 * Get user's Droplets
 * Get user's Images (Snapshot and Backups)
 * Get public Images
@@ -37,6 +40,36 @@ python-digitalocean support all the features provided via digitalocean.com APIs,
 
 
 ## Examples
+
+### Listing the Projects
+
+This example shows how to list all the projects:
+
+```python
+import digitalocean
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+my_projects = manager.get_all_projects()
+print(my_projects)
+```
+
+### Assign a resource for specific project
+
+```python
+import digitalocean
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+my_projects = manager.get_all_projects()
+my_projects[0].assign_resource(["do:droplet:<Droplet Number>"])
+```
+
+### List all the resources of a project
+```python
+import digitalocean
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+my_projects = manager.get_all_projects()
+resources = my_projects[0].get_all_resources()
+print(resources)
+```
+
 ### Listing the droplets
 
 This example shows how to list all the active droplets:

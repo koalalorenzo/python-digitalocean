@@ -1,4 +1,4 @@
-# Dokcerfile made to test this
+# Dockerfile made to test this
 FROM python:alpine
 
 MAINTAINER Lorenzo Setale <lorenzo@setale.me>

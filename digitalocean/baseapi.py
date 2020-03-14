@@ -59,7 +59,7 @@ class BaseAPI(object):
 
         for attr in kwargs.keys():
             setattr(self, attr, kwargs[attr])
-        
+
         parsed_url = urlparse.urlparse(self.end_point)
         if not parsed_url.scheme or not parsed_url.netloc:
             raise EndPointError("Provided end point is not a valid URL. Please use a valid URL")

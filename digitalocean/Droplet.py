@@ -599,7 +599,7 @@ class Droplet(BaseAPI):
             action_id (int): id of action
         """
         return Action.get_object(
-            api_token=self.token,
+            api_token=self.tokens,
             action_id=action_id
         )
 

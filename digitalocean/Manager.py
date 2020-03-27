@@ -41,7 +41,7 @@ class Manager(BaseAPI):
         regions = list()
         for jsoned in data['regions']:
             region = Region(**jsoned)
-            region.token = self.token
+            region.token = self.tokens
             regions.append(region)
         return regions
 
@@ -60,7 +60,7 @@ class Manager(BaseAPI):
         droplets = list()
         for jsoned in data['droplets']:
             droplet = Droplet(**jsoned)
-            droplet.token = self.token
+            droplet.token = self.tokens
 
             for net in droplet.networks['v4']:
                 if net['type'] == 'private':
@@ -101,7 +101,7 @@ class Manager(BaseAPI):
         sizes = list()
         for jsoned in data['sizes']:
             size = Size(**jsoned)
-            size.token = self.token
+            size.token = self.tokens
             sizes.append(size)
         return sizes
 
@@ -118,7 +118,7 @@ class Manager(BaseAPI):
         images = list()
         for jsoned in data['images']:
             image = Image(**jsoned)
-            image.token = self.token
+            image.token = self.tokens
             images.append(image)
         return images
 
@@ -157,7 +157,7 @@ class Manager(BaseAPI):
         images = list()
         for i in data:
             if i.public:
-                i.token = self.token
+                i.token = self.tokens
                 images.append(i)
         return images
 
@@ -185,7 +185,7 @@ class Manager(BaseAPI):
         domains = list()
         for jsoned in data['domains']:
             domain = Domain(**jsoned)
-            domain.token = self.token
+            domain.token = self.tokens
             domains.append(domain)
         return domains
 
@@ -203,7 +203,7 @@ class Manager(BaseAPI):
         ssh_keys = list()
         for jsoned in data['ssh_keys']:
             ssh_key = SSHKey(**jsoned)
-            ssh_key.token = self.token
+            ssh_key.token = self.tokens
             ssh_keys.append(ssh_key)
         return ssh_keys
 
@@ -236,7 +236,7 @@ class Manager(BaseAPI):
         floating_ips = list()
         for jsoned in data['floating_ips']:
             floating_ip = FloatingIP(**jsoned)
-            floating_ip.token = self.token
+            floating_ip.token = self.tokens
             floating_ips.append(floating_ip)
         return floating_ips
 
@@ -255,7 +255,7 @@ class Manager(BaseAPI):
         load_balancers = list()
         for jsoned in data['load_balancers']:
             load_balancer = LoadBalancer(**jsoned)
-            load_balancer.token = self.token
+            load_balancer.token = self.tokens
             load_balancer.health_check = HealthCheck(**jsoned['health_check'])
             load_balancer.sticky_sessions = StickySessions(**jsoned['sticky_sessions'])
             forwarding_rules = list()
@@ -291,7 +291,7 @@ class Manager(BaseAPI):
         certificates = list()
         for jsoned in data['certificates']:
             cert = Certificate(**jsoned)
-            cert.token = self.token
+            cert.token = self.tokens
             certificates.append(cert)
 
         return certificates
@@ -310,7 +310,7 @@ class Manager(BaseAPI):
         """
         data = self.get_data("snapshots/")
         return [
-            Snapshot(token=self.token, **snapshot)
+            Snapshot(token=self.tokens, **snapshot)
             for snapshot in data['snapshots']
         ]
 
@@ -320,7 +320,7 @@ class Manager(BaseAPI):
         """
         data = self.get_data("snapshots?resource_type=droplet")
         return [
-            Snapshot(token=self.token, **snapshot)
+            Snapshot(token=self.tokens, **snapshot)
             for snapshot in data['snapshots']
         ]
 
@@ -330,7 +330,7 @@ class Manager(BaseAPI):
         """
         data = self.get_data("snapshots?resource_type=volume")
         return [
-            Snapshot(token=self.token, **snapshot)
+            Snapshot(token=self.tokens, **snapshot)
             for snapshot in data['snapshots']
         ]
 
@@ -346,7 +346,7 @@ class Manager(BaseAPI):
         volumes = list()
         for jsoned in data['volumes']:
             volume = Volume(**jsoned)
-            volume.token = self.token
+            volume.token = self.tokens
             volumes.append(volume)
         return volumes
 
@@ -364,7 +364,7 @@ class Manager(BaseAPI):
         firewalls = list()
         for jsoned in data['firewalls']:
             firewall = Firewall(**jsoned)
-            firewall.token = self.token
+            firewall.token = self.tokens
             in_rules = list()
             for rule in jsoned['inbound_rules']:
                 in_rules.append(InboundRule(**rule))

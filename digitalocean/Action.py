@@ -7,7 +7,6 @@ from .baseapi import BaseAPI
 class Action(BaseAPI):
     def __init__(self, *args, **kwargs):
         self.id = None
-        self.token = None
         self.status = None
         self.type = None
         self.started_at = None

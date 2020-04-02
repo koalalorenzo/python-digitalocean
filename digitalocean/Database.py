@@ -12,7 +12,7 @@ __SIZE_SLUG__ = [
 ]
 
 __DB_ENGINES__ = {
-    'pq': {
+    'pg': {
         'versions': ['10','11']
     },
     'mysql': {

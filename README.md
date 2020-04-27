@@ -148,7 +148,7 @@ import digitalocean
 droplet = digitalocean.Droplet(token="secretspecialuniquesnowflake",
                                name='Example',
                                region='nyc2', # New York 2
-                               image='ubuntu-14-04-x64', # Ubuntu 14.04 x64
+                               image='ubuntu-20-04-x64', # Ubuntu 20.04 x64
                                size_slug='512mb',  # 512MB
                                backups=True)
 droplet.create()
@@ -188,7 +188,7 @@ keys = manager.get_all_sshkeys()
 droplet = digitalocean.Droplet(token="secretspecialuniquesnowflake",
                                name='DropletWithSSHKeys',
                                region='ams3', # Amster
-                               image='ubuntu-14-04-x64', # Ubuntu 14.04 x64
+                               image='ubuntu-20-04-x64', # Ubuntu 20.04 x64
                                size_slug='512mb',  # 512MB
                                ssh_keys=keys, #Automatic conversion
                                backups=False)

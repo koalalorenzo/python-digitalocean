@@ -162,7 +162,7 @@ actions = droplet.get_actions()
 for action in actions:
     action.load()
     # Once it shows complete, droplet is up and running
-    print action.status
+    print(action.status)
 ```
 
 **[⬆ back to top](#table-of-contents)**

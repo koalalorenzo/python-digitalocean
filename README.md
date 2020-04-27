@@ -161,7 +161,7 @@ droplet.create()
 actions = droplet.get_actions()
 for action in actions:
     action.load()
-    # Once it shows complete, droplet is up and running
+    # Once it shows "completed", droplet is up and running
     print(action.status)
 ```
 

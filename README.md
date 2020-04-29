@@ -148,8 +148,8 @@ import digitalocean
 droplet = digitalocean.Droplet(token="secretspecialuniquesnowflake",
                                name='Example',
                                region='nyc2', # New York 2
-                               image='ubuntu-14-04-x64', # Ubuntu 14.04 x64
-                               size_slug='512mb',  # 512MB
+                               image='ubuntu-20-04-x64', # Ubuntu 20.04 x64
+                               size_slug='s-1vcpu-1gb',  # 1GB RAM, 1 vCPU
                                backups=True)
 droplet.create()
 ```
@@ -161,8 +161,8 @@ droplet.create()
 actions = droplet.get_actions()
 for action in actions:
     action.load()
-    # Once it shows complete, droplet is up and running
-    print action.status
+    # Once it shows "completed", droplet is up and running
+    print(action.status)
 ```
 
 **[⬆ back to top](#table-of-contents)**
@@ -188,8 +188,8 @@ keys = manager.get_all_sshkeys()
 droplet = digitalocean.Droplet(token="secretspecialuniquesnowflake",
                                name='DropletWithSSHKeys',
                                region='ams3', # Amster
-                               image='ubuntu-14-04-x64', # Ubuntu 14.04 x64
-                               size_slug='512mb',  # 512MB
+                               image='ubuntu-20-04-x64', # Ubuntu 20.04 x64
+                               size_slug='s-1vcpu-1gb',  # 1GB RAM, 1 vCPU
                                ssh_keys=keys, #Automatic conversion
                                backups=False)
 droplet.create()

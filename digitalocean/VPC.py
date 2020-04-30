@@ -11,7 +11,7 @@ class VPC(BaseAPI):
     Args:
         name (str): A name for the VPC
         region (str): The slug for the region where the VPC will be created
-        description( str): A free-form text field for describing the VPC
+        description(str): A free-form text field for describing the VPC
         ip_range (str): The requested range of IP addresses for the VPC in \
             CIDR notation
 
@@ -20,7 +20,7 @@ class VPC(BaseAPI):
         * id (str): A unique identifier for the VPC
         * name (str): The name of the VPC
         * region (str): The slug for the region where the VPC is located
-        * description( str): A free-form text field for describing the VPC
+        * description(str): A free-form text field for describing the VPC
         * ip_range (str): The requested range of IP addresses for the VPC in \
             CIDR notation
         * urn (str): The uniform resource name (URN) for the VPC

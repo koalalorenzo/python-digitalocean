@@ -283,7 +283,7 @@ class TestLoadBalancer(BaseTest):
 
     @responses.activate
     def test_add_droplets(self):
-        url = '{0}load_balancers/{1}/droplets/'.format(self.base_url,
+        url = '{0}load_balancers/{1}/droplets'.format(self.base_url,
                                                        self.lb_id)
         responses.add(responses.POST,
                       url,
@@ -299,7 +299,7 @@ class TestLoadBalancer(BaseTest):
 
     @responses.activate
     def test_remove_droplets(self):
-        url = '{0}load_balancers/{1}/droplets/'.format(self.base_url,
+        url = '{0}load_balancers/{1}/droplets'.format(self.base_url,
                                                        self.lb_id)
         responses.add(responses.DELETE,
                       url,

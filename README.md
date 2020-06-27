@@ -82,41 +82,6 @@ python-digitalocean support all the features provided via digitalocean.com APIs,
 **[⬆ back to top](#table-of-contents)**
 
 ## Examples
-### Listing the Projects
-
-This example shows how to list all the projects:
-
-```python
-import digitalocean
-manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
-my_projects = manager.get_all_projects()
-print(my_projects)
-```
-
-**[⬆ back to top](#table-of-contents)**
-
-### Assign a resource for specific project
-
-```python
-import digitalocean
-manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
-my_projects = manager.get_all_projects()
-my_projects[0].assign_resource(["do:droplet:<Droplet Number>"])
-```
-
-**[⬆ back to top](#table-of-contents)**
-
-### List all the resources of a project
-```python
-import digitalocean
-manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
-my_projects = manager.get_all_projects()
-resources = my_projects[0].get_all_resources()
-print(resources)
-```
-
-**[⬆ back to top](#table-of-contents)**
-
 ### Listing the droplets
 
 This example shows how to list all the active droplets:
@@ -201,6 +166,41 @@ for action in actions:
     action.load()
     # Once it shows "completed", droplet is up and running
     print(action.status)
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Listing the Projects
+
+This example shows how to list all the projects:
+
+```python
+import digitalocean
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+my_projects = manager.get_all_projects()
+print(my_projects)
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Assign a resource for specific project
+
+```python
+import digitalocean
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+my_projects = manager.get_all_projects()
+my_projects[0].assign_resource(["do:droplet:<Droplet Number>"])
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### List all the resources of a project
+```python
+import digitalocean
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+my_projects = manager.get_all_projects()
+resources = my_projects[0].get_all_resources()
+print(resources)
 ```
 
 **[⬆ back to top](#table-of-contents)**

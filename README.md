@@ -12,7 +12,7 @@
 
 - [How to install](#how-to-install)
 - [Configurations](#configurations)
-- [Features](#features)  
+- [Features](#features)
 - [Examples](#examples)
    - [Listing the droplets](#listing-the-droplets)
    - [Listing the droplets by tags](#listing-the-droplets-by-tags)
@@ -24,7 +24,7 @@
    - [Creating a new droplet with all your SSH keys](#creating-a-new-droplet-with-all-your-ssh-keys)
    - [Creating a Firewall](#creating-a-firewall)
    - [Listing the domains](#listing-the-domains)
-   - [Listing records of a domain](#listing-records-of-a-domain)   
+   - [Listing records of a domain](#listing-records-of-a-domain)
    - [Creating a domain record](#creating-a-domain-record)
    - [Update a domain record](#update-a-domain-record)
 - [Getting account requests/hour limits status](#getting-account-requestshour-limits-status)
@@ -324,7 +324,7 @@ for r in records:
         r.save()
 ```
 
-**[⬆ back to top](#table-of-contents)**   
+**[⬆ back to top](#table-of-contents)**
 
 ## Getting account requests/hour limits status
 

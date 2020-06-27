@@ -93,6 +93,8 @@ my_projects = manager.get_all_projects()
 print(my_projects)
 ```
 
+**[⬆ back to top](#table-of-contents)**
+
 ### Assign a resource for specific project
 
 ```python
@@ -102,6 +104,8 @@ my_projects = manager.get_all_projects()
 my_projects[0].assign_resource(["do:droplet:<Droplet Number>"])
 ```
 
+**[⬆ back to top](#table-of-contents)**
+
 ### List all the resources of a project
 ```python
 import digitalocean
@@ -110,6 +114,8 @@ my_projects = manager.get_all_projects()
 resources = my_projects[0].get_all_resources()
 print(resources)
 ```
+
+**[⬆ back to top](#table-of-contents)**
 
 ### Listing the droplets
 

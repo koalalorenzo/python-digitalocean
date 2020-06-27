@@ -1,3 +1,4 @@
+import json
 import unittest
 import responses
 import digitalocean
@@ -466,6 +467,17 @@ class TestManager(BaseTest):
             'dfcc9f57d86bf58e321c2c6c31c7a971be244ac7')
         self.assertEqual(certs[0].not_after, '2017-02-22T00:23:00Z')
         self.assertEqual(certs[0].created_at, '2017-02-08T16:02:37Z')
+        self.assertEqual(certs[0].type, 'custom')
+        self.assertEqual(certs[0].state, 'verified')
+
+        self.assertEqual(certs[1].id, 'ba9b9c18-6c59-46c2-99df-70da170a42ba')
+        self.assertEqual(certs[1].name, 'web-cert-02')
+        self.assertEqual(certs[1].sha1_fingerprint,
+            '479c82b5c63cb6d3e6fac4624d58a33b267e166c')
+        self.assertEqual(certs[1].not_after, '2018-06-07T17:44:12Z')
+        self.assertEqual(certs[1].created_at, '2018-03-09T18:44:11Z')
+        self.assertEqual(certs[1].type, 'lets_encrypt')
+        self.assertEqual(certs[1].state, 'pending')
 
     @responses.activate
     def test_get_all_volumes(self):
@@ -482,12 +494,33 @@ class TestManager(BaseTest):
 
         self.assertEqual(volumes[0].id, "506f78a4-e098-11e5-ad9f-000f53306ae1")
         self.assertEqual(volumes[0].region['slug'], 'nyc1')
+        self.assertEqual(volumes[0].filesystem_type, "ext4")
+        self.assertEqual(len(volumes), 2)
+
+    @responses.activate
+    def test_get_per_region_volumes(self):
+        data = json.loads(self.load_from_file('volumes/all.json'))
+        data["volumes"] = [
+            volume for volume in data["volumes"]
+            if volume["region"]["slug"] == "nyc1"]
+
+        url = self.base_url + "volumes?region=nyc1&per_page=200"
+        responses.add(responses.GET, url,
+                      match_querystring=True,
+                      body=json.dumps(data),
+                      status=200,
+                      content_type='application/json')
+        volumes = self.manager.get_all_volumes("nyc1")
+
+        self.assertEqual(volumes[0].id, "506f78a4-e098-11e5-ad9f-000f53306ae1")
+        self.assertEqual(volumes[0].region['slug'], 'nyc1')
+        self.assertEqual(len(volumes), 1)
 
     @responses.activate
     def test_get_all_tags(self):
         data = self.load_from_file('tags/all.json')
 
-        url = self.base_url + 'tags/'
+        url = self.base_url + 'tags'
         responses.add(responses.GET, url,
                       body=data,
                       status=200,
@@ -607,6 +640,41 @@ class TestManager(BaseTest):
         self.assertEqual(default_project.created_at, "2018-09-27T20:10:35Z")
         self.assertEqual(default_project.updated_at, "2018-09-27T20:10:35Z")
 
+    @responses.activate
+    def test_get_firewalls(self):
+        data = self.load_from_file('firewalls/all.json')
+
+        url = self.base_url + "firewalls"
+        responses.add(responses.GET,
+                      url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        firewalls = self.manager.get_all_firewalls()
+        f = firewalls[0]
+
+        self.assert_get_url_equal(responses.calls[0].request.url, url)
+        self.assertEqual(f.id, "12345")
+        self.assertEqual(f.name, "firewall")
+        self.assertEqual(f.status, "succeeded")
+        self.assertEqual(f.inbound_rules[0].ports, "80")
+        self.assertEqual(f.inbound_rules[0].protocol, "tcp")
+        self.assertEqual(f.inbound_rules[0].sources.load_balancer_uids,
+                         ["12345"])
+        self.assertEqual(f.inbound_rules[0].sources.addresses, [])
+        self.assertEqual(f.inbound_rules[0].sources.tags, [])
+        self.assertEqual(f.outbound_rules[0].ports, "80")
+        self.assertEqual(f.outbound_rules[0].protocol, "tcp")
+        self.assertEqual(
+            f.outbound_rules[0].destinations.load_balancer_uids, [])
+        self.assertEqual(f.outbound_rules[0].destinations.addresses,
+                         ["0.0.0.0/0", "::/0"])
+        self.assertEqual(f.outbound_rules[0].destinations.tags, [])
+        self.assertEqual(f.created_at, "2017-05-23T21:24:00Z")
+        self.assertEqual(f.droplet_ids, [12345])
+        self.assertEqual(f.tags, [])
+        self.assertEqual(f.pending_changes, [])
 
 
 if __name__ == '__main__':

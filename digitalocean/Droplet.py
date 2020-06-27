@@ -6,6 +6,7 @@ from .Image import Image
 from .Kernel import Kernel
 from .baseapi import BaseAPI, Error, GET, POST, DELETE
 from .SSHKey import SSHKey
+from .Volume import Volume
 
 
 class DropletError(Error):
@@ -22,7 +23,7 @@ class BadSSHKeyFormat(DropletError):
 
 
 class Droplet(BaseAPI):
-    """"Droplet management
+    """Droplet management
 
     Attributes accepted at creation time:
 
@@ -31,36 +32,36 @@ class Droplet(BaseAPI):
         size_slug (str): droplet size
         image (str): image name to use to create droplet
         region (str): region
-        ssh_keys: (:obj:`str`, optional): list of ssh keys
+        ssh_keys (:obj:`str`, optional): list of ssh keys
         backups (bool): True if backups enabled
         ipv6 (bool): True if ipv6 enabled
         private_networking (bool): True if private networking enabled
         user_data (str): arbitrary data to pass to droplet
         volumes (:obj:`str`, optional): list of blockstorage volumes
-        monitoring: (bool) - True if installing the DigitalOcean monitoring agent
+        monitoring (bool): True if installing the DigitalOcean monitoring agent
 
     Attributes returned by API:
-        id (int): droplet id
-        memory (str): memory size
-        vcpus (int): number of vcpus
-        disk (int): disk size in GB
-        status (str): status
-        locked (bool): True if locked
-        created_at (str): creation date in format u'2014-11-06T10:42:09Z'
-        status (str): status, e.g. 'new', 'active', etc
-        networks (dict): details of connected networks
-        kernel (dict): details of kernel
-        backup_ids (:obj:`int`, optional): list of ids of backups of this droplet
-        snapshot_ids (:obj:`int`, optional): list of ids of snapshots of this droplet
-        action_ids (:obj:`int`, optional): list of ids of actions
-        features (:obj:`str`, optional): list of enabled features. e.g.
-                  [u'private_networking', u'virtio']
-        image (dict): details of image used to create this droplet
-        ip_address (str): public ip addresses
-        private_ip_address (str): private ip address
-        ip_v6_address (:obj:`str`, optional): list of ipv6 addresses assigned
-        end_point (str): url of api endpoint used
-        volume_ids (:obj:`str`, optional): list of blockstorage volumes
+        * id (int): droplet id
+        * memory (str): memory size
+        * vcpus (int): number of vcpus
+        * disk (int): disk size in GB
+        * locked (bool): True if locked
+        * created_at (str): creation date in format u'2014-11-06T10:42:09Z'
+        * status (str): status, e.g. 'new', 'active', etc
+        * networks (dict): details of connected networks
+        * kernel (dict): details of kernel
+        * backup_ids (:obj:`int`, optional): list of ids of backups of this droplet
+        * snapshot_ids (:obj:`int`, optional): list of ids of snapshots of this droplet
+        * action_ids (:obj:`int`, optional): list of ids of actions
+        * features (:obj:`str`, optional): list of enabled features. e.g.
+              [u'private_networking', u'virtio']
+        * image (dict): details of image used to create this droplet
+        * ip_address (str): public ip addresses
+        * private_ip_address (str): private ip address
+        * ip_v6_address (:obj:`str`, optional): list of ipv6 addresses assigned
+        * end_point (str): url of api endpoint used
+        * volume_ids (:obj:`str`, optional): list of blockstorage volumes
+
     """
 
     def __init__(self, *args, **kwargs):
@@ -71,7 +72,6 @@ class Droplet(BaseAPI):
         self.vcpus = None
         self.disk = None
         self.region = []
-        self.status = None
         self.image = None
         self.size_slug = None
         self.locked = None
@@ -309,8 +309,8 @@ class Droplet(BaseAPI):
             new_size_slug (str): name of new size
 
         Optional Args:
-            return_dict (bool): Return a dict when True (default),
-                                otherwise return an Action.
+            return_dict (bool): Return a dict when True (default), \
+                otherwise return an Action.
             disk (bool): If a permanent resize, with disk changes included.
 
         Returns dict or Action
@@ -571,7 +571,7 @@ class Droplet(BaseAPI):
 
     def get_events(self):
         """
-            A helper function for backwards compatability.
+            A helper function for backwards compatibility.
             Calls get_actions()
         """
         return self.get_actions()
@@ -637,6 +637,21 @@ class Droplet(BaseAPI):
                 break
 
         return kernels
+
+    def update_volumes_data(self):
+        """
+           Trigger volume objects list refresh.
+           When called on a droplet instance, it will take
+           all volumes ids(gathered in initial droplet details
+           collection) and will create list of object of Volume
+           types. Each volume is a separate api call.
+        """
+        self.volumes = list()
+
+        for volume_id in self.volume_ids:
+            volume = Volume().get_object(self.token, volume_id)
+            self.volumes.append(volume)
+
 
     def __str__(self):
         return "<Droplet: %s %s>" % (self.id, self.name)

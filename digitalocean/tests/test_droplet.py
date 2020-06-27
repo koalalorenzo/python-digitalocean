@@ -974,5 +974,36 @@ class TestDroplet(BaseTest):
         self.assertEqual(kernels[2].name,
                          "Ubuntu 14.04 x64 vmlinuz-3.13.0-32-generic")
 
+    @responses.activate
+    def test_update_volumes_data(self):
+        droplet_response = self.load_from_file('droplets/single.json')
+        volume_response = self.load_from_file('volumes/single.json')
+        url_droplet =self.base_url + "droplets/12345"
+        url_volume = self.base_url +  "volumes/506f78a4-e098-11e5-ad9f-000f53306ae1"
+        responses.add(responses.GET,
+                      url_droplet,
+                      body=droplet_response,
+                      status=200,
+                      content_type='application/json')
+        responses.add(responses.GET,
+                      url_volume,
+                      body=volume_response,
+                      status=200,
+                      content_type='application/json')
+
+        droplet = digitalocean.Droplet(id='12345', token=self.token)
+        d = droplet.load()
+        d.update_volumes_data()
+
+        self.assert_get_url_equal(responses.calls[0].request.url, url_droplet)
+        self.assert_get_url_equal(responses.calls[1].request.url, url_volume)
+        self.assertEqual(len(d.volumes), 1)
+        self.assertEqual(d.volumes[0].id, '506f78a4-e098-11e5-ad9f-000f53306ae1')
+        self.assertEqual(d.volumes[0].name, 'example')
+        self.assertEqual(d.volumes[0].region['slug'], 'nyc1')
+
+
+
+
 if __name__ == '__main__':
     unittest.main()

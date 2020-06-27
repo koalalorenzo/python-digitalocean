@@ -65,7 +65,7 @@ class TestLoadBalancer(BaseTest):
                                             target_protocol='https',
                                             tls_passthrough=True)
         check = digitalocean.HealthCheck()
-        sticky = digitalocean.StickySesions(type='none')
+        sticky = digitalocean.StickySessions(type='none')
         lb = digitalocean.LoadBalancer(name='example-lb-01', region='nyc3',
                                        algorithm='round_robin',
                                        forwarding_rules=[rule1, rule2],
@@ -113,7 +113,7 @@ class TestLoadBalancer(BaseTest):
                                             target_protocol='https',
                                             tls_passthrough=True)
         check = digitalocean.HealthCheck()
-        sticky = digitalocean.StickySesions(type='none')
+        sticky = digitalocean.StickySessions(type='none')
         lb = digitalocean.LoadBalancer(name='example-lb-01', region='nyc3',
                                        algorithm='round_robin',
                                        forwarding_rules=[rule1, rule2],
@@ -158,7 +158,7 @@ class TestLoadBalancer(BaseTest):
                                            target_port=80,
                                            target_protocol='http')
         check = digitalocean.HealthCheck()
-        sticky = digitalocean.StickySesions(type='none')
+        sticky = digitalocean.StickySessions(type='none')
         lb = digitalocean.LoadBalancer(name='example-lb-01', region='nyc3',
                                        algorithm='round_robin',
                                        forwarding_rules=[rule],
@@ -235,7 +235,7 @@ class TestLoadBalancer(BaseTest):
 
         lb = digitalocean.LoadBalancer(**res['load_balancer'])
         lb.health_check = digitalocean.HealthCheck(**res['load_balancer']['health_check'])
-        lb.sticky_sessions = digitalocean.StickySesions(**res['load_balancer']['sticky_sessions'])
+        lb.sticky_sessions = digitalocean.StickySessions(**res['load_balancer']['sticky_sessions'])
         rules = list()
         for rule in lb.forwarding_rules:
             rules.append(digitalocean.ForwardingRule(**rule))

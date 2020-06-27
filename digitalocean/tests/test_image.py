@@ -65,6 +65,35 @@ class TestImage(BaseTest):
         self.assertEqual(self.image_with_slug.min_disk_size, 30)
 
     @responses.activate
+    def test_create(self):
+        data = self.load_from_file('images/create.json')
+        url = self.base_url + "images"
+
+        responses.add(responses.POST,
+                      url,
+                      body=data,
+                      status=202,
+                      content_type='application/json')
+
+        image = digitalocean.Image(name='ubuntu-18.04-minimal',
+                                   url='https://www.example.com/cloud.img',
+                                   distribution='Ubuntu',
+                                   region='nyc3',
+                                   description='Cloud-optimized image',
+                                   tags=['base-image', 'prod'],
+                                   token=self.token)
+        image.create()
+
+        self.assertEqual(image.id, 38413969)
+        self.assertEqual(image.name, 'ubuntu-18.04-minimal')
+        self.assertEqual(image.distribution, 'Ubuntu')
+        self.assertEqual(image.type, 'custom')
+        self.assertEqual(image.status, 'NEW')
+        self.assertEqual(image.description, 'Cloud-optimized image')
+        self.assertEqual(image.tags, ['base-image', 'prod'])
+        self.assertEqual(image.created_at, '2018-09-20T19:28:00Z')
+
+    @responses.activate
     def test_destroy(self):
         responses.add(responses.DELETE,
                       '{}images/{}/'.format(self.base_url, self.image.id),
@@ -111,6 +140,13 @@ class TestImage(BaseTest):
                          self.base_url + 'images/449676856')
         self.assertEqual(res['image']['name'], 'Descriptive name')
 
+    def test_is_string(self):
+        self.assertEqual(self.image._is_string("String"), True)
+        self.assertEqual(self.image._is_string("1234"), True)
+        self.assertEqual(self.image._is_string(123), False)
+        self.assertEqual(self.image._is_string(None), None)
+        self.assertEqual(self.image._is_string(True), None)
+        self.assertEqual(self.image._is_string(False), None)
 
 if __name__ == '__main__':
     unittest.main()

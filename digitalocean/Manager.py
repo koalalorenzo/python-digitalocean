@@ -11,9 +11,10 @@ from .Certificate import Certificate
 from .Domain import Domain
 from .Droplet import Droplet
 from .FloatingIP import FloatingIP
+from .Firewall import Firewall, InboundRule, OutboundRule
 from .Image import Image
 from .LoadBalancer import LoadBalancer
-from .LoadBalancer import StickySesions, HealthCheck, ForwardingRule
+from .LoadBalancer import StickySessions, HealthCheck, ForwardingRule
 from .Region import Region
 from .SSHKey import SSHKey
 from .Size import Size
@@ -21,6 +22,7 @@ from .Snapshot import Snapshot
 from .Tag import Tag
 from .Volume import Volume
 from .Project import Project
+
 
 class Manager(BaseAPI):
     def __init__(self, *args, **kwargs):
@@ -44,11 +46,13 @@ class Manager(BaseAPI):
             regions.append(region)
         return regions
 
-    def get_all_droplets(self, tag_name=None):
+    def get_all_droplets(self, params=None, tag_name=None):
         """
             This function returns a list of Droplet object.
         """
-        params = dict()
+        if params is None:
+            params = dict()
+
         if tag_name:
             params["tag_name"] = tag_name
 
@@ -132,7 +136,7 @@ class Manager(BaseAPI):
             Return a Image by its ID/Slug.
         """
         return Image.get_object(
-            apt_token=self.token,
+            api_token=self.token,
             image_id_or_slug=image_id_or_slug,
         )
 
@@ -214,7 +218,7 @@ class Manager(BaseAPI):
         """
             This method returns a list of all tags.
         """
-        data = self.get_data("tags/")
+        data = self.get_data("tags")
         return [
             Tag(token=self.token, **tag) for tag in data['tags']
         ]
@@ -254,7 +258,7 @@ class Manager(BaseAPI):
             load_balancer = LoadBalancer(**jsoned)
             load_balancer.token = self.token
             load_balancer.health_check = HealthCheck(**jsoned['health_check'])
-            load_balancer.sticky_sessions = StickySesions(**jsoned['sticky_sessions'])
+            load_balancer.sticky_sessions = StickySessions(**jsoned['sticky_sessions'])
             forwarding_rules = list()
             for rule in jsoned['forwarding_rules']:
                 forwarding_rules.append(ForwardingRule(**rule))
@@ -331,11 +335,15 @@ class Manager(BaseAPI):
             for snapshot in data['snapshots']
         ]
 
-    def get_all_volumes(self):
+    def get_all_volumes(self, region=None):
         """
             This function returns a list of Volume objects.
         """
-        data = self.get_data("volumes")
+        if region:
+            url = "volumes?region={}".format(region)
+        else:
+            url = "volumes"
+        data = self.get_data(url)
         volumes = list()
         for jsoned in data['volumes']:
             volume = Volume(**jsoned)
@@ -377,6 +385,35 @@ class Manager(BaseAPI):
         return Project.get_object(
             api_token=self.token,
             project_id="default",
+        )
+
+    def get_all_firewalls(self):
+        """
+            This function returns a list of Firewall objects.
+        """
+        data = self.get_data("firewalls")
+        firewalls = list()
+        for jsoned in data['firewalls']:
+            firewall = Firewall(**jsoned)
+            firewall.token = self.token
+            in_rules = list()
+            for rule in jsoned['inbound_rules']:
+                in_rules.append(InboundRule(**rule))
+            firewall.inbound_rules = in_rules
+            out_rules = list()
+            for rule in jsoned['outbound_rules']:
+                out_rules.append(OutboundRule(**rule))
+            firewall.outbound_rules = out_rules
+            firewalls.append(firewall)
+        return firewalls
+
+    def get_firewall(self, firewall_id):
+        """
+            Return a Firewall by its ID.
+        """
+        return Firewall.get_object(
+            api_token=self.token,
+            firewall_id=firewall_id,
         )
 
     def __str__(self):

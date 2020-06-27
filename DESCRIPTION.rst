@@ -43,7 +43,7 @@ digitalocean.com APIs, such as:
 -  Enable/Disable automatic Backups
 -  Restore root password of a Droplet
 
- Examples
+Examples
 ---------
 
 Listing the droplets

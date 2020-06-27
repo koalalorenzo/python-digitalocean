@@ -1,0 +1,14 @@
+{
+  "domain_record": {
+    "id": 18,
+    "type": "CAA",
+    "name": "@",
+    "data": "letsencrypt.org.",
+    "priority": null,
+    "port": null,
+    "ttl": 1800,
+    "weight": null,
+    "flags": 0,
+    "tag": "issue"
+  }
+}

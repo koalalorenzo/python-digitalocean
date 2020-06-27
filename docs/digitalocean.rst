@@ -61,7 +61,7 @@ digitalocean.Kernel module
     :show-inheritance:
 
 digitalocean.LoadBalancer module
---------------------------
+--------------------------------
 
 .. automodule:: digitalocean.LoadBalancer
     :members:

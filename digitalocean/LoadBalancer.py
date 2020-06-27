@@ -2,7 +2,7 @@
 from .baseapi import BaseAPI, GET, POST, PUT, DELETE
 
 
-class StickySesions(object):
+class StickySessions(object):
     """
     An object holding information on a LoadBalancer's sticky sessions settings.
 
@@ -14,9 +14,9 @@ class StickySesions(object):
         cookie_ttl_seconds (int, optional): The number of seconds until the
             cookie expires
     """
-    def __init__(self, type='none', cookie_name='', cookie_ttl_seconds=None):
+    def __init__(self, type='none', cookie_name='', cookie_ttl_seconds=None, **kwargs):
         self.type = type
-        if type is 'cookies':
+        if type == 'cookies':
             self.cookie_name = 'DO-LB'
             self.cookie_ttl_seconds = 300
         self.cookie_name = cookie_name
@@ -91,40 +91,40 @@ class LoadBalancer(BaseAPI):
     Args:
         name (str): The Load Balancer's name
         region (str): The slug identifier for a DigitalOcean region
-        algorithm (str, optional): The load balancing algorithm to be
-            used. Currently, it must be either "round_robin" or
+        algorithm (str, optional): The load balancing algorithm to be \
+            used. Currently, it must be either "round_robin" or \
             "least_connections"
         forwarding_rules (obj:`list`): A list of `ForwrdingRules` objects
         health_check (obj, optional): A `HealthCheck` object
         sticky_sessions (obj, optional): A `StickySessions` object
-        redirect_http_to_https (bool, optional): A boolean indicating
-            whether HTTP requests to the Load Balancer should be
+        redirect_http_to_https (bool, optional): A boolean indicating \
+            whether HTTP requests to the Load Balancer should be \
             redirected to HTTPS
-        droplet_ids (obj:`list` of `int`): A list of IDs representing
-            Droplets to be added to the Load Balancer (mutually
+        droplet_ids (obj:`list` of `int`): A list of IDs representing \
+            Droplets to be added to the Load Balancer (mutually \
             exclusive with 'tag')
-        tag (str): A string representing a DigitalOcean Droplet tag
+        tag (str): A string representing a DigitalOcean Droplet tag \
             (mutually exclusive with 'droplet_ids')
 
-   Attributes returned by API:
-        name (str): The Load Balancer's name
-        id (str): An unique identifier for a LoadBalancer
-        ip (str): Public IP address for a LoadBalancer
-        region (str): The slug identifier for a DigitalOcean region
-        algorithm (str, optional): The load balancing algorithm to be
-            used. Currently, it must be either "round_robin" or
-            "least_connections"
-        forwarding_rules (obj:`list`): A list of `ForwrdingRules` objects
-        health_check (obj, optional): A `HealthCheck` object
-        sticky_sessions (obj, optional): A `StickySessions` object
-        redirect_http_to_https (bool, optional): A boolean indicating
-            whether HTTP requests to the Load Balancer should be
-            redirected to HTTPS
-        droplet_ids (obj:`list` of `int`): A list of IDs representing
-            Droplets to be added to the Load Balancer
-        tag (str): A string representing a DigitalOcean Droplet tag
-        status (string): An indication the current state of the LoadBalancer
-        created_at (str): The date and time when the LoadBalancer was created
+    Attributes returned by API:
+        * name (str): The Load Balancer's name
+        * id (str): An unique identifier for a LoadBalancer
+        * ip (str): Public IP address for a LoadBalancer
+        * region (str): The slug identifier for a DigitalOcean region
+        * algorithm (str, optional): The load balancing algorithm to be \
+              used. Currently, it must be either "round_robin" or \
+              "least_connections"
+        * forwarding_rules (obj:`list`): A list of `ForwrdingRules` objects
+        * health_check (obj, optional): A `HealthCheck` object
+        * sticky_sessions (obj, optional): A `StickySessions` object
+        * redirect_http_to_https (bool, optional): A boolean indicating \
+              whether HTTP requests to the Load Balancer should be \
+              redirected to HTTPS
+        * droplet_ids (obj:`list` of `int`): A list of IDs representing \
+              Droplets to be added to the Load Balancer
+        * tag (str): A string representing a DigitalOcean Droplet tag
+        * status (string): An indication the current state of the LoadBalancer
+        * created_at (str): The date and time when the LoadBalancer was created
     """
     def __init__(self, *args, **kwargs):
         self.id = None
@@ -170,7 +170,7 @@ class LoadBalancer(BaseAPI):
                 health_check = HealthCheck(**load_balancer['health_check'])
                 setattr(self, attr, health_check)
             elif attr == 'sticky_sessions':
-                sticky_ses = StickySesions(**load_balancer['sticky_sessions'])
+                sticky_ses = StickySessions(**load_balancer['sticky_sessions'])
                 setattr(self, attr, sticky_ses)
             elif attr == 'forwarding_rules':
                 rules = list()
@@ -235,7 +235,7 @@ class LoadBalancer(BaseAPI):
             self.algorithm = data['load_balancer']['algorithm']
             self.health_check = HealthCheck(
                 **data['load_balancer']['health_check'])
-            self.sticky_sessions = StickySesions(
+            self.sticky_sessions = StickySessions(
                 **data['load_balancer']['sticky_sessions'])
             self.droplet_ids = data['load_balancer']['droplet_ids']
             self.status = data['load_balancer']['status']

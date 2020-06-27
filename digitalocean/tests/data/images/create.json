@@ -1,0 +1,19 @@
+{
+  "image": {
+    "created_at": "2018-09-20T19:28:00Z",
+    "description": "Cloud-optimized image",
+    "distribution": "Ubuntu",
+    "error_message": "",
+    "id": 38413969,
+    "name": "ubuntu-18.04-minimal",
+    "regions": [
+
+    ],
+    "type": "custom",
+    "tags": [
+      "base-image",
+      "prod"
+    ],
+    "status": "NEW"
+  }
+}

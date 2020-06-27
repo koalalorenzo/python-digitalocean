@@ -31,6 +31,10 @@
     "size_gigabytes": 100,
     "filesystem_label": "ext4",
     "filesystem_label": "label",
+    "tags": [
+      "tag1",
+      "tag2"
+    ],
     "created_at": "2016-03-02T17:00:49Z"
   }
 }

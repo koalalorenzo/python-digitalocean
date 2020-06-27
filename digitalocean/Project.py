@@ -105,7 +105,7 @@ class Project(BaseAPI):
          - Machine Learning / AI / Data Processing
          - IoT
          - Operational / Developer tooling
-         - Other 
+         - Other
         """
         data['environment'] = kwargs.get("environment", self.environment)
         """

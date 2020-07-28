@@ -26,4 +26,5 @@ from .LoadBalancer import LoadBalancer
 from .LoadBalancer import StickySessions, ForwardingRule, HealthCheck
 from .Certificate import Certificate
 from .Snapshot import Snapshot
+from .Project import Project
 from .Firewall import Firewall, InboundRule, OutboundRule, Destinations, Sources

@@ -7,6 +7,7 @@ except ImportError:
 from .baseapi import BaseAPI
 from .Account import Account
 from .Action import Action
+from .Balance import Balance
 from .Certificate import Certificate
 from .Domain import Domain
 from .Droplet import Droplet
@@ -33,6 +34,12 @@ class Manager(BaseAPI):
             Returns an Account object.
         """
         return Account.get_object(api_token=self.token)
+
+    def get_balance(self):
+        """
+            Returns a Balance object.
+        """
+        return Balance.get_object(api_token=self.token)
 
     def get_all_regions(self):
         """

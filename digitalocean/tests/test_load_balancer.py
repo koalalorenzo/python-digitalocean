@@ -48,7 +48,7 @@ class TestLoadBalancer(BaseTest):
     def test_create_ids(self):
         data = self.load_from_file('loadbalancer/single.json')
 
-        url = self.base_url + "load_balancers/"
+        url = self.base_url + "load_balancers"
         responses.add(responses.POST,
                       url,
                       body=data,
@@ -96,7 +96,7 @@ class TestLoadBalancer(BaseTest):
     def test_create_tag(self):
         data = self.load_from_file('loadbalancer/single_tag.json')
 
-        url = self.base_url + "load_balancers/"
+        url = self.base_url + "load_balancers"
         responses.add(responses.POST,
                       url,
                       body=data,
@@ -125,7 +125,7 @@ class TestLoadBalancer(BaseTest):
         resp_rules = lb.forwarding_rules
 
         self.assertEqual(responses.calls[0].request.url,
-                         self.base_url + 'load_balancers/')
+                         self.base_url + 'load_balancers')
         self.assertEqual(lb.id, '4de2ac7b-495b-4884-9e69-1050d6793cd4')
         self.assertEqual(lb.algorithm, 'round_robin')
         self.assertEqual(lb.ip, '104.131.186.248')
@@ -218,8 +218,7 @@ class TestLoadBalancer(BaseTest):
         self.assertEqual(self.lb.redirect_http_to_https, False)
 
         data2 = self.load_from_file('loadbalancer/save.json')
-        # PUT requires slash at the end of url
-        url = '{0}load_balancers/{1}/'.format(self.base_url, self.lb_id)
+        url = '{0}load_balancers/{1}'.format(self.base_url, self.lb_id)
         responses.add(responses.PUT,
                       url,
                       body=data2,
@@ -271,7 +270,7 @@ class TestLoadBalancer(BaseTest):
 
     @responses.activate
     def test_destroy(self):
-        url = '{0}load_balancers/{1}/'.format(self.base_url, self.lb_id)
+        url = '{0}load_balancers/{1}'.format(self.base_url, self.lb_id)
         responses.add(responses.DELETE,
                       url,
                       status=204,
@@ -315,7 +314,7 @@ class TestLoadBalancer(BaseTest):
 
     @responses.activate
     def test_add_forwarding_rules(self):
-        url = '{0}load_balancers/{1}/forwarding_rules/'.format(self.base_url,
+        url = '{0}load_balancers/{1}/forwarding_rules'.format(self.base_url,
                                                                self.lb_id)
         responses.add(responses.POST,
                       url,
@@ -348,7 +347,7 @@ class TestLoadBalancer(BaseTest):
 
     @responses.activate
     def test_remove_forwarding_rules(self):
-        url = '{0}load_balancers/{1}/forwarding_rules/'.format(self.base_url,
+        url = '{0}load_balancers/{1}/forwarding_rules'.format(self.base_url,
                                                                self.lb_id)
         responses.add(responses.DELETE,
                       url,

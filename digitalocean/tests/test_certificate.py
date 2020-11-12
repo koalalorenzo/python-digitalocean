@@ -37,7 +37,7 @@ class TestCertificate(BaseTest):
     @responses.activate
     def test_create_custom(self):
         data = self.load_from_file('certificate/custom.json')
-        url = self.base_url + 'certificates/'
+        url = self.base_url + 'certificates'
 
         responses.add(responses.POST,
                       url,
@@ -64,7 +64,7 @@ class TestCertificate(BaseTest):
     @responses.activate
     def test_create_lets_encrypt(self):
         data = self.load_from_file('certificate/lets_encrpyt.json')
-        url = self.base_url + 'certificates/'
+        url = self.base_url + 'certificates'
 
         responses.add(responses.POST,
                       url,

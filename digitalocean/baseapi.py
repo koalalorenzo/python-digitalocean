@@ -14,6 +14,7 @@ GET = 'GET'
 POST = 'POST'
 DELETE = 'DELETE'
 PUT = 'PUT'
+PATCH = 'PATCH'
 REQUEST_TIMEOUT_ENV_VAR = 'PYTHON_DIGITALOCEAN_REQUEST_TIMEOUT_SEC'
 
 
@@ -46,7 +47,8 @@ class BaseAPI(object):
     """
         Basic api class for
     """
-    token = ""
+    tokens = []
+    _last_used = 0
     end_point = "https://api.digitalocean.com/v2/"
 
     def __init__(self, *args, **kwargs):
@@ -58,7 +60,7 @@ class BaseAPI(object):
 
         for attr in kwargs.keys():
             setattr(self, attr, kwargs[attr])
-        
+
         parsed_url = urlparse.urlparse(self.end_point)
         if not parsed_url.scheme or not parsed_url.netloc:
             raise EndPointError("Provided end point is not a valid URL. Please use a valid URL")
@@ -97,7 +99,9 @@ class BaseAPI(object):
         json_dumps = lambda x: json.dumps(x)
         lookup = {
             GET: (self._session.get, {'Content-type': 'application/json'}, 'params', identity),
-            POST: (self._session.post, {'Content-type': 'application/json'}, 'data',
+            PATCH: (requests.patch, {'Content-type': 'application/json'},
+                    'data', json_dumps),
+            POST: (requests.post, {'Content-type': 'application/json'}, 'data',
                    json_dumps),
             PUT: (self._session.put, {'Content-type': 'application/json'}, 'data',
                   json_dumps),
@@ -120,7 +124,9 @@ class BaseAPI(object):
             kwargs['timeout'] = timeout
 
         # remove token from log
-        headers_str = str(headers).replace(self.token.strip(), 'TOKEN')
+        headers_str = str(headers)
+        for i, token in enumerate(self.tokens):
+            headers_str = headers_str.replace(token.strip(), 'TOKEN%s' % i)
         self._log.debug('%s %s %s:%s %s %s' %
                         (type, url, payload, params, headers_str, timeout))
 
@@ -158,6 +164,23 @@ class BaseAPI(object):
         self.ratelimit_remaining = headers.get('Ratelimit-Remaining', None)
         # Add the account requests limit reset time
         self.ratelimit_reset = headers.get('Ratelimit-Reset', None)
+
+    @property
+    def token(self):
+        # use all the tokens round-robin style
+        if self.tokens:
+            self._last_used = (self._last_used + 1) % len(self.tokens)
+            return self.tokens[self._last_used]
+        return ""
+
+    @token.setter
+    def token(self, token):
+        self._last_used = 0
+        if isinstance(token, list):
+            self.tokens = token
+        else:
+            # for backward compatibility
+            self.tokens = [token]
 
     def get_timeout(self):
         """

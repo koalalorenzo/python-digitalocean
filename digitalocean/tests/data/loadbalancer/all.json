@@ -70,7 +70,8 @@
       3164444,
       3164445
     ],
-    "redirect_http_to_https": false
+    "redirect_http_to_https": false,
+    "vpc_uuid": "08187eaa-90eb-40d6-a8f0-0222b28ded72"
   },
   {
     "id": "4de7ac8b-495b-4884-9a69-1050c6793cd6",
@@ -142,7 +143,8 @@
       3164444,
       3164445
     ],
-    "redirect_http_to_https": false
+    "redirect_http_to_https": false,
+    "vpc_uuid": "08187eaa-90eb-40d6-a8f0-0222b28ded72"
   }],
   "links": {
   },

@@ -189,7 +189,7 @@ class Volume(BaseAPI):
         snapshots = list()
         for jsond in data[u'snapshots']:
             snapshot = Snapshot(**jsond)
-            snapshot.token = self.token
+            snapshot.token = self.tokens
             snapshots.append(snapshot)
 
         return snapshots

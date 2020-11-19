@@ -226,7 +226,7 @@ class Droplet(BaseAPI):
             return action
         else:
             action = action[u'action']
-            return_action = Action(token=self.token)
+            return_action = Action(token=self.tokens)
             # Loading attributes
             for attr in action.keys():
                 setattr(return_action, attr, action[attr])
@@ -590,7 +590,7 @@ class Droplet(BaseAPI):
         actions = []
         for action_dict in answer['actions']:
             action = Action(**action_dict)
-            action.token = self.token
+            action.token = self.tokens
             action.droplet_id = self.id
             action.load()
             actions.append(action)
@@ -603,7 +603,7 @@ class Droplet(BaseAPI):
             action_id (int): id of action
         """
         return Action.get_object(
-            api_token=self.token,
+            api_token=self.tokens,
             action_id=action_id
         )
 
@@ -616,7 +616,7 @@ class Droplet(BaseAPI):
         for id in self.snapshot_ids:
             snapshot = Image()
             snapshot.id = id
-            snapshot.token = self.token
+            snapshot.token = self.tokens
             snapshots.append(snapshot)
         return snapshots
 
@@ -630,7 +630,7 @@ class Droplet(BaseAPI):
         while True:
             for jsond in data[u'kernels']:
                 kernel = Kernel(**jsond)
-                kernel.token = self.token
+                kernel.token = self.tokens
                 kernels.append(kernel)
             try:
                 url = data[u'links'][u'pages'].get(u'next')
@@ -653,7 +653,7 @@ class Droplet(BaseAPI):
         self.volumes = list()
 
         for volume_id in self.volume_ids:
-            volume = Volume().get_object(self.token, volume_id)
+            volume = Volume().get_object(self.tokens, volume_id)
             self.volumes.append(volume)
 
 

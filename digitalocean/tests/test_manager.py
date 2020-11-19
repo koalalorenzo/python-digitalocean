@@ -35,6 +35,25 @@ class TestManager(BaseTest):
         self.assertEqual(acct.status, "active")
 
     @responses.activate
+    def test_get_balance(self):
+        data = self.load_from_file('balance/balance.json')
+
+        url = self.base_url + 'customers/my/balance'
+        responses.add(responses.GET, url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        balance = self.manager.get_balance()
+
+        self.assert_get_url_equal(responses.calls[0].request.url, url)
+        self.assertEqual(balance.token, balance.token)
+        self.assertEqual(balance.month_to_date_balance, '23.44')
+        self.assertEqual(balance.account_balance, '12.23')
+        self.assertEqual(balance.month_to_date_usage, '11.21')
+        self.assertEqual(balance.generated_at, '2019-07-09T15:01:12Z')
+
+    @responses.activate
     def test_auth_fail(self):
         data = self.load_from_file('errors/unauthorized.json')
 

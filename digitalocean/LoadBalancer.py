@@ -233,7 +233,7 @@ class LoadBalancer(BaseAPI):
         if self.sticky_sessions:
             params['sticky_sessions'] = self.sticky_sessions.__dict__
 
-        data = self.get_data('load_balancers/', type=POST, params=params)
+        data = self.get_data('load_balancers', type=POST, params=params)
 
         if data:
             self.id = data['load_balancer']['id']
@@ -276,7 +276,7 @@ class LoadBalancer(BaseAPI):
         if self.sticky_sessions:
             data['sticky_sessions'] = self.sticky_sessions.__dict__
 
-        return self.get_data("load_balancers/%s/" % self.id,
+        return self.get_data("load_balancers/%s" % self.id,
                              type=PUT,
                              params=data)
 
@@ -284,7 +284,7 @@ class LoadBalancer(BaseAPI):
         """
         Destroy the LoadBalancer
         """
-        return self.get_data('load_balancers/%s/' % self.id, type=DELETE)
+        return self.get_data('load_balancers/%s' % self.id, type=DELETE)
 
     def add_droplets(self, droplet_ids):
         """
@@ -294,7 +294,7 @@ class LoadBalancer(BaseAPI):
             droplet_ids (obj:`list` of `int`): A list of Droplet IDs
         """
         return self.get_data(
-            "load_balancers/%s/droplets/" % self.id,
+            "load_balancers/%s/droplets" % self.id,
             type=POST,
             params={"droplet_ids": droplet_ids}
         )
@@ -307,7 +307,7 @@ class LoadBalancer(BaseAPI):
             droplet_ids (obj:`list` of `int`): A list of Droplet IDs
         """
         return self.get_data(
-            "load_balancers/%s/droplets/" % self.id,
+            "load_balancers/%s/droplets" % self.id,
             type=DELETE,
             params={"droplet_ids": droplet_ids}
         )
@@ -322,7 +322,7 @@ class LoadBalancer(BaseAPI):
         rules_dict = [rule.__dict__ for rule in forwarding_rules]
 
         return self.get_data(
-            "load_balancers/%s/forwarding_rules/" % self.id,
+            "load_balancers/%s/forwarding_rules" % self.id,
             type=POST,
             params={"forwarding_rules": rules_dict}
         )
@@ -337,7 +337,7 @@ class LoadBalancer(BaseAPI):
         rules_dict = [rule.__dict__ for rule in forwarding_rules]
 
         return self.get_data(
-            "load_balancers/%s/forwarding_rules/" % self.id,
+            "load_balancers/%s/forwarding_rules" % self.id,
             type=DELETE,
             params={"forwarding_rules": rules_dict}
         )

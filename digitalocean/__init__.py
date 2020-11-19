@@ -14,6 +14,7 @@ from .Size import Size
 from .Image import Image
 from .Action import Action
 from .Account import Account
+from .Balance import Balance
 from .Domain import Domain
 from .Record import Record
 from .SSHKey import SSHKey
@@ -26,5 +27,6 @@ from .LoadBalancer import LoadBalancer
 from .LoadBalancer import StickySessions, ForwardingRule, HealthCheck
 from .Certificate import Certificate
 from .Snapshot import Snapshot
+from .Project import Project
 from .Firewall import Firewall, InboundRule, OutboundRule, Destinations, Sources
 from .VPC import VPC

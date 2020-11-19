@@ -93,7 +93,7 @@ class Certificate(BaseAPI):
             "certificate_chain": self.certificate_chain
         }
 
-        data = self.get_data("certificates/", type=POST, params=params)
+        data = self.get_data("certificates", type=POST, params=params)
 
         if data:
             self.id = data['certificate']['id']

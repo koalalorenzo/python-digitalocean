@@ -12,7 +12,7 @@
 
 - [How to install](#how-to-install)
 - [Configurations](#configurations)
-- [Features](#features)  
+- [Features](#features)
 - [Examples](#examples)
    - [Listing the droplets](#listing-the-droplets)
    - [Listing the droplets by tags](#listing-the-droplets-by-tags)
@@ -20,11 +20,14 @@
    - [Shutdown all droplets](#shutdown-all-droplets)
    - [Creating a Droplet and checking its status](#creating-a-droplet-and-checking-its-status)
    - [Checking the status of the droplet](#checking-the-status-of-the-droplet)
+   - [Listing the Projects](#listing-the-projects)
+   - [Assign a resource for specific project](#assigne-a-resource-for-specific-project)
+   - [List all the resources of a project](#list-all-the-resources-of-a-project)
    - [Add SSHKey into DigitalOcean Account](#add-sshkey-into-digitalocean-account)
    - [Creating a new droplet with all your SSH keys](#creating-a-new-droplet-with-all-your-ssh-keys)
    - [Creating a Firewall](#creating-a-firewall)
    - [Listing the domains](#listing-the-domains)
-   - [Listing records of a domain](#listing-records-of-a-domain)   
+   - [Listing records of a domain](#listing-records-of-a-domain)
    - [Creating a domain record](#creating-a-domain-record)
    - [Update a domain record](#update-a-domain-record)
 - [Getting account requests/hour limits status](#getting-account-requestshour-limits-status)
@@ -63,6 +66,9 @@ Note: Probably want to add the export line above to your `.bashrc` file.
 ## Features
 python-digitalocean support all the features provided via digitalocean.com APIs, such as:
 
+* Get user's Projects
+* Assign a resource to a user project
+* List the resources of user's project
 * Get user's Droplets
 * Get user's Images (Snapshot and Backups)
 * Get public Images
@@ -163,6 +169,41 @@ for action in actions:
     action.load()
     # Once it shows "completed", droplet is up and running
     print(action.status)
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Listing the Projects
+
+This example shows how to list all the projects:
+
+```python
+import digitalocean
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+my_projects = manager.get_all_projects()
+print(my_projects)
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Assign a resource for specific project
+
+```python
+import digitalocean
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+my_projects = manager.get_all_projects()
+my_projects[0].assign_resource(["do:droplet:<Droplet Number>"])
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### List all the resources of a project
+```python
+import digitalocean
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+my_projects = manager.get_all_projects()
+resources = my_projects[0].get_all_resources()
+print(resources)
 ```
 
 **[⬆ back to top](#table-of-contents)**
@@ -292,7 +333,7 @@ for r in records:
         r.save()
 ```
 
-**[⬆ back to top](#table-of-contents)**   
+**[⬆ back to top](#table-of-contents)**
 
 ## Getting account requests/hour limits status
 

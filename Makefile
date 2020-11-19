@@ -6,9 +6,17 @@ clean:
 .PHONY: clean
 
 dist:
+	python setup.py sdist bdist_wheel
 
-build:
-	
+publish: dist
+	twine upload dist/*
+.PHONY: publish
+
+publish_deps:
+	python -m pip install --upgrade pip
+	pip install setuptools wheel twine
+.PHONY: publish_deps
+
 deps:
 	pip install -U -r requirements.txt
 .PHONY: deps

@@ -21,7 +21,7 @@ from .SSHKey import SSHKey
 from .Kernel import Kernel
 from .FloatingIP import FloatingIP
 from .Volume import Volume
-from .baseapi import Error, EndPointError, TokenError, DataReadError
+from .baseapi import Error, EndPointError, TokenError, DataReadError, NotFoundError
 from .Tag import Tag
 from .LoadBalancer import LoadBalancer
 from .LoadBalancer import StickySessions, ForwardingRule, HealthCheck

@@ -22,6 +22,7 @@ from .Size import Size
 from .Snapshot import Snapshot
 from .Tag import Tag
 from .Volume import Volume
+from .VPC import VPC
 from .Project import Project
 
 
@@ -422,6 +423,27 @@ class Manager(BaseAPI):
             api_token=self.token,
             firewall_id=firewall_id,
         )
+
+    def get_vpc(self, id):
+        """
+            Returns a VPC object by its ID.
+             Args:
+                id (str): The VPC's ID
+        """
+        return VPC.get_object(api_token=self.token, vpc_id=id)
+
+    def get_all_vpcs(self):
+        """
+            This function returns a list of VPC objects.
+        """
+        data = self.get_data("vpcs")
+        vpcs = list()
+        for jsoned in data['vpcs']:
+            vpc = VPC(**jsoned)
+            vpc.token = self.token
+            vpcs.append(vpc)
+
+        return vpcs
 
     def __str__(self):
         return "<Manager>"

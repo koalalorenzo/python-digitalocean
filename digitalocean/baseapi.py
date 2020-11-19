@@ -14,6 +14,7 @@ GET = 'GET'
 POST = 'POST'
 DELETE = 'DELETE'
 PUT = 'PUT'
+PATCH = 'PATCH'
 REQUEST_TIMEOUT_ENV_VAR = 'PYTHON_DIGITALOCEAN_REQUEST_TIMEOUT_SEC'
 
 
@@ -97,7 +98,9 @@ class BaseAPI(object):
         json_dumps = lambda x: json.dumps(x)
         lookup = {
             GET: (self._session.get, {'Content-type': 'application/json'}, 'params', identity),
-            POST: (self._session.post, {'Content-type': 'application/json'}, 'data',
+            PATCH: (requests.patch, {'Content-type': 'application/json'},
+                    'data', json_dumps),
+            POST: (requests.post, {'Content-type': 'application/json'}, 'data',
                    json_dumps),
             PUT: (self._session.put, {'Content-type': 'application/json'}, 'data',
                   json_dumps),

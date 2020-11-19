@@ -57,6 +57,7 @@ class TestDroplet(BaseTest):
         self.assertEqual(d.kernel['id'], 2233)
         self.assertEqual(d.features, ["ipv6", "virtio"])
         self.assertEqual(d.tags, [])
+        self.assertEqual(d.vpc_uuid, "08187eaa-90eb-40d6-a8f0-0222b28ded72")
 
     @responses.activate
     def test_power_off(self):
@@ -803,11 +804,12 @@ class TestDroplet(BaseTest):
                                        region="nyc3",
                                        backups=True,
                                        ipv6=True,
-                                       private_networking=True,
+                                       private_networking=False,
                                        monitoring=True,
                                        user_data="Some user data.",
                                        token=self.token,
-                                       tags=["web"])
+                                       tags=["web"],
+                                       vpc_uuid="08187eaa-90eb-40d6-a8f0-0222b28ded72")
         droplet.create()
 
         self.assert_url_query_equal(responses.calls[0].request.url, url)
@@ -816,10 +818,11 @@ class TestDroplet(BaseTest):
             json.loads(responses.calls[0].request.body),
             {u"name": u"example.com", u"region": u"nyc3",
              u"user_data": u"Some user data.", u"ipv6": True,
-             u"private_networking": True, u"monitoring": True,
+             u"private_networking": False, u"monitoring": True,
              u"backups": True, u"image": u"ubuntu-14-04-x64",
              u"size": u"512mb", u"ssh_keys": [],
-             u"volumes": [], u"tags": ["web"]})
+             u"volumes": [], u"tags": ["web"],
+             u"vpc_uuid": "08187eaa-90eb-40d6-a8f0-0222b28ded72"})
         self.assertEqual(droplet.id, 3164494)
         self.assertEqual(droplet.action_ids, [36805096])
 
@@ -842,11 +845,12 @@ class TestDroplet(BaseTest):
                                                         region="nyc3",
                                                         backups=True,
                                                         ipv6=True,
-                                                        private_networking=True,
+                                                        private_networking=False,
                                                         monitoring=True,
                                                         user_data="Some user data.",
                                                         token=self.token,
-                                                        tags=["web"])
+                                                        tags=["web"],
+                                                        vpc_uuid="08187eaa-90eb-40d6-a8f0-0222b28ded72")
         self.assert_url_query_equal(responses.calls[0].request.url, url)
         self.assertEqual(len(droplets), 2)
         self.assertEqual(droplets[0].id, 3164494)
@@ -859,9 +863,10 @@ class TestDroplet(BaseTest):
             json.loads(responses.calls[0].request.body),
             {u"names": [u"example.com", u"example2.com"], u"region": u"nyc3",
              u"user_data": u"Some user data.", u"ipv6": True,
-             u"private_networking": True,  u"monitoring": True,
+             u"private_networking": False, u"monitoring": True,
              u"backups": True, u"image": u"ubuntu-14-04-x64",
-             u"size": u"512mb", u"tags": ["web"]})
+             u"size": u"512mb", u"tags": ["web"],
+             u"vpc_uuid": "08187eaa-90eb-40d6-a8f0-0222b28ded72"})
 
 
     @responses.activate

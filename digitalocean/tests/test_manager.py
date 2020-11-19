@@ -695,6 +695,62 @@ class TestManager(BaseTest):
         self.assertEqual(f.tags, [])
         self.assertEqual(f.pending_changes, [])
 
+    @responses.activate
+    def test_get_vpc(self):
+        data = self.load_from_file('vpcs/single.json')
+        vpc_id = "5a4981aa-9653-4bd1-bef5-d6bff52042e4"
+        url = self.base_url + 'vpcs/' + vpc_id
+
+        responses.add(responses.GET,
+                      url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        vpc = self.manager.get_vpc(vpc_id)
+
+        self.assert_get_url_equal(responses.calls[0].request.url, url)
+        self.assertEqual(vpc.id, vpc_id)
+        self.assertEqual(vpc.name, 'my-new-vpc')
+        self.assertEqual(vpc.region, 'nyc1')
+        self.assertEqual(vpc.ip_range, '10.10.10.0/24')
+        self.assertEqual(vpc.description, '')
+        self.assertEqual(vpc.urn, 'do:vpc:5a4981aa-9653-4bd1-bef5-d6bff52042e4')
+        self.assertEqual(vpc.created_at, '2020-03-13T18:48:45Z')
+        self.assertEqual(vpc.default, False)
+
+    @responses.activate
+    def test_get_all_vpcs(self):
+        data = self.load_from_file('vpcs/list.json')
+
+        url = self.base_url + "vpcs"
+        responses.add(responses.GET,
+                      url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        vpcs = self.manager.get_all_vpcs()
+
+        self.assertEqual(vpcs[0].id, '5a4981aa-9653-4bd1-bef5-d6bff52042e4')
+        self.assertEqual(vpcs[0].name, 'my-new-vpc')
+        self.assertEqual(vpcs[0].created_at, '2020-03-13T19:20:47Z')
+        self.assertEqual(vpcs[0].region, 'nyc1')
+        self.assertEqual(vpcs[0].description, '')
+        self.assertEqual(vpcs[0].urn,
+            'do:vpc:5a4981aa-9653-4bd1-bef5-d6bff52042e4')
+        self.assertEqual(vpcs[0].ip_range, '10.10.10.0/24')
+        self.assertEqual(vpcs[0].default, False)
+        self.assertEqual(vpcs[1].id, 'e0fe0f4d-596a-465e-a902-571ce57b79fa')
+        self.assertEqual(vpcs[1].name, 'default-nyc1')
+        self.assertEqual(vpcs[1].description, '')
+        self.assertEqual(vpcs[1].urn,
+            'do:vpc:e0fe0f4d-596a-465e-a902-571ce57b79fa')
+        self.assertEqual(vpcs[1].ip_range, '10.102.0.0/20')
+        self.assertEqual(vpcs[1].created_at, '2020-03-13T19:29:20Z')
+        self.assertEqual(vpcs[1].region, 'nyc1')
+        self.assertEqual(vpcs[1].default, True)
+
 
 if __name__ == '__main__':
     unittest.main()

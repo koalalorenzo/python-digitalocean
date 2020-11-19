@@ -29,3 +29,4 @@ from .Certificate import Certificate
 from .Snapshot import Snapshot
 from .Project import Project
 from .Firewall import Firewall, InboundRule, OutboundRule, Destinations, Sources
+from .VPC import VPC

@@ -11,6 +11,7 @@ class TestLoadBalancer(BaseTest):
     def setUp(self):
         super(TestLoadBalancer, self).setUp()
         self.lb_id = '4de7ac8b-495b-4884-9a69-1050c6793cd6'
+        self.vpc_uuid = "08187eaa-90eb-40d6-a8f0-0222b28ded72"
         self.lb = digitalocean.LoadBalancer(id=self.lb_id, token=self.token)
 
     @responses.activate
@@ -43,6 +44,7 @@ class TestLoadBalancer(BaseTest):
         self.assertEqual(self.lb.health_check.port, 80)
         self.assertEqual(self.lb.sticky_sessions.type, 'none')
         self.assertEqual(self.lb.droplet_ids, [3164444, 3164445])
+        self.assertEqual(self.lb.vpc_uuid, self.vpc_uuid)
 
     @responses.activate
     def test_create_ids(self):
@@ -73,6 +75,7 @@ class TestLoadBalancer(BaseTest):
                                        sticky_sessions=sticky,
                                        redirect_http_to_https=False,
                                        droplet_ids=[3164444, 3164445],
+                                       vpc_uuid=self.vpc_uuid,
                                        token=self.token).create()
         resp_rules = lb.forwarding_rules
 
@@ -91,6 +94,7 @@ class TestLoadBalancer(BaseTest):
         self.assertEqual(lb.health_check.port, 80)
         self.assertEqual(lb.sticky_sessions.type, 'none')
         self.assertEqual(lb.droplet_ids, [3164444, 3164445])
+        self.assertEqual(lb.vpc_uuid, self.vpc_uuid)
 
     @responses.activate
     def test_create_tag(self):
@@ -121,6 +125,7 @@ class TestLoadBalancer(BaseTest):
                                        sticky_sessions=sticky,
                                        redirect_http_to_https=False,
                                        tag='web',
+                                       vpc_uuid=self.vpc_uuid,
                                        token=self.token).create()
         resp_rules = lb.forwarding_rules
 
@@ -141,6 +146,7 @@ class TestLoadBalancer(BaseTest):
         self.assertEqual(lb.sticky_sessions.type, 'none')
         self.assertEqual(lb.tag, 'web')
         self.assertEqual(lb.droplet_ids, [3164444, 3164445])
+        self.assertEqual(lb.vpc_uuid, self.vpc_uuid)
 
     @responses.activate
     def test_create_exception(self):
@@ -167,6 +173,7 @@ class TestLoadBalancer(BaseTest):
                                        redirect_http_to_https=False,
                                        tag='web',
                                        droplet_ids=[123456, 789456],
+                                       vpc_uuid=self.vpc_uuid,
                                        token=self.token)
 
         with self.assertRaises(ValueError) as context:
@@ -216,6 +223,7 @@ class TestLoadBalancer(BaseTest):
         self.assertEqual(self.lb.droplet_ids, [3164444, 3164445])
         self.assertEqual(self.lb.tag, '')
         self.assertEqual(self.lb.redirect_http_to_https, False)
+        self.assertEqual(self.lb.vpc_uuid, self.vpc_uuid)
 
         data2 = self.load_from_file('loadbalancer/save.json')
         url = '{0}load_balancers/{1}'.format(self.base_url, self.lb_id)
@@ -230,6 +238,7 @@ class TestLoadBalancer(BaseTest):
         self.lb.sticky_sessions.cookie_name = 'DO_LB'
         self.lb.sticky_sessions.cookie_ttl_seconds = 300
         self.lb.droplet_ids = [34153248, 34153250]
+        self.lb.vpc_uuid = self.vpc_uuid
         res = self.lb.save()
 
         lb = digitalocean.LoadBalancer(**res['load_balancer'])
@@ -267,6 +276,7 @@ class TestLoadBalancer(BaseTest):
         self.assertEqual(lb.droplet_ids, [34153248, 34153250])
         self.assertEqual(lb.tag, '')
         self.assertEqual(lb.redirect_http_to_https, False)
+        self.assertEqual(self.lb.vpc_uuid, self.vpc_uuid)
 
     @responses.activate
     def test_destroy(self):

@@ -39,6 +39,7 @@ class Droplet(BaseAPI):
         user_data (str): arbitrary data to pass to droplet
         volumes (:obj:`str`, optional): list of blockstorage volumes
         monitoring (bool): True if installing the DigitalOcean monitoring agent
+        vpc_uuid (str, optional): ID of a VPC in which the Droplet will be created
 
     Attributes returned by API:
         * id (int): droplet id
@@ -61,7 +62,7 @@ class Droplet(BaseAPI):
         * ip_v6_address (:obj:`str`, optional): list of ipv6 addresses assigned
         * end_point (str): url of api endpoint used
         * volume_ids (:obj:`str`, optional): list of blockstorage volumes
-
+        * vpc_uuid (str, optional): ID of the VPC that the Droplet is assigned to
     """
 
     def __init__(self, *args, **kwargs):
@@ -94,6 +95,7 @@ class Droplet(BaseAPI):
         self.volumes = []
         self.tags = []
         self.monitoring = None
+        self.vpc_uuid = None
 
         # This will load also the values passed
         super(Droplet, self).__init__(*args, **kwargs)
@@ -124,6 +126,7 @@ class Droplet(BaseAPI):
             "private_networking": bool(kwargs.get("private_networking")),
             "tags": kwargs.get("tags"),
             "monitoring": bool(kwargs.get("monitoring")),
+            "vpc_uuid": kwargs.get("vpc_uuid"),
         }
 
         if kwargs.get("ssh_keys"):
@@ -556,6 +559,7 @@ class Droplet(BaseAPI):
             "volumes": self.volumes,
             "tags": self.tags,
             "monitoring": bool(self.monitoring),
+            "vpc_uuid": self.vpc_uuid,
         }
 
         if self.user_data:

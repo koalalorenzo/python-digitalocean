@@ -226,7 +226,7 @@ key.create()
 manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
 keys = manager.get_all_sshkeys()
 
-droplet = digitalocean.Droplet(token="secretspecialuniquesnowflake",
+droplet = digitalocean.Droplet(token=manager.token,
                                name='DropletWithSSHKeys',
                                region='ams3', # Amster
                                image='ubuntu-20-04-x64', # Ubuntu 20.04 x64

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """digitalocean API to manage droplets"""
 
-__version__ = "1.15.0"
+__version__ = "1.16.0"
 __author__ = "Lorenzo Setale ( http://who.is.lorenzo.setale.me/? )"
 __author_email__ = "lorenzo@setale.me"
 __license__ = "LGPL v3"

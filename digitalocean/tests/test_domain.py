@@ -80,13 +80,13 @@ class TestDomain(BaseTest):
                       content_type='application/json')
 
         response = self.domain.update_domain_record(
-            type="CNAME", name="www", data="@")
+            domain="example.com", id=record_id, type="CNAME", name="www", data="@")
 
         self.assert_url_query_equal(
             responses.calls[0].request.url,
             self.base_url + "domains/example.com/records/" + record_id)
         self.assertEqual(json.loads(responses.calls[0].request.body),
-                         {"type": "CNAME", "data": "@", "name": "www"})
+                         {"type": "CNAME", "id": record_id, "domain": "example.com", "data": "@", "name": "www"})
         self.assertEqual(response['domain_record']['type'], "CNAME")
         self.assertEqual(response['domain_record']['name'], "www")
         self.assertEqual(response['domain_record']['data'], "@")

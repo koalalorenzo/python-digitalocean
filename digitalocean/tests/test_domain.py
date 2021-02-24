@@ -68,6 +68,31 @@ class TestDomain(BaseTest):
         self.assertEqual(response['domain_record']['ttl'], 600)
 
     @responses.activate
+    def test_update_new_domain_record(self):
+        data = self.load_from_file('domains/update_record.json')
+        record_id = str(json.loads(data)['domain_record']['id'])
+
+        url = self.base_url + "domains/example.com/records/" + record_id
+        responses.add(responses.PUT,
+                      url,
+                      body=data,
+                      status=201,
+                      content_type='application/json')
+
+        response = self.domain.update_domain_record(
+            type="CNAME", name="www", data="@")
+
+        self.assert_url_query_equal(
+            responses.calls[0].request.url,
+            self.base_url + "domains/example.com/records/" + record_id)
+        self.assertEqual(json.loads(responses.calls[0].request.body),
+                         {"type": "CNAME", "data": "@", "name": "www"})
+        self.assertEqual(response['domain_record']['type'], "CNAME")
+        self.assertEqual(response['domain_record']['name'], "www")
+        self.assertEqual(response['domain_record']['data'], "@")
+        self.assertEqual(response['domain_record']['ttl'], 600)
+
+    @responses.activate
     def test_create_new_srv_record_zero_priority(self):
         data = self.load_from_file('domains/create_srv_record.json')
 

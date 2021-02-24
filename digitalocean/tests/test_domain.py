@@ -93,6 +93,19 @@ class TestDomain(BaseTest):
         self.assertEqual(response['domain_record']['ttl'], 600)
 
     @responses.activate
+    def test_delete_domain_record(self):
+        record_id = "1234"
+        url = self.base_url + "domains/example.com/records/" + record_id
+        responses.add(responses.DELETE,
+                      url,
+                      status=204,
+                      content_type='application/json')
+
+        self.domain.delete_domain_record(id=record_id)
+
+        self.assertEqual(responses.calls[0].request.url, url)
+
+    @responses.activate
     def test_create_new_srv_record_zero_priority(self):
         data = self.load_from_file('domains/create_srv_record.json')
 

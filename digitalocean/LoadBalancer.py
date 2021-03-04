@@ -267,6 +267,7 @@ class LoadBalancer(BaseAPI):
             self.id = data['load_balancer']['id']
             self.ip = data['load_balancer']['ip']
             self.algorithm = data['load_balancer']['algorithm']
+            self.size = data['load_balancer']['size']
             self.health_check = HealthCheck(
                 **data['load_balancer']['health_check'])
             self.sticky_sessions = StickySessions(
@@ -274,6 +275,9 @@ class LoadBalancer(BaseAPI):
             self.droplet_ids = data['load_balancer']['droplet_ids']
             self.status = data['load_balancer']['status']
             self.created_at = data['load_balancer']['created_at']
+            self.redirect_http_to_https = data['load_balancer']['redirect_http_to_https']
+            self.enable_proxy_protocol = data['load_balancer']['enable_proxy_protocol']
+            self.enable_backend_keepalive = data['load_balancer']['enable_backend_keepalive']
             self.vpc_uuid = data['load_balancer']['vpc_uuid']
 
         return self

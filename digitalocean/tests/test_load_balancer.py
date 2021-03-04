@@ -31,6 +31,7 @@ class TestLoadBalancer(BaseTest):
         self.assert_get_url_equal(responses.calls[0].request.url, url)
         self.assertEqual(self.lb.id, self.lb_id)
         self.assertEqual(self.lb.region['slug'], 'nyc3')
+        self.assertEqual(self.lb.size, 'lb-small')
         self.assertEqual(self.lb.algorithm, 'round_robin')
         self.assertEqual(self.lb.ip, '104.131.186.241')
         self.assertEqual(self.lb.name, 'example-lb-01')
@@ -44,6 +45,9 @@ class TestLoadBalancer(BaseTest):
         self.assertEqual(self.lb.health_check.port, 80)
         self.assertEqual(self.lb.sticky_sessions.type, 'none')
         self.assertEqual(self.lb.droplet_ids, [3164444, 3164445])
+        self.assertEqual(self.lb.redirect_http_to_https, False)
+        self.assertEqual(self.lb.enable_proxy_protocol, False)
+        self.assertEqual(self.lb.enable_backend_keepalive, False)
         self.assertEqual(self.lb.vpc_uuid, self.vpc_uuid)
 
     @responses.activate
@@ -70,6 +74,7 @@ class TestLoadBalancer(BaseTest):
         sticky = digitalocean.StickySessions(type='none')
         lb = digitalocean.LoadBalancer(name='example-lb-01', region='nyc3',
                                        algorithm='round_robin',
+                                       size='lb-small',
                                        forwarding_rules=[rule1, rule2],
                                        health_check=check,
                                        sticky_sessions=sticky,
@@ -84,6 +89,7 @@ class TestLoadBalancer(BaseTest):
         self.assertEqual(lb.algorithm, 'round_robin')
         self.assertEqual(lb.ip, '104.131.186.241')
         self.assertEqual(lb.name, 'example-lb-01')
+        self.assertEqual(lb.size, 'lb-small')
         self.assertEqual(len(resp_rules), 2)
         self.assertEqual(resp_rules[0].entry_protocol, 'http')
         self.assertEqual(resp_rules[0].entry_port, 80)
@@ -94,6 +100,9 @@ class TestLoadBalancer(BaseTest):
         self.assertEqual(lb.health_check.port, 80)
         self.assertEqual(lb.sticky_sessions.type, 'none')
         self.assertEqual(lb.droplet_ids, [3164444, 3164445])
+        self.assertEqual(lb.redirect_http_to_https, False)
+        self.assertEqual(lb.enable_proxy_protocol, False)
+        self.assertEqual(lb.enable_backend_keepalive, False)
         self.assertEqual(lb.vpc_uuid, self.vpc_uuid)
 
     @responses.activate
@@ -120,6 +129,7 @@ class TestLoadBalancer(BaseTest):
         sticky = digitalocean.StickySessions(type='none')
         lb = digitalocean.LoadBalancer(name='example-lb-01', region='nyc3',
                                        algorithm='round_robin',
+                                       size='lb-small',
                                        forwarding_rules=[rule1, rule2],
                                        health_check=check,
                                        sticky_sessions=sticky,
@@ -135,6 +145,7 @@ class TestLoadBalancer(BaseTest):
         self.assertEqual(lb.algorithm, 'round_robin')
         self.assertEqual(lb.ip, '104.131.186.248')
         self.assertEqual(lb.name, 'example-lb-01')
+        self.assertEqual(lb.size, 'lb-small')
         self.assertEqual(len(resp_rules), 2)
         self.assertEqual(resp_rules[0].entry_protocol, 'http')
         self.assertEqual(resp_rules[0].entry_port, 80)
@@ -146,6 +157,9 @@ class TestLoadBalancer(BaseTest):
         self.assertEqual(lb.sticky_sessions.type, 'none')
         self.assertEqual(lb.tag, 'web:prod')
         self.assertEqual(lb.droplet_ids, [3164444, 3164445])
+        self.assertEqual(lb.redirect_http_to_https, False)
+        self.assertEqual(lb.enable_proxy_protocol, False)
+        self.assertEqual(lb.enable_backend_keepalive, False)
         self.assertEqual(lb.vpc_uuid, self.vpc_uuid)
 
     @responses.activate
@@ -167,6 +181,7 @@ class TestLoadBalancer(BaseTest):
         sticky = digitalocean.StickySessions(type='none')
         lb = digitalocean.LoadBalancer(name='example-lb-01', region='nyc3',
                                        algorithm='round_robin',
+                                       size='lb-small',
                                        forwarding_rules=[rule],
                                        health_check=check,
                                        sticky_sessions=sticky,
@@ -223,6 +238,8 @@ class TestLoadBalancer(BaseTest):
         self.assertEqual(self.lb.droplet_ids, [3164444, 3164445])
         self.assertEqual(self.lb.tag, '')
         self.assertEqual(self.lb.redirect_http_to_https, False)
+        self.assertEqual(self.lb.enable_proxy_protocol, False)
+        self.assertEqual(self.lb.enable_backend_keepalive, False)
         self.assertEqual(self.lb.vpc_uuid, self.vpc_uuid)
 
         data2 = self.load_from_file('loadbalancer/save.json')
@@ -276,6 +293,8 @@ class TestLoadBalancer(BaseTest):
         self.assertEqual(lb.droplet_ids, [34153248, 34153250])
         self.assertEqual(lb.tag, '')
         self.assertEqual(lb.redirect_http_to_https, False)
+        self.assertEqual(lb.enable_proxy_protocol, False)
+        self.assertEqual(lb.enable_backend_keepalive, False)
         self.assertEqual(self.lb.vpc_uuid, self.vpc_uuid)
 
     @responses.activate

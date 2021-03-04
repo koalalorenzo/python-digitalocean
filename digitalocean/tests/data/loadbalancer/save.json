@@ -71,9 +71,9 @@
       34153248,
       34153250
     ],
-    "redirect_http_to_https": false,
-    "enable_proxy_protocol": false,
-    "enable_backend_keepalive": false,
+    "redirect_http_to_https": true,
+    "enable_proxy_protocol": true,
+    "enable_backend_keepalive": true,
     "vpc_uuid": "c33931f2-a26a-4e61-b85c-4e95a2ec431b"
   }
 }

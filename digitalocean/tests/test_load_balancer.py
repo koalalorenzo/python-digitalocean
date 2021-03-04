@@ -256,6 +256,9 @@ class TestLoadBalancer(BaseTest):
         self.lb.sticky_sessions.cookie_ttl_seconds = 300
         self.lb.droplet_ids = [34153248, 34153250]
         self.lb.vpc_uuid = self.vpc_uuid
+        self.lb.redirect_http_to_https = True
+        self.lb.enable_proxy_protocol = True
+        self.lb.enable_backend_keepalive = True
         res = self.lb.save()
 
         lb = digitalocean.LoadBalancer(**res['load_balancer'])
@@ -292,9 +295,9 @@ class TestLoadBalancer(BaseTest):
         self.assertEqual(lb.sticky_sessions.cookie_ttl_seconds, 300)
         self.assertEqual(lb.droplet_ids, [34153248, 34153250])
         self.assertEqual(lb.tag, '')
-        self.assertEqual(lb.redirect_http_to_https, False)
-        self.assertEqual(lb.enable_proxy_protocol, False)
-        self.assertEqual(lb.enable_backend_keepalive, False)
+        self.assertEqual(lb.redirect_http_to_https, True)
+        self.assertEqual(lb.enable_proxy_protocol, True)
+        self.assertEqual(lb.enable_backend_keepalive, True)
         self.assertEqual(self.lb.vpc_uuid, self.vpc_uuid)
 
     @responses.activate

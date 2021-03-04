@@ -11,7 +11,7 @@ class TestLoadBalancer(BaseTest):
     def setUp(self):
         super(TestLoadBalancer, self).setUp()
         self.lb_id = '4de7ac8b-495b-4884-9a69-1050c6793cd6'
-        self.vpc_uuid = "08187eaa-90eb-40d6-a8f0-0222b28ded72"
+        self.vpc_uuid = "c33931f2-a26a-4e61-b85c-4e95a2ec431b"
         self.lb = digitalocean.LoadBalancer(id=self.lb_id, token=self.token)
 
     @responses.activate
@@ -124,14 +124,14 @@ class TestLoadBalancer(BaseTest):
                                        health_check=check,
                                        sticky_sessions=sticky,
                                        redirect_http_to_https=False,
-                                       tag='web',
+                                       tag='web:prod',
                                        vpc_uuid=self.vpc_uuid,
                                        token=self.token).create()
         resp_rules = lb.forwarding_rules
 
         self.assertEqual(responses.calls[0].request.url,
                          self.base_url + 'load_balancers')
-        self.assertEqual(lb.id, '4de2ac7b-495b-4884-9e69-1050d6793cd4')
+        self.assertEqual(lb.id, '4de7ac8b-495b-4884-9a69-1050c6793cd6')
         self.assertEqual(lb.algorithm, 'round_robin')
         self.assertEqual(lb.ip, '104.131.186.248')
         self.assertEqual(lb.name, 'example-lb-01')
@@ -144,7 +144,7 @@ class TestLoadBalancer(BaseTest):
         self.assertEqual(lb.health_check.protocol, 'http')
         self.assertEqual(lb.health_check.port, 80)
         self.assertEqual(lb.sticky_sessions.type, 'none')
-        self.assertEqual(lb.tag, 'web')
+        self.assertEqual(lb.tag, 'web:prod')
         self.assertEqual(lb.droplet_ids, [3164444, 3164445])
         self.assertEqual(lb.vpc_uuid, self.vpc_uuid)
 
@@ -171,7 +171,7 @@ class TestLoadBalancer(BaseTest):
                                        health_check=check,
                                        sticky_sessions=sticky,
                                        redirect_http_to_https=False,
-                                       tag='web',
+                                       tag='web:prod',
                                        droplet_ids=[123456, 789456],
                                        vpc_uuid=self.vpc_uuid,
                                        token=self.token)

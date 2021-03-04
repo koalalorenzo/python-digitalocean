@@ -42,20 +42,20 @@
       "name": "New York 3",
       "slug": "nyc3",
       "sizes": [
-        "512mb",
-        "1gb",
-        "2gb",
-        "4gb",
-        "8gb",
-        "16gb",
-        "m-16gb",
-        "32gb",
-        "m-32gb",
-        "48gb",
-        "m-64gb",
-        "64gb",
-        "m-128gb",
-        "m-224gb"
+        "s-1vcpu-1gb",
+        "s-1vcpu-2gb",
+        "s-1vcpu-3gb",
+        "s-2vcpu-2gb",
+        "s-3vcpu-1gb",
+        "s-2vcpu-4gb",
+        "s-4vcpu-8gb",
+        "s-6vcpu-16gb",
+        "s-8vcpu-32gb",
+        "s-12vcpu-48gb",
+        "s-16vcpu-64gb",
+        "s-20vcpu-96gb",
+        "s-24vcpu-128gb",
+        "s-32vcpu-192gb"
       ],
       "features": [
         "private_networking",
@@ -72,6 +72,8 @@
       34153250
     ],
     "redirect_http_to_https": false,
-    "vpc_uuid": "08187eaa-90eb-40d6-a8f0-0222b28ded72"
+    "enable_proxy_protocol": false,
+    "enable_backend_keepalive": false,
+    "vpc_uuid": "c33931f2-a26a-4e61-b85c-4e95a2ec431b"
   }
 }

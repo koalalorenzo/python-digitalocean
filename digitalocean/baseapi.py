@@ -3,6 +3,7 @@ import os
 import json
 import logging
 import requests
+from . import __name__, __version__
 try:
     import urlparse
 except ImportError:
@@ -13,6 +14,7 @@ GET = 'GET'
 POST = 'POST'
 DELETE = 'DELETE'
 PUT = 'PUT'
+PATCH = 'PATCH'
 REQUEST_TIMEOUT_ENV_VAR = 'PYTHON_DIGITALOCEAN_REQUEST_TIMEOUT_SEC'
 
 
@@ -37,20 +39,44 @@ class NotFoundError(Error):
     pass
 
 
+class EndPointError(Error):
+    pass
+
+
 class BaseAPI(object):
     """
         Basic api class for
     """
-    token = ""
+    tokens = []
+    _last_used = 0
     end_point = "https://api.digitalocean.com/v2/"
 
     def __init__(self, *args, **kwargs):
-        self.token = ""
-        self.end_point = "https://api.digitalocean.com/v2/"
+        self.token = os.getenv("DIGITALOCEAN_ACCESS_TOKEN", "")
+        self.end_point = os.getenv("DIGITALOCEAN_END_POINT", "https://api.digitalocean.com/v2/")
         self._log = logging.getLogger(__name__)
+
+        self._session = requests.Session()
 
         for attr in kwargs.keys():
             setattr(self, attr, kwargs[attr])
+
+        parsed_url = urlparse.urlparse(self.end_point)
+        if not parsed_url.scheme or not parsed_url.netloc:
+            raise EndPointError("Provided end point is not a valid URL. Please use a valid URL")
+
+        if not parsed_url.path:
+            self.end_point += '/'
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        # The logger is not pickleable due to using thread.lock
+        del state['_log']
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__ = state
+        self._log = logging.getLogger(__name__)
 
     def __perform_request(self, url, type=GET, params=None):
         """
@@ -72,18 +98,25 @@ class BaseAPI(object):
         identity = lambda x: x
         json_dumps = lambda x: json.dumps(x)
         lookup = {
-            GET: (requests.get, {}, 'params', identity),
+            GET: (self._session.get, {'Content-type': 'application/json'}, 'params', identity),
+            PATCH: (requests.patch, {'Content-type': 'application/json'},
+                    'data', json_dumps),
             POST: (requests.post, {'Content-type': 'application/json'}, 'data',
                    json_dumps),
-            PUT: (requests.put, {'Content-type': 'application/json'}, 'data',
+            PUT: (self._session.put, {'Content-type': 'application/json'}, 'data',
                   json_dumps),
-            DELETE: (requests.delete,
+            DELETE: (self._session.delete,
                      {'content-type': 'application/json'},
                      'data', json_dumps),
         }
 
         requests_method, headers, payload, transform = lookup[type]
-        headers.update({'Authorization': 'Bearer ' + self.token})
+        agent = "{0}/{1} {2}/{3}".format('python-digitalocean',
+                                         __version__,
+                                         requests.__name__,
+                                         requests.__version__)
+        headers.update({'Authorization': 'Bearer ' + self.token,
+                        'User-Agent': agent})
         kwargs = {'headers': headers, payload: transform(params)}
 
         timeout = self.get_timeout()
@@ -91,7 +124,9 @@ class BaseAPI(object):
             kwargs['timeout'] = timeout
 
         # remove token from log
-        headers_str = str(headers).replace(self.token.strip(), 'TOKEN')
+        headers_str = str(headers)
+        for i, token in enumerate(self.tokens):
+            headers_str = headers_str.replace(token.strip(), 'TOKEN%s' % i)
         self._log.debug('%s %s %s:%s %s %s' %
                         (type, url, payload, params, headers_str, timeout))
 
@@ -121,6 +156,31 @@ class BaseAPI(object):
                     all_data[key] = value
 
         return all_data
+
+    def __init_ratelimit(self, headers):
+        # Add the account requests/hour limit
+        self.ratelimit_limit = headers.get('Ratelimit-Limit', None)
+        # Add the account requests remaining
+        self.ratelimit_remaining = headers.get('Ratelimit-Remaining', None)
+        # Add the account requests limit reset time
+        self.ratelimit_reset = headers.get('Ratelimit-Reset', None)
+
+    @property
+    def token(self):
+        # use all the tokens round-robin style
+        if self.tokens:
+            self._last_used = (self._last_used + 1) % len(self.tokens)
+            return self.tokens[self._last_used]
+        return ""
+
+    @token.setter
+    def token(self, token):
+        self._last_used = 0
+        if isinstance(token, list):
+            self.tokens = token
+        else:
+            # for backward compatibility
+            self.tokens = [token]
 
     def get_timeout(self):
         """
@@ -172,7 +232,10 @@ class BaseAPI(object):
             msg = [data[m] for m in ("id", "message") if m in data][1]
             raise DataReadError(msg)
 
-        # If there are more elements available (total) than the elements per 
+        # init request limits
+        self.__init_ratelimit(req.headers)
+
+        # If there are more elements available (total) than the elements per
         # page, try to deal with pagination. Note: Breaking the logic on
         # multiple pages,
         pages = data.get("links", {}).get("pages", {})

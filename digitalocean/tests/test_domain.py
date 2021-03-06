@@ -68,6 +68,91 @@ class TestDomain(BaseTest):
         self.assertEqual(response['domain_record']['ttl'], 600)
 
     @responses.activate
+    def test_update_new_domain_record(self):
+        data = self.load_from_file('domains/update_record.json')
+        record_id = str(json.loads(data)['domain_record']['id'])
+
+        url = self.base_url + "domains/example.com/records/" + record_id
+        responses.add(responses.PUT,
+                      url,
+                      body=data,
+                      status=201,
+                      content_type='application/json')
+
+        response = self.domain.update_domain_record(
+            domain="example.com", id=record_id, type="CNAME", name="www", data="@")
+
+        self.assert_url_query_equal(
+            responses.calls[0].request.url,
+            self.base_url + "domains/example.com/records/" + record_id)
+        self.assertEqual(json.loads(responses.calls[0].request.body),
+                         {"type": "CNAME", "id": record_id, "domain": "example.com", "data": "@", "name": "www"})
+        self.assertEqual(response['domain_record']['type'], "CNAME")
+        self.assertEqual(response['domain_record']['name'], "www")
+        self.assertEqual(response['domain_record']['data'], "@")
+        self.assertEqual(response['domain_record']['ttl'], 600)
+
+    @responses.activate
+    def test_delete_domain_record(self):
+        record_id = "1234"
+        url = self.base_url + "domains/example.com/records/" + record_id
+        responses.add(responses.DELETE,
+                      url,
+                      status=204,
+                      content_type='application/json')
+
+        self.domain.delete_domain_record(id=record_id)
+
+        self.assertEqual(responses.calls[0].request.url, url)
+
+    @responses.activate
+    def test_create_new_srv_record_zero_priority(self):
+        data = self.load_from_file('domains/create_srv_record.json')
+
+        url = self.base_url + "domains/example.com/records"
+        responses.add(responses.POST,
+                      url,
+                      body=data,
+                      status=201,
+                      content_type='application/json')
+
+        response = self.domain.create_new_domain_record(
+            type="SRV", name="service", data="service", priority=0, weight=0)
+
+        self.assert_url_query_equal(
+            responses.calls[0].request.url,
+            self.base_url + "domains/example.com/records")
+        self.assertEqual(response['domain_record']['type'], "SRV")
+        self.assertEqual(response['domain_record']['name'], "service")
+        self.assertEqual(response['domain_record']['data'], "service")
+        self.assertEqual(response['domain_record']['priority'], 0)
+        self.assertEqual(response['domain_record']['weight'], 0)
+
+    @responses.activate
+    def test_create_new_caa_record_zero_flags(self):
+        data = self.load_from_file('domains/create_caa_record.json')
+
+        url = self.base_url + "domains/example.com/records"
+        responses.add(responses.POST,
+                      url,
+                      body=data,
+                      status=201,
+                      content_type='application/json')
+
+        response = self.domain.create_new_domain_record(
+            type="CAA", name="@", data="letsencrypt.org.", ttl=1800, flags=0, tag="issue")
+
+        self.assert_url_query_equal(
+            responses.calls[0].request.url,
+            self.base_url + "domains/example.com/records")
+        self.assertEqual(response['domain_record']['type'], "CAA")
+        self.assertEqual(response['domain_record']['name'], "@")
+        self.assertEqual(response['domain_record']['data'], "letsencrypt.org.")
+        self.assertEqual(response['domain_record']['ttl'], 1800)
+        self.assertEqual(response['domain_record']['flags'], 0)
+        self.assertEqual(response['domain_record']['tag'], "issue")
+
+    @responses.activate
     def test_create(self):
         data = self.load_from_file( 'domains/create.json')
 
@@ -103,12 +188,13 @@ class TestDomain(BaseTest):
         records = self.domain.get_records()
 
         self.assert_get_url_equal(responses.calls[0].request.url, url)
-        self.assertEqual(len(records), 5)
+        self.assertEqual(len(records), 6)
         self.assertEqual(records[0].type, "A")
         self.assertEqual(records[0].name, "@")
         self.assertEqual(records[4].type, "CNAME")
         self.assertEqual(records[4].name, "example")
         self.assertEqual(records[4].ttl, 600)
+        self.assertEqual(records[5].data, "letsencrypt.org.")
 
 
 if __name__ == '__main__':

@@ -1,0 +1,52 @@
+{
+    "firewall": {
+      "id": 12345,
+      "name": "firewall",
+      "status": "succeeded",
+      "inbound_rules": [
+        {
+          "protocol": "tcp",
+          "ports": "80",
+          "sources": {
+            "load_balancer_uids": [
+              "12345"
+            ]
+          }
+        },
+        {
+          "protocol": "tcp",
+          "ports": 22,
+          "sources": {
+            "tags": [
+              "gateway"
+            ],
+            "addresses": [
+              "18.0.0.0/8"
+            ]
+          }
+        }
+      ],
+      "outbound_rules": [
+        {
+          "protocol": "tcp",
+          "ports": "80",
+          "destinations": {
+            "addresses": [
+              "0.0.0.0/0",
+              "::/0"
+            ]
+          }
+        }
+      ],
+      "created_at": "2017-05-23T21:24:00Z",
+      "droplet_ids": [
+        12345
+      ],
+      "tags": [
+  
+      ],
+      "pending_changes": [
+  
+      ]
+    }
+  }

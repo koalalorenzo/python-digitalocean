@@ -42,3 +42,5 @@ MANIFEST
 
 .venv
 
+*.sw[pon]
+.eggs

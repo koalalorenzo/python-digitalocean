@@ -1,5 +1,7 @@
 requests>=2.2.1
+jsonpickle
 
 # Testing requirements
 pytest
 responses
+mock; python_version < '3.3'

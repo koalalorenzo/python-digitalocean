@@ -43,8 +43,8 @@ class SSHKey(BaseAPI):
 
     def load_by_pub_key(self, public_key):
         """
-            This method will laod a SSHKey object from DigitalOcean
-            from a public_key. This method will avoid problem like
+            This method will load a SSHKey object from DigitalOcean
+            from a public_key. This method will avoid problems like
             uploading the same public_key twice.
         """
 

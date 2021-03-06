@@ -25,7 +25,6 @@ from .Volume import Volume
 from .VPC import VPC
 from .Project import Project
 
-
 class Manager(BaseAPI):
     def __init__(self, *args, **kwargs):
         super(Manager, self).__init__(*args, **kwargs)
@@ -444,6 +443,36 @@ class Manager(BaseAPI):
             vpcs.append(vpc)
 
         return vpcs
+
+    def get_all_projects(self):
+        """
+            All the projects of the account
+        """
+        data = self.get_data("projects")
+        projects = list()
+        for jsoned in data['projects']:
+            project = Project(**jsoned)
+            project.token = self.token
+            projects.append(project)
+        return projects
+
+    def get_project(self, project_id):
+        """
+            Return a Project by its ID.
+        """
+        return Project.get_object(
+            api_token=self.token,
+            project_id=project_id,
+        )
+
+    def get_default_project(self):
+        """
+            Return default project of the account
+        """
+        return Project.get_object(
+            api_token=self.token,
+            project_id="default",
+        )
 
     def __str__(self):
         return "<Manager>"

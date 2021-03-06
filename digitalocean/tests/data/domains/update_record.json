@@ -1,0 +1,12 @@
+{
+  "domain_record": {
+    "id": 30,
+    "type": "CNAME",
+    "name": "www",
+    "data": "@",
+    "priority": null,
+    "port": null,
+    "ttl": 600,
+    "weight": null
+  }
+}

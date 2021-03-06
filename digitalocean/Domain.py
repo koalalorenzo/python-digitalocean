@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from .Record import Record
-from .baseapi import BaseAPI, GET, POST, DELETE
+from .baseapi import BaseAPI, GET, POST, DELETE, PUT
 
 
 class Domain(BaseAPI):
@@ -80,10 +80,60 @@ class Domain(BaseAPI):
         if kwargs.get("tag", None):
             data['tag'] = kwargs.get("tag", "issue")
 
+        if self.ttl:
+            data['ttl'] = self.ttl
+
         return self.get_data(
             "domains/%s/records" % self.name,
             type=POST,
             params=data
+        )
+
+    def update_domain_record(self, *args, **kwargs):
+        """
+            Args:
+                type: The record type (A, MX, CNAME, etc).
+                name: The host name, alias, or service being defined by the record
+                data: Variable data depending on record type.
+                priority: The priority of the host
+                port: The port that the service is accessible on
+                weight: The weight of records with the same priority
+        """
+        data = {
+            'id': kwargs.get("id", None),
+            'domain': kwargs.get("domain", None)
+        }
+
+        if kwargs.get("data", None):
+            data['data'] = kwargs.get("data", None)
+
+        if kwargs.get("type", None):
+            data['type'] = kwargs.get("type", None)
+
+        if kwargs.get("name", None):
+            data['name'] = kwargs.get("name", None)
+
+        if kwargs.get("port", None):
+            data['port'] = kwargs.get("port", None)
+
+        if kwargs.get("weight", None):
+            data['weight'] = kwargs.get("weight", None)
+
+        return self.get_data(
+            "domains/%s/records/%s" % (data['domain'], data['id']),
+            type=PUT,
+            params=data
+        )
+
+    def delete_domain_record(self, *args, **kwargs):
+
+        data = {
+            'id': kwargs.get("id", None)
+        }
+
+        return self.get_data(
+            "domains/%s/records/%s" % (self.name, data['id']),
+            type=DELETE
         )
 
     def create(self):

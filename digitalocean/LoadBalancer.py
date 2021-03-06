@@ -91,6 +91,9 @@ class LoadBalancer(BaseAPI):
     Args:
         name (str): The Load Balancer's name
         region (str): The slug identifier for a DigitalOcean region
+        size (str): The size of the load balancer. The available sizes \
+            are "lb-small", "lb-medium", or "lb-large". Once you have \
+            created a load balancer, you can't change its size
         algorithm (str, optional): The load balancing algorithm to be \
             used. Currently, it must be either "round_robin" or \
             "least_connections"
@@ -100,6 +103,11 @@ class LoadBalancer(BaseAPI):
         redirect_http_to_https (bool, optional): A boolean indicating \
             whether HTTP requests to the Load Balancer should be \
             redirected to HTTPS
+        enable_proxy_protocol (bool, optional): A boolean value indicating \
+            whether PROXY Protocol is in use
+        enable_backend_keepalive (bool, optional): A boolean value \
+            indicating whether HTTP keepalive connections are maintained \
+            to target Droplets.
         droplet_ids (obj:`list` of `int`): A list of IDs representing \
             Droplets to be added to the Load Balancer (mutually \
             exclusive with 'tag')
@@ -112,6 +120,7 @@ class LoadBalancer(BaseAPI):
         * id (str): An unique identifier for a LoadBalancer
         * ip (str): Public IP address for a LoadBalancer
         * region (str): The slug identifier for a DigitalOcean region
+        * size (str): The size of the load balancer
         * algorithm (str, optional): The load balancing algorithm to be \
               used. Currently, it must be either "round_robin" or \
               "least_connections"
@@ -121,6 +130,11 @@ class LoadBalancer(BaseAPI):
         * redirect_http_to_https (bool, optional): A boolean indicating \
               whether HTTP requests to the Load Balancer should be \
               redirected to HTTPS
+        * enable_proxy_protocol (bool, optional): A boolean value indicating \
+              whether PROXY Protocol is in use
+        * enable_backend_keepalive (bool, optional): A boolean value \
+              indicating whether HTTP keepalive connections are maintained \
+              to target Droplets.
         * droplet_ids (obj:`list` of `int`): A list of IDs representing \
               Droplets to be added to the Load Balancer
         * tag (str): A string representing a DigitalOcean Droplet tag
@@ -132,11 +146,14 @@ class LoadBalancer(BaseAPI):
         self.id = None
         self.name = None
         self.region = None
+        self.size = None
         self.algorithm = None
         self.forwarding_rules = []
         self.health_check = None
         self.sticky_sessions = None
         self.redirect_http_to_https = False
+        self.enable_proxy_protocol = False
+        self.enable_backend_keepalive = False
         self.droplet_ids = []
         self.tag = None
         self.status = None
@@ -195,6 +212,9 @@ class LoadBalancer(BaseAPI):
         Args:
             name (str): The Load Balancer's name
             region (str): The slug identifier for a DigitalOcean region
+            size (str): The size of the load balancer. The available sizes
+                are "lb-small", "lb-medium", or "lb-large". Once you have
+                created a load balancer, you can't change its size
             algorithm (str, optional): The load balancing algorithm to be
                 used. Currently, it must be either "round_robin" or
                 "least_connections"
@@ -204,6 +224,11 @@ class LoadBalancer(BaseAPI):
             redirect_http_to_https (bool, optional): A boolean indicating
                 whether HTTP requests to the Load Balancer should be
                 redirected to HTTPS
+            enable_proxy_protocol (bool, optional): A boolean value indicating
+                whether PROXY Protocol is in use
+            enable_backend_keepalive (bool, optional): A boolean value
+                indicating whether HTTP keepalive connections are maintained
+                to target Droplets.
             droplet_ids (obj:`list` of `int`): A list of IDs representing
                 Droplets to be added to the Load Balancer (mutually
                 exclusive with 'tag')
@@ -215,8 +240,11 @@ class LoadBalancer(BaseAPI):
         rules_dict = [rule.__dict__ for rule in self.forwarding_rules]
 
         params = {'name': self.name, 'region': self.region,
+                  'size': self.size,
                   'forwarding_rules': rules_dict,
                   'redirect_http_to_https': self.redirect_http_to_https,
+                  'enable_proxy_protocol': self.enable_proxy_protocol,
+                  'enable_backend_keepalive': self.enable_backend_keepalive,
                   'vpc_uuid': self.vpc_uuid}
 
         if self.droplet_ids and self.tag:
@@ -239,6 +267,7 @@ class LoadBalancer(BaseAPI):
             self.id = data['load_balancer']['id']
             self.ip = data['load_balancer']['ip']
             self.algorithm = data['load_balancer']['algorithm']
+            self.size = data['load_balancer']['size']
             self.health_check = HealthCheck(
                 **data['load_balancer']['health_check'])
             self.sticky_sessions = StickySessions(
@@ -246,6 +275,9 @@ class LoadBalancer(BaseAPI):
             self.droplet_ids = data['load_balancer']['droplet_ids']
             self.status = data['load_balancer']['status']
             self.created_at = data['load_balancer']['created_at']
+            self.redirect_http_to_https = data['load_balancer']['redirect_http_to_https']
+            self.enable_proxy_protocol = data['load_balancer']['enable_proxy_protocol']
+            self.enable_backend_keepalive = data['load_balancer']['enable_backend_keepalive']
             self.vpc_uuid = data['load_balancer']['vpc_uuid']
 
         return self
@@ -261,6 +293,8 @@ class LoadBalancer(BaseAPI):
             'region': self.region['slug'],
             'forwarding_rules': forwarding_rules,
             'redirect_http_to_https': self.redirect_http_to_https,
+            'enable_proxy_protocol': self.enable_proxy_protocol,
+            'enable_backend_keepalive': self.enable_backend_keepalive,
             'vpc_uuid': self.vpc_uuid
         }
 

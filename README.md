@@ -21,7 +21,7 @@
    - [Creating a Droplet and checking its status](#creating-a-droplet-and-checking-its-status)
    - [Checking the status of the droplet](#checking-the-status-of-the-droplet)
    - [Listing the Projects](#listing-the-projects)
-   - [Assign a resource for specific project](#assigne-a-resource-for-specific-project)
+   - [Assign a resource for specific project](#assign-a-resource-for-specific-project)
    - [List all the resources of a project](#list-all-the-resources-of-a-project)
    - [Add SSHKey into DigitalOcean Account](#add-sshkey-into-digitalocean-account)
    - [Creating a new droplet with all your SSH keys](#creating-a-new-droplet-with-all-your-ssh-keys)

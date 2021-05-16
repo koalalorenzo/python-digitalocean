@@ -160,7 +160,7 @@ class LoadBalancer(BaseAPI):
 
     def load(self):
         """
-        Loads updated attributues for a LoadBalancer object.
+        Loads updated attributes for a LoadBalancer object.
 
         Requires self.id to be set.
         """

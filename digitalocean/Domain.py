@@ -88,7 +88,7 @@ class Domain(BaseAPI):
 
     def create(self):
         """
-            Create new doamin
+            Create new domain
         """
         # URL https://api.digitalocean.com/v2/domains
         data = {

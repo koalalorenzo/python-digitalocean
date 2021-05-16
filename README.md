@@ -240,7 +240,7 @@ droplet.create()
 
 ### Creating a Firewall
 
-This example creates a firewall that only accepts inbound tcp traffic on port 80 from a specific load balancer and allows outbout tcp traffic on all ports to all addresses.
+This example creates a firewall that only accepts inbound tcp traffic on port 80 from a specific load balancer and allows outbound tcp traffic on all ports to all addresses.
 
 ```python
 from digitalocean import Firewall, InboundRule, OutboundRule, Destinations, Sources
@@ -375,7 +375,7 @@ print(manager.ratelimit_limit)
 
 ## Session customization
 
-You can take advandtage of the [requests](http://docs.python-requests.org/en/master/) library and configure the HTTP client under python-digitalocean.
+You can take advantage of the [requests](http://docs.python-requests.org/en/master/) library and configure the HTTP client under python-digitalocean.
 
 ### Configure retries in case of connection error
 

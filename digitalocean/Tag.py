@@ -187,3 +187,7 @@ class Tag(BaseAPI):
         
         return False
 
+
+    def __str__(self):
+        return "<Tag: %s>" % self.name
+

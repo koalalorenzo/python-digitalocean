@@ -349,7 +349,7 @@ print(new_record)
 
 ### Update a domain record
 
-This example shows how to create new domain record (sub.example.com):
+This example shows how to modify an existing domain record (sub.example.com):
 
 ```python
 import digitalocean
@@ -358,7 +358,7 @@ domain = digitalocean.Domain(token=TOKEN, name="example.com")
 records = domain.get_records()
 id = None
 for r in records:
-    if r.name == 'usb':
+    if r.name == 'sub':
         r.data = '1.1.1.1'
         r.save()
 ```

@@ -25,7 +25,7 @@ class VPC(BaseAPI):
             CIDR notation
         * urn (str): The uniform resource name (URN) for the VPC
         * created_at (str): A string that represents when the VPC was created
-        * default (bool): A boolen representing whether or not the VPC is the \
+        * default (bool): A boolean representing whether or not the VPC is the \
             user's default VPC for the region
     """
     def __init__(self, *args, **kwargs):

@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ['2.x', '3.x', 3.6, 3.7, 3.8]
+        python-version: ['2.x', '3.x', 3.7, 3.8, 3.9]
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}

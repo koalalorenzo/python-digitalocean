@@ -345,6 +345,12 @@ class Manager(BaseAPI):
     def get_all_volumes(self, region=None, name=None):
         """
             This function returns a list of Volume objects.
+
+            Args:
+                region (str, optional): Restrict results to volumes \
+                    available in a specific region. e.g. nyc1
+                name (str, optional): List volumes on your account that \
+                    match a specified name. e.g. example-volume
         """
         url = "volumes"
         parameters = []

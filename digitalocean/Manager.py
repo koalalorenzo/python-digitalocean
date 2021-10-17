@@ -342,14 +342,18 @@ class Manager(BaseAPI):
             for snapshot in data['snapshots']
         ]
 
-    def get_all_volumes(self, region=None):
+    def get_all_volumes(self, region=None, name=None):
         """
             This function returns a list of Volume objects.
         """
+        url = "volumes"
+        parameters = []
         if region:
-            url = "volumes?region={}".format(region)
-        else:
-            url = "volumes"
+            parameters.append("region={}".format(region))
+        if name:
+            parameters.append("name={}".format(name))
+        if len(parameters) > 0:
+            url += "?" + "&".join(parameters)
         data = self.get_data(url)
         volumes = list()
         for jsoned in data['volumes']:

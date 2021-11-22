@@ -1,0 +1,9 @@
+{
+    "endpoint": {
+      "id": "19f06b6a-3ace-4315-b086-499a0e521b76",
+      "origin": "static-images.nyc3.digitaloceanspaces.com",
+      "endpoint": "static-images.nyc3.cdn.digitaloceanspaces.com",
+      "created_at": "2018-07-19T15:04:16Z",
+      "ttl": 60
+    }
+}

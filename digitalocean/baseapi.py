@@ -119,6 +119,10 @@ class BaseAPI(object):
                         'User-Agent': agent})
         kwargs = {'headers': headers, payload: transform(params)}
 
+        # Some requests do not require a body
+        if params is False:
+            del kwargs['data']
+
         timeout = self.get_timeout()
         if timeout:
             kwargs['timeout'] = timeout

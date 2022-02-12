@@ -115,8 +115,7 @@ class BaseAPI(object):
                                          __version__,
                                          requests.__name__,
                                          requests.__version__)
-        headers.update({'Authorization': 'Bearer ' + self.token,
-                        'User-Agent': agent})
+        headers.update({'User-Agent': agent})
         kwargs = {'headers': headers, payload: transform(params)}
 
         timeout = self.get_timeout()
@@ -130,7 +129,18 @@ class BaseAPI(object):
         self._log.debug('%s %s %s:%s %s %s' %
                         (type, url, payload, params, headers_str, timeout))
 
-        return requests_method(url, **kwargs)
+        first_tried_token = self._last_used
+        while True:
+            headers.update({'Authorization': 'Bearer ' + self.token})
+            req = requests_method(url, **kwargs)
+            if req.status_code == 429:
+                self._last_used = (self._last_used + 1) % len(self.tokens)
+                if self._last_used == first_tried_token:
+                    # all tokens tried
+                    break
+                continue
+            break
+        return req
 
     def __deal_with_pagination(self, url, method, params, data):
         """
@@ -167,9 +177,8 @@ class BaseAPI(object):
 
     @property
     def token(self):
-        # use all the tokens round-robin style
+        # use all the tokens round-robin style, change on reaching Ratelimit
         if self.tokens:
-            self._last_used = (self._last_used + 1) % len(self.tokens)
             return self.tokens[self._last_used]
         return ""
 

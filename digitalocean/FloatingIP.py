@@ -50,7 +50,7 @@ class FloatingIP(BaseAPI):
         """
         data = self.get_data('floating_ips/',
                              type=POST,
-                             params={'droplet_id': self.droplet_id})
+                             params={'droplet_id': kwargs['droplet_id']})
 
         if data:
             self.ip = data['floating_ip']['ip']

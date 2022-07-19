@@ -43,6 +43,11 @@ class EndPointError(Error):
     pass
 
 
+class ServerError(Error):
+    """Raised when the server responds with a 5xx status code and no body"""
+    pass
+
+
 class BaseAPI(object):
     """
         Basic api class for
@@ -228,6 +233,10 @@ class BaseAPI(object):
 
         if req.status_code == 404:
             raise NotFoundError()
+
+        if len(req.content) == 0:
+            # Raise an error if the request failed and there is no response content
+            req.raise_for_status()
 
         try:
             data = req.json()

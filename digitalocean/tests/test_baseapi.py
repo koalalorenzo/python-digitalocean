@@ -1,9 +1,12 @@
 import os
+
+from digitalocean.baseapi import BaseAPI
 try:
     import mock
 except ImportError:
     from unittest import mock
 
+import random
 import responses
 import requests
 import digitalocean
@@ -65,3 +68,18 @@ class TestBaseAPI(BaseTest):
                             {'DIGITALOCEAN_END_POINT': custom_endpoint},
                             clear=True):
             self.assertRaises(digitalocean.EndPointError, digitalocean.baseapi.BaseAPI)
+
+    def test_get_data_error_response_no_body(self):
+        with mock.patch.object(self.manager, '_BaseAPI__perform_request') as mock_4xx_response:
+            mock_4xx_response.return_value = requests.Response()
+            mock_4xx_response.return_value._content = b''
+            mock_4xx_response.return_value.status_code = random.randint(400, 499) # random 4xx status code
+
+            self.assertRaises(requests.HTTPError, self.manager.get_data, 'test')
+        
+        with mock.patch.object(self.manager, '_BaseAPI__perform_request') as mock_5xx_response:
+            mock_5xx_response.return_value = requests.Response()
+            mock_5xx_response.return_value._content = b'' 
+            mock_5xx_response.return_value.status_code = random.randint(500, 599) # random 5xx status code
+
+            self.assertRaises(requests.HTTPError, self.manager.get_data, 'test')

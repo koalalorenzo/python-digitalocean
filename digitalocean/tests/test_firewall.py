@@ -150,5 +150,20 @@ class TestFirewall(BaseTest):
 
         self.assertEqual(responses.calls[0].request.url, url)
 
+    @responses.activate
+    def test_remove_inbound(self):
+        data = self.load_from_file('firewalls/rules.json')
+
+        url = self.base_url + "firewalls/12345/rules"
+        responses.add(responses.DELETE, url,
+                      body=data,
+                      status=204,
+                      content_type='application/json')
+
+        rule = json.loads(data)["rules"][0]
+        self.firewall.remove_inbound([rule])
+
+        self.assertEqual(responses.calls[0].request.url, url)
+
 if __name__ == '__main__':
     unittest.main()

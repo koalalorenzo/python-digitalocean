@@ -1,0 +1,19 @@
+{
+  "rules": [
+    {
+      "protocol": "tcp",
+      "ports": "443",
+      "sources": {
+        "load_balancer_uids": ["12345"]
+      }
+    },
+    {
+      "protocol": "tcp",
+      "ports": "9000",
+      "sources": {
+        "tags": ["gateway"],
+        "addresses": ["18.0.0.0/8"]
+      }
+    }
+  ]
+}

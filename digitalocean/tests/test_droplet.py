@@ -57,6 +57,7 @@ class TestDroplet(BaseTest):
         self.assertEqual(d.kernel['id'], 2233)
         self.assertEqual(d.features, ["ipv6", "virtio"])
         self.assertEqual(d.tags, [])
+        self.assertEqual(d.vpc_uuid, "08187eaa-90eb-40d6-a8f0-0222b28ded72")
 
     @responses.activate
     def test_power_off(self):
@@ -803,11 +804,12 @@ class TestDroplet(BaseTest):
                                        region="nyc3",
                                        backups=True,
                                        ipv6=True,
-                                       private_networking=True,
+                                       private_networking=False,
                                        monitoring=True,
                                        user_data="Some user data.",
                                        token=self.token,
-                                       tags=["web"])
+                                       tags=["web"],
+                                       vpc_uuid="08187eaa-90eb-40d6-a8f0-0222b28ded72")
         droplet.create()
 
         self.assert_url_query_equal(responses.calls[0].request.url, url)
@@ -816,10 +818,11 @@ class TestDroplet(BaseTest):
             json.loads(responses.calls[0].request.body),
             {u"name": u"example.com", u"region": u"nyc3",
              u"user_data": u"Some user data.", u"ipv6": True,
-             u"private_networking": True, u"monitoring": True,
+             u"private_networking": False, u"monitoring": True,
              u"backups": True, u"image": u"ubuntu-14-04-x64",
              u"size": u"512mb", u"ssh_keys": [],
-             u"volumes": [], u"tags": ["web"]})
+             u"volumes": [], u"tags": ["web"],
+             u"vpc_uuid": "08187eaa-90eb-40d6-a8f0-0222b28ded72"})
         self.assertEqual(droplet.id, 3164494)
         self.assertEqual(droplet.action_ids, [36805096])
 
@@ -842,11 +845,12 @@ class TestDroplet(BaseTest):
                                                         region="nyc3",
                                                         backups=True,
                                                         ipv6=True,
-                                                        private_networking=True,
+                                                        private_networking=False,
                                                         monitoring=True,
                                                         user_data="Some user data.",
                                                         token=self.token,
-                                                        tags=["web"])
+                                                        tags=["web"],
+                                                        vpc_uuid="08187eaa-90eb-40d6-a8f0-0222b28ded72")
         self.assert_url_query_equal(responses.calls[0].request.url, url)
         self.assertEqual(len(droplets), 2)
         self.assertEqual(droplets[0].id, 3164494)
@@ -859,9 +863,10 @@ class TestDroplet(BaseTest):
             json.loads(responses.calls[0].request.body),
             {u"names": [u"example.com", u"example2.com"], u"region": u"nyc3",
              u"user_data": u"Some user data.", u"ipv6": True,
-             u"private_networking": True,  u"monitoring": True,
+             u"private_networking": False, u"monitoring": True,
              u"backups": True, u"image": u"ubuntu-14-04-x64",
-             u"size": u"512mb", u"tags": ["web"]})
+             u"size": u"512mb", u"tags": ["web"],
+             u"vpc_uuid": "08187eaa-90eb-40d6-a8f0-0222b28ded72"})
 
 
     @responses.activate
@@ -973,6 +978,37 @@ class TestDroplet(BaseTest):
         self.assertEqual(kernels[2].id, 231)
         self.assertEqual(kernels[2].name,
                          "Ubuntu 14.04 x64 vmlinuz-3.13.0-32-generic")
+
+    @responses.activate
+    def test_update_volumes_data(self):
+        droplet_response = self.load_from_file('droplets/single.json')
+        volume_response = self.load_from_file('volumes/single.json')
+        url_droplet =self.base_url + "droplets/12345"
+        url_volume = self.base_url +  "volumes/506f78a4-e098-11e5-ad9f-000f53306ae1"
+        responses.add(responses.GET,
+                      url_droplet,
+                      body=droplet_response,
+                      status=200,
+                      content_type='application/json')
+        responses.add(responses.GET,
+                      url_volume,
+                      body=volume_response,
+                      status=200,
+                      content_type='application/json')
+
+        droplet = digitalocean.Droplet(id='12345', token=self.token)
+        d = droplet.load()
+        d.update_volumes_data()
+
+        self.assert_get_url_equal(responses.calls[0].request.url, url_droplet)
+        self.assert_get_url_equal(responses.calls[1].request.url, url_volume)
+        self.assertEqual(len(d.volumes), 1)
+        self.assertEqual(d.volumes[0].id, '506f78a4-e098-11e5-ad9f-000f53306ae1')
+        self.assertEqual(d.volumes[0].name, 'example')
+        self.assertEqual(d.volumes[0].region['slug'], 'nyc1')
+
+
+
 
 if __name__ == '__main__':
     unittest.main()

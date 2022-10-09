@@ -1,3 +1,4 @@
+import json
 import unittest
 import responses
 import digitalocean
@@ -32,6 +33,25 @@ class TestManager(BaseTest):
         self.assertEqual(acct.droplet_limit, 25)
         self.assertEqual(acct.email_verified, True)
         self.assertEqual(acct.status, "active")
+
+    @responses.activate
+    def test_get_balance(self):
+        data = self.load_from_file('balance/balance.json')
+
+        url = self.base_url + 'customers/my/balance'
+        responses.add(responses.GET, url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        balance = self.manager.get_balance()
+
+        self.assert_get_url_equal(responses.calls[0].request.url, url)
+        self.assertEqual(balance.token, balance.token)
+        self.assertEqual(balance.month_to_date_balance, '23.44')
+        self.assertEqual(balance.account_balance, '12.23')
+        self.assertEqual(balance.month_to_date_usage, '11.21')
+        self.assertEqual(balance.generated_at, '2019-07-09T15:01:12Z')
 
     @responses.activate
     def test_auth_fail(self):
@@ -431,10 +451,10 @@ class TestManager(BaseTest):
         lbs = self.manager.get_all_load_balancers()
         resp_rules = lbs[0].forwarding_rules[0]
 
-        self.assertEqual(lbs[0].id, '4de2ac7b-495b-4884-9e69-1050d6793cd4')
+        self.assertEqual(lbs[0].id, '4de7ac8b-495b-4884-9a69-1050c6793cd6')
         self.assertEqual(lbs[0].algorithm, 'round_robin')
-        self.assertEqual(lbs[0].ip, '104.131.186.248')
-        self.assertEqual(lbs[0].name, 'example-lb-02')
+        self.assertEqual(lbs[0].ip, '104.131.186.241')
+        self.assertEqual(lbs[0].name, 'example-lb-01')
         self.assertEqual(len(lbs[0].forwarding_rules), 2)
         self.assertEqual(resp_rules.entry_protocol, 'http')
         self.assertEqual(resp_rules.entry_port, 80)
@@ -444,7 +464,7 @@ class TestManager(BaseTest):
         self.assertEqual(lbs[0].health_check.protocol, 'http')
         self.assertEqual(lbs[0].health_check.port, 80)
         self.assertEqual(lbs[0].sticky_sessions.type, 'none')
-        self.assertEqual(lbs[0].tag, 'web')
+        self.assertEqual(lbs[0].tag, '')
         self.assertEqual(lbs[0].droplet_ids, [3164444, 3164445])
 
     @responses.activate
@@ -466,6 +486,17 @@ class TestManager(BaseTest):
             'dfcc9f57d86bf58e321c2c6c31c7a971be244ac7')
         self.assertEqual(certs[0].not_after, '2017-02-22T00:23:00Z')
         self.assertEqual(certs[0].created_at, '2017-02-08T16:02:37Z')
+        self.assertEqual(certs[0].type, 'custom')
+        self.assertEqual(certs[0].state, 'verified')
+
+        self.assertEqual(certs[1].id, 'ba9b9c18-6c59-46c2-99df-70da170a42ba')
+        self.assertEqual(certs[1].name, 'web-cert-02')
+        self.assertEqual(certs[1].sha1_fingerprint,
+            '479c82b5c63cb6d3e6fac4624d58a33b267e166c')
+        self.assertEqual(certs[1].not_after, '2018-06-07T17:44:12Z')
+        self.assertEqual(certs[1].created_at, '2018-03-09T18:44:11Z')
+        self.assertEqual(certs[1].type, 'lets_encrypt')
+        self.assertEqual(certs[1].state, 'pending')
 
     @responses.activate
     def test_get_all_volumes(self):
@@ -482,6 +513,46 @@ class TestManager(BaseTest):
 
         self.assertEqual(volumes[0].id, "506f78a4-e098-11e5-ad9f-000f53306ae1")
         self.assertEqual(volumes[0].region['slug'], 'nyc1')
+        self.assertEqual(volumes[0].filesystem_type, "ext4")
+        self.assertEqual(len(volumes), 2)
+
+    @responses.activate
+    def test_get_per_region_volumes(self):
+        data = json.loads(self.load_from_file('volumes/all.json'))
+        data["volumes"] = [
+            volume for volume in data["volumes"]
+            if volume["region"]["slug"] == "nyc1"]
+
+        url = self.base_url + "volumes?region=nyc1&per_page=200"
+        responses.add(responses.GET, url,
+                      match_querystring=True,
+                      body=json.dumps(data),
+                      status=200,
+                      content_type='application/json')
+        volumes = self.manager.get_all_volumes("nyc1")
+
+        self.assertEqual(volumes[0].id, "506f78a4-e098-11e5-ad9f-000f53306ae1")
+        self.assertEqual(volumes[0].region['slug'], 'nyc1')
+        self.assertEqual(len(volumes), 1)
+
+    @responses.activate
+    def test_get_named_volumes(self):
+        data = json.loads(self.load_from_file('volumes/all.json'))
+        data["volumes"] = [
+            volume for volume in data["volumes"]
+            if volume["name"] == "another-example"]
+
+        url = self.base_url + "volumes?name=another-example&per_page=200"
+        responses.add(responses.GET, url,
+                      match_querystring=True,
+                      body=json.dumps(data),
+                      status=200,
+                      content_type='application/json')
+        volumes = self.manager.get_all_volumes(name="another-example")
+
+        self.assertEqual(volumes[0].id, "2d2967ff-491d-11e6-860c-000f53315870")
+        self.assertEqual(volumes[0].name, 'another-example')
+        self.assertEqual(len(volumes), 1)
 
     @responses.activate
     def test_get_all_tags(self):
@@ -563,6 +634,51 @@ class TestManager(BaseTest):
         self.assertEqual(len(volume_snapshots[0].regions), 1)
 
     @responses.activate
+    def test_get_all_projects(self):
+        data = self.load_from_file('projects/all_projects_list.json')
+        url = self.base_url + 'projects'
+        responses.add(responses.GET, url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        all_projects = self.manager.get_all_projects()
+
+        self.assertEqual(len(all_projects), 1)
+        self.assertEqual(all_projects[0].id, "4e1bfbc3-dc3e-41f2-a18f-1b4d7ba71679")
+        self.assertEqual(all_projects[0].owner_uuid, "99525febec065ca37b2ffe4f852fd2b2581895e7")
+        self.assertEqual(all_projects[0].owner_id, 2)
+        self.assertEqual(all_projects[0].name, "my-web-api")
+        self.assertEqual(all_projects[0].description, "My website API")
+        self.assertEqual(all_projects[0].purpose, "Service or API")
+        self.assertEqual(all_projects[0].environment, "Production")
+        self.assertEqual(all_projects[0].is_default, False)
+        self.assertEqual(all_projects[0].created_at, "2018-09-27T20:10:35Z")
+        self.assertEqual(all_projects[0].updated_at, "2018-09-27T20:10:35Z")
+
+    @responses.activate
+    def test_get_default_project(self):
+        data = self.load_from_file('projects/default_project.json')
+        url = self.base_url + 'projects' + "/default"
+        responses.add(responses.GET, url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        default_project = self.manager.get_default_project()
+
+        self.assertEqual(default_project.id, "4e1bfbc3-dc3e-41f2-a18f-1b4d7ba71679")
+        self.assertEqual(default_project.owner_uuid, "99525febec065ca37b2ffe4f852fd2b2581895e7")
+        self.assertEqual(default_project.owner_id, 2)
+        self.assertEqual(default_project.name, "my-web-api")
+        self.assertEqual(default_project.description, "My website API")
+        self.assertEqual(default_project.purpose, "Service or API")
+        self.assertEqual(default_project.environment, "Production")
+        self.assertEqual(default_project.is_default, True)
+        self.assertEqual(default_project.created_at, "2018-09-27T20:10:35Z")
+        self.assertEqual(default_project.updated_at, "2018-09-27T20:10:35Z")
+
+    @responses.activate
     def test_get_firewalls(self):
         data = self.load_from_file('firewalls/all.json')
 
@@ -597,6 +713,62 @@ class TestManager(BaseTest):
         self.assertEqual(f.droplet_ids, [12345])
         self.assertEqual(f.tags, [])
         self.assertEqual(f.pending_changes, [])
+
+    @responses.activate
+    def test_get_vpc(self):
+        data = self.load_from_file('vpcs/single.json')
+        vpc_id = "5a4981aa-9653-4bd1-bef5-d6bff52042e4"
+        url = self.base_url + 'vpcs/' + vpc_id
+
+        responses.add(responses.GET,
+                      url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        vpc = self.manager.get_vpc(vpc_id)
+
+        self.assert_get_url_equal(responses.calls[0].request.url, url)
+        self.assertEqual(vpc.id, vpc_id)
+        self.assertEqual(vpc.name, 'my-new-vpc')
+        self.assertEqual(vpc.region, 'nyc1')
+        self.assertEqual(vpc.ip_range, '10.10.10.0/24')
+        self.assertEqual(vpc.description, '')
+        self.assertEqual(vpc.urn, 'do:vpc:5a4981aa-9653-4bd1-bef5-d6bff52042e4')
+        self.assertEqual(vpc.created_at, '2020-03-13T18:48:45Z')
+        self.assertEqual(vpc.default, False)
+
+    @responses.activate
+    def test_get_all_vpcs(self):
+        data = self.load_from_file('vpcs/list.json')
+
+        url = self.base_url + "vpcs"
+        responses.add(responses.GET,
+                      url,
+                      body=data,
+                      status=200,
+                      content_type='application/json')
+
+        vpcs = self.manager.get_all_vpcs()
+
+        self.assertEqual(vpcs[0].id, '5a4981aa-9653-4bd1-bef5-d6bff52042e4')
+        self.assertEqual(vpcs[0].name, 'my-new-vpc')
+        self.assertEqual(vpcs[0].created_at, '2020-03-13T19:20:47Z')
+        self.assertEqual(vpcs[0].region, 'nyc1')
+        self.assertEqual(vpcs[0].description, '')
+        self.assertEqual(vpcs[0].urn,
+            'do:vpc:5a4981aa-9653-4bd1-bef5-d6bff52042e4')
+        self.assertEqual(vpcs[0].ip_range, '10.10.10.0/24')
+        self.assertEqual(vpcs[0].default, False)
+        self.assertEqual(vpcs[1].id, 'e0fe0f4d-596a-465e-a902-571ce57b79fa')
+        self.assertEqual(vpcs[1].name, 'default-nyc1')
+        self.assertEqual(vpcs[1].description, '')
+        self.assertEqual(vpcs[1].urn,
+            'do:vpc:e0fe0f4d-596a-465e-a902-571ce57b79fa')
+        self.assertEqual(vpcs[1].ip_range, '10.102.0.0/20')
+        self.assertEqual(vpcs[1].created_at, '2020-03-13T19:29:20Z')
+        self.assertEqual(vpcs[1].region, 'nyc1')
+        self.assertEqual(vpcs[1].default, True)
 
 
 if __name__ == '__main__':

@@ -1,12 +1,22 @@
 {
-    "meta": {"total": 1},
-    "links": {},
-    "tags": [
-        {
-            "name": "test",
-            "resources": {
-                "droplets": {"count": 0, "last_tagged": null}
-            }
+  "tags": [
+    {
+      "name": "test",
+      "resources": {
+        "count": 0,
+        "droplets": {
+          "count": 0
+        },
+        "images": {
+          "count": 0
+        },
+        "volumes": {
+          "count": 0
+        },
+        "volume_snapshots": {
+          "count": 0
         }
-    ]
+      }
+    }
+  ]
 }

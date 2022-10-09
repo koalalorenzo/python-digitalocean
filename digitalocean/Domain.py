@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from .Record import Record
-from .baseapi import BaseAPI, GET, POST, DELETE
+from .baseapi import BaseAPI, GET, POST, DELETE, PUT
 
 
 class Domain(BaseAPI):
@@ -50,6 +50,10 @@ class Domain(BaseAPI):
                 priority: The priority of the host
                 port: The port that the service is accessible on
                 weight: The weight of records with the same priority
+                ttl: This value is the time to live for the record, in seconds.
+                flags: An unsigned integer between 0-255 used for CAA records.
+                tag: The parameter tag for CAA records. Valid values are "issue",
+                    "issuewild", or "iodef".
         """
         data = {
             "type": kwargs.get("type", None),
@@ -58,8 +62,56 @@ class Domain(BaseAPI):
         }
 
         #  Optional Args
-        if kwargs.get("priority", None):
+        if kwargs.get("priority", None) != None:
             data['priority'] = kwargs.get("priority", None)
+
+        if kwargs.get("port", None):
+            data['port'] = kwargs.get("port", None)
+
+        if kwargs.get("weight", None) != None:
+            data['weight'] = kwargs.get("weight", None)
+
+        if kwargs.get("ttl", None):
+            data['ttl'] = kwargs.get("ttl", 1800)
+
+        if kwargs.get("flags", None) != None:
+            data['flags'] = kwargs.get("flags", None)
+
+        if kwargs.get("tag", None):
+            data['tag'] = kwargs.get("tag", "issue")
+
+        if self.ttl:
+            data['ttl'] = self.ttl
+
+        return self.get_data(
+            "domains/%s/records" % self.name,
+            type=POST,
+            params=data
+        )
+
+    def update_domain_record(self, *args, **kwargs):
+        """
+            Args:
+                type: The record type (A, MX, CNAME, etc).
+                name: The host name, alias, or service being defined by the record
+                data: Variable data depending on record type.
+                priority: The priority of the host
+                port: The port that the service is accessible on
+                weight: The weight of records with the same priority
+        """
+        data = {
+            'id': kwargs.get("id", None),
+            'domain': kwargs.get("domain", None)
+        }
+
+        if kwargs.get("data", None):
+            data['data'] = kwargs.get("data", None)
+
+        if kwargs.get("type", None):
+            data['type'] = kwargs.get("type", None)
+
+        if kwargs.get("name", None):
+            data['name'] = kwargs.get("name", None)
 
         if kwargs.get("port", None):
             data['port'] = kwargs.get("port", None)
@@ -68,14 +120,25 @@ class Domain(BaseAPI):
             data['weight'] = kwargs.get("weight", None)
 
         return self.get_data(
-            "domains/%s/records" % self.name,
-            type=POST,
+            "domains/%s/records/%s" % (data['domain'], data['id']),
+            type=PUT,
             params=data
+        )
+
+    def delete_domain_record(self, *args, **kwargs):
+
+        data = {
+            'id': kwargs.get("id", None)
+        }
+
+        return self.get_data(
+            "domains/%s/records/%s" % (self.name, data['id']),
+            type=DELETE
         )
 
     def create(self):
         """
-            Create new doamin
+            Create new domain
         """
         # URL https://api.digitalocean.com/v2/domains
         data = {

@@ -7,7 +7,6 @@ from .baseapi import BaseAPI
 class Action(BaseAPI):
     def __init__(self, *args, **kwargs):
         self.id = None
-        self.token = None
         self.status = None
         self.type = None
         self.started_at = None
@@ -39,19 +38,22 @@ class Action(BaseAPI):
                 setattr(self, attr, action[attr])
 
     def load(self):
-        action = self.get_data(
-            "droplets/%s/actions/%s" % (
-                self.droplet_id,
-                self.id
+        if not self.droplet_id:
+            action = self.load_directly()
+        else:
+            action = self.get_data(
+                "droplets/%s/actions/%s" % (
+                    self.droplet_id,
+                    self.id
+                )
             )
-        )
         if action:
             action = action[u'action']
             # Loading attributes
             for attr in action.keys():
                 setattr(self, attr, action[attr])
 
-    def wait(self, update_every_seconds=1):
+    def wait(self, update_every_seconds=1, repeat=20):
         """
             Wait until the action is marked as completed or with an error.
             It will return True in case of success, otherwise False.
@@ -60,9 +62,13 @@ class Action(BaseAPI):
                 update_every_seconds - int : number of seconds to wait before
                     checking if the action is completed.
         """
+        counter = 0
         while self.status == u'in-progress':
             sleep(update_every_seconds)
             self.load()
+            counter += 1
+            if counter > repeat:
+                break
 
         return self.status == u'completed'
 

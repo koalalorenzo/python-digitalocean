@@ -11,7 +11,8 @@
 ## Table of Contents
 
 - [How to install](#how-to-install)
-- [Features](#features)  
+- [Configurations](#configurations)
+- [Features](#features)
 - [Examples](#examples)
    - [Listing the droplets](#listing-the-droplets)
    - [Listing the droplets by tags](#listing-the-droplets-by-tags)
@@ -19,10 +20,18 @@
    - [Shutdown all droplets](#shutdown-all-droplets)
    - [Creating a Droplet and checking its status](#creating-a-droplet-and-checking-its-status)
    - [Checking the status of the droplet](#checking-the-status-of-the-droplet)
+   - [Listing the Projects](#listing-the-projects)
+   - [Assign a resource for specific project](#assign-a-resource-for-specific-project)
+   - [List all the resources of a project](#list-all-the-resources-of-a-project)
    - [Add SSHKey into DigitalOcean Account](#add-sshkey-into-digitalocean-account)
    - [Creating a new droplet with all your SSH keys](#creating-a-new-droplet-with-all-your-ssh-keys)
    - [Creating a Firewall](#creating-a-firewall)
-- [Getting account requests/hour limits status](#getting-account-requests-hour-limits-status)
+   - [Listing the domains](#listing-the-domains)
+   - [Listing records of a domain](#listing-records-of-a-domain)
+   - [Creating a domain record](#creating-a-domain-record)
+   - [Update a domain record](#update-a-domain-record)
+- [Getting account requests/hour limits status](#getting-account-requestshour-limits-status)
+- [Session customization](#session-customization)
 - [Testing](#testing)
    - [Test using Docker](#test-using-docker)
    - [Testing using pytest manually](#testing-using-pytest-manually)
@@ -40,9 +49,26 @@ or via sources:
 
 **[⬆ back to top](#table-of-contents)**
 
+## Configurations
+
+Specify a custom provider using environment variable
+
+    export DIGITALOCEAN_END_POINT=http://example.com/
+
+Specify the DIGITALOCEAN_ACCESS_TOKEN using environment variable
+
+    export DIGITALOCEAN_ACCESS_TOKEN='xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+
+Note: Probably want to add the export line above to your `.bashrc` file.
+
+**[⬆ back to top](#table-of-contents)**
+
 ## Features
 python-digitalocean support all the features provided via digitalocean.com APIs, such as:
 
+* Get user's Projects
+* Assign a resource to a user project
+* List the resources of user's project
 * Get user's Droplets
 * Get user's Images (Snapshot and Backups)
 * Get public Images
@@ -58,7 +84,37 @@ python-digitalocean support all the features provided via digitalocean.com APIs,
 
 **[⬆ back to top](#table-of-contents)**
 
-## Examples
+## Examples
+
+### Listing the Projects
+
+This example shows how to list all the projects:
+
+```python
+import digitalocean
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+my_projects = manager.get_all_projects()
+print(my_projects)
+```
+
+### Assign a resource for specific project
+
+```python
+import digitalocean
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+my_projects = manager.get_all_projects()
+my_projects[0].assign_resource(["do:droplet:<Droplet Number>"])
+```
+
+### List all the resources of a project
+```python
+import digitalocean
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+my_projects = manager.get_all_projects()
+resources = my_projects[0].get_all_resources()
+print(resources)
+```
+
 ### Listing the droplets
 
 This example shows how to list all the active droplets:
@@ -68,6 +124,13 @@ import digitalocean
 manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
 my_droplets = manager.get_all_droplets()
 print(my_droplets)
+```
+
+This example shows how to specify custom provider's end point URL:
+
+```python
+import digitalocean
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake", end_point="http://example.com/")
 ```
 
 **[⬆ back to top](#table-of-contents)**
@@ -121,8 +184,8 @@ import digitalocean
 droplet = digitalocean.Droplet(token="secretspecialuniquesnowflake",
                                name='Example',
                                region='nyc2', # New York 2
-                               image='ubuntu-14-04-x64', # Ubuntu 14.04 x64
-                               size_slug='512mb',  # 512MB
+                               image='ubuntu-20-04-x64', # Ubuntu 20.04 x64
+                               size_slug='s-1vcpu-1gb',  # 1GB RAM, 1 vCPU
                                backups=True)
 droplet.create()
 ```
@@ -134,8 +197,43 @@ droplet.create()
 actions = droplet.get_actions()
 for action in actions:
     action.load()
-    # Once it shows complete, droplet is up and running
-    print action.status
+    # Once it shows "completed", droplet is up and running
+    print(action.status)
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Listing the Projects
+
+This example shows how to list all the projects:
+
+```python
+import digitalocean
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+my_projects = manager.get_all_projects()
+print(my_projects)
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Assign a resource for specific project
+
+```python
+import digitalocean
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+my_projects = manager.get_all_projects()
+my_projects[0].assign_resource(["do:droplet:<Droplet Number>"])
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### List all the resources of a project
+```python
+import digitalocean
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+my_projects = manager.get_all_projects()
+resources = my_projects[0].get_all_resources()
+print(resources)
 ```
 
 **[⬆ back to top](#table-of-contents)**
@@ -158,11 +256,11 @@ key.create()
 manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
 keys = manager.get_all_sshkeys()
 
-droplet = digitalocean.Droplet(token="secretspecialuniquesnowflake",
+droplet = digitalocean.Droplet(token=manager.token,
                                name='DropletWithSSHKeys',
                                region='ams3', # Amster
-                               image='ubuntu-14-04-x64', # Ubuntu 14.04 x64
-                               size_slug='512mb',  # 512MB
+                               image='ubuntu-20-04-x64', # Ubuntu 20.04 x64
+                               size_slug='s-1vcpu-1gb',  # 1GB RAM, 1 vCPU
                                ssh_keys=keys, #Automatic conversion
                                backups=False)
 droplet.create()
@@ -172,7 +270,7 @@ droplet.create()
 
 ### Creating a Firewall
 
-This example creates a firewall that only accepts inbound tcp traffic on port 80 from a specific load balancer and allows outbout tcp traffic on all ports to all addresses.
+This example creates a firewall that only accepts inbound tcp traffic on port 80 from a specific load balancer and allows outbound tcp traffic on all ports to all addresses.
 
 ```python
 from digitalocean import Firewall, InboundRule, OutboundRule, Destinations, Sources
@@ -198,6 +296,71 @@ firewall = Firewall(token="secretspecialuniquesnowflake",
                     outbound_rules=[outbound_rule],
                     droplet_ids=[8043964, 8043972])
 firewall.create()
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Listing the domains
+
+This example shows how to list all the active domains:
+
+```python
+import digitalocean
+TOKEN="secretspecialuniquesnowflake"
+manager = digitalocean.Manager(token=TOKEN)
+my_domains = manager.get_all_domains()
+print(my_domains)
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Listing records of a domain
+
+This example shows how to list all records of a domain:
+
+```python
+import digitalocean
+TOKEN="secretspecialuniquesnowflake"
+domain = digitalocean.Domain(token=TOKEN, name="example.com")
+records = domain.get_records()
+for r in records:
+    print(r.name, r.domain, r.type, r.data)
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Creating a domain record
+
+This example shows how to create new domain record (sub.example.com):
+
+```python
+import digitalocean
+TOKEN="secretspecialuniquesnowflake"
+domain = digitalocean.Domain(token=TOKEN, name="example.com")
+new_record =  domain.create_new_domain_record(
+                type='A',
+                name='sub',
+                data='93.184.216.34'
+                )
+print(new_record)
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Update a domain record
+
+This example shows how to modify an existing domain record (sub.example.com):
+
+```python
+import digitalocean
+TOKEN="secretspecialuniquesnowflake"
+domain = digitalocean.Domain(token=TOKEN, name="example.com")
+records = domain.get_records()
+id = None
+for r in records:
+    if r.name == 'sub':
+        r.data = '1.1.1.1'
+        r.save()
 ```
 
 **[⬆ back to top](#table-of-contents)**
@@ -237,6 +400,48 @@ domains = manager.get_all_domains()
 
 print(manager.ratelimit_limit)
 ```
+
+**[⬆ back to top](#table-of-contents)**
+
+## Session customization
+
+You can take advantage of the [requests](http://docs.python-requests.org/en/master/) library and configure the HTTP client under python-digitalocean.
+
+### Configure retries in case of connection error
+
+This example shows how to configure your client to retry 3 times in case of `ConnectionError`:
+```python
+import digitalocean
+import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
+
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+retry = Retry(connect=3)
+adapter = HTTPAdapter(max_retries=retry)
+manager._session.mount('https://', adapter)
+```
+
+See [`Retry`](https://urllib3.readthedocs.io/en/latest/reference/urllib3.util.html#urllib3.util.retry.Retry) object reference to get more details about all retries options.
+
+### Configure a hook on specified answer
+
+This example shows how to launch custom actions if a HTTP 500 occurs:
+
+```python
+import digitalocean
+
+def handle_response(response, *args, **kwargs):
+    if response.status_code == 500:
+        # Make a lot things from the raw response
+        pass
+    return response
+
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+manager._session.hooks['response'].append(handle_response)
+```
+
+See [event hooks documentation](http://docs.python-requests.org/en/master/user/advanced/?highlight=HTTPAdapter#event-hooks) to get more details about this feature.
 
 **[⬆ back to top](#table-of-contents)**
 

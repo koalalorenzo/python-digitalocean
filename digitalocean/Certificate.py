@@ -10,13 +10,20 @@ class Certificate(BaseAPI):
 
     Args:
         name (str): A name for the Certificate
-        private_key (str): The contents of a PEM-formatted private-key
-            corresponding to the SSL certificate
-        leaf_certificate (str): The contents of a PEM-formatted public SSL
-            certificate
-        certificate_chain (str): The full PEM-formatted trust chain between the
-            certificate authority's certificate and your domain's SSL
-            certificate
+        private_key (str, optional): The contents of a PEM-formatted
+            private-key corresponding to the SSL certificate. Only used
+            when uploading a custom certificate.
+        leaf_certificate (str, optional): The contents of a PEM-formatted
+            public SSL certificate. Only used when uploading a custom
+            certificate.
+        certificate_chain (str, optional): The full PEM-formatted trust chain
+            between the certificate authority's certificate and your domain's
+            SSL certificate. Only used when uploading a custom certificate.
+        dns_names (:obj:`str`): A list of fully qualified domain names (FQDNs)
+            for which the certificate will be issued by Let's Encrypt
+        type (str): Specifies the type of certificate to be created. The value
+            should be "custom" for a user-uploaded certificate or
+            "lets_encrypt" for one automatically generated with Let's Encrypt.
 
     Attributes returned by API:
         name (str): The name of the Certificate
@@ -27,6 +34,13 @@ class Certificate(BaseAPI):
             generated from its SHA-1 fingerprint
         created_at (str): A string that represents when the Certificate was
             created
+        dns_names (:obj:`str`): A list of fully qualified domain names (FQDNs)
+            for which a Let's Encrypt generated certificate is issued.
+        type (str): Specifies the type of certificate. The value will be
+            "custom" for a user-uploaded certificate or "lets_encrypt" for one
+            automatically generated with Let's Encrypt.
+        state (str): Represents the current state of the certificate. It may be
+            "pending", "verified", or "errored".
     """
     def __init__(self, *args, **kwargs):
         self.id = ""
@@ -37,6 +51,9 @@ class Certificate(BaseAPI):
         self.not_after = None
         self.sha1_fingerprint = None
         self.created_at = None
+        self.dns_names = []
+        self.type = None
+        self.state = None
 
         super(Certificate, self).__init__(*args, **kwargs)
 
@@ -69,18 +86,23 @@ class Certificate(BaseAPI):
         """
         params = {
             "name": self.name,
+            "type": self.type,
+            "dns_names": self.dns_names,
             "private_key": self.private_key,
             "leaf_certificate": self.leaf_certificate,
             "certificate_chain": self.certificate_chain
         }
 
-        data = self.get_data("certificates/", type=POST, params=params)
+        data = self.get_data("certificates", type=POST, params=params)
 
         if data:
             self.id = data['certificate']['id']
             self.not_after = data['certificate']['not_after']
             self.sha1_fingerprint = data['certificate']['sha1_fingerprint']
             self.created_at = data['certificate']['created_at']
+            self.type = data['certificate']['type']
+            self.dns_names = data['certificate']['dns_names']
+            self.state = data['certificate']['state']
 
         return self
 

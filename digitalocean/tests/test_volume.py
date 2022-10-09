@@ -45,12 +45,67 @@ class TestVolume(BaseTest):
         volume = digitalocean.Volume(droplet_id=12345,
                                      region='nyc1',
                                      size_gigabytes=100,
+                                     filesystem_type='ext4',
+                                     filesystem_label='label',
                                      token=self.token).create()
 
         self.assertEqual(responses.calls[0].request.url,
                          self.base_url + "volumes/")
         self.assertEqual(volume.id, "506f78a4-e098-11e5-ad9f-000f53306ae1")
         self.assertEqual(volume.size_gigabytes, 100)
+        self.assertEqual(volume.filesystem_type, "ext4")
+
+    @responses.activate
+    def test_create_with_tags(self):
+        data = self.load_from_file('volumes/single_with_tags.json')
+
+        url = self.base_url + "volumes/"
+        responses.add(responses.POST,
+                      url,
+                      body=data,
+                      status=201,
+                      content_type='application/json')
+
+        volume = digitalocean.Volume(droplet_id=12345,
+                                     region='nyc1',
+                                     size_gigabytes=100,
+                                     filesystem_type='ext4',
+                                     filesystem_label='label',
+                                     tags=['tag1', 'tag2'],
+                                     token=self.token).create()
+
+        self.assertEqual(volume.tags, ['tag1', 'tag2'])
+
+        self.assertEqual(responses.calls[0].request.url,
+                         self.base_url + "volumes/")
+        self.assertEqual(volume.id, "506f78a4-e098-11e5-ad9f-000f53306ae1")
+        self.assertEqual(volume.size_gigabytes, 100)
+        self.assertEqual(volume.filesystem_type, "ext4")
+
+    @responses.activate
+    def test_create_from_snapshot(self):
+        data = self.load_from_file('volumes/single.json')
+
+        url = self.base_url + "volumes/"
+        responses.add(responses.POST,
+                      url,
+                      body=data,
+                      status=201,
+                      content_type='application/json')
+
+        volume = digitalocean.Volume(droplet_id=12345,
+                                     snapshot_id='234234qwer',
+                                     region='nyc1',
+                                     size_gigabytes=100,
+                                     filesystem_type='ext4',
+                                     filesystem_label='label',
+                                     token=self.token).create()
+
+        self.assertEqual(responses.calls[0].request.url,
+                         self.base_url + "volumes/")
+        self.assertEqual(volume.id, "506f78a4-e098-11e5-ad9f-000f53306ae1")
+        self.assertEqual(volume.size_gigabytes, 100)
+        self.assertEqual(volume.filesystem_type, "ext4")
 
     @responses.activate
     def test_destroy(self):

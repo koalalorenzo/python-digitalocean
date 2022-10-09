@@ -41,3 +41,6 @@ MANIFEST
 .cache
 
 .venv
+
+*.sw[pon]
+.eggs

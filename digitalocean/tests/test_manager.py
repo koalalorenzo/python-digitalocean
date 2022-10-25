@@ -536,6 +536,25 @@ class TestManager(BaseTest):
         self.assertEqual(len(volumes), 1)
 
     @responses.activate
+    def test_get_named_volumes(self):
+        data = json.loads(self.load_from_file('volumes/all.json'))
+        data["volumes"] = [
+            volume for volume in data["volumes"]
+            if volume["name"] == "another-example"]
+
+        url = self.base_url + "volumes?name=another-example&per_page=200"
+        responses.add(responses.GET, url,
+                      match_querystring=True,
+                      body=json.dumps(data),
+                      status=200,
+                      content_type='application/json')
+        volumes = self.manager.get_all_volumes(name="another-example")
+
+        self.assertEqual(volumes[0].id, "2d2967ff-491d-11e6-860c-000f53315870")
+        self.assertEqual(volumes[0].name, 'another-example')
+        self.assertEqual(len(volumes), 1)
+
+    @responses.activate
     def test_get_all_tags(self):
         data = self.load_from_file('tags/all.json')
 

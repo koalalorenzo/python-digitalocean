@@ -344,14 +344,24 @@ class Manager(BaseAPI):
             for snapshot in data['snapshots']
         ]
 
-    def get_all_volumes(self, region=None):
+    def get_all_volumes(self, region=None, name=None):
         """
             This function returns a list of Volume objects.
+
+            Args:
+                region (str, optional): Restrict results to volumes \
+                    available in a specific region. e.g. nyc1
+                name (str, optional): List volumes on your account that \
+                    match a specified name. e.g. example-volume
         """
+        url = "volumes"
+        parameters = []
         if region:
-            url = "volumes?region={}".format(region)
-        else:
-            url = "volumes"
+            parameters.append("region={}".format(region))
+        if name:
+            parameters.append("name={}".format(name))
+        if len(parameters) > 0:
+            url += "?" + "&".join(parameters)
         data = self.get_data(url)
         volumes = list()
         for jsoned in data['volumes']:
@@ -365,36 +375,6 @@ class Manager(BaseAPI):
             Returns a Volume object by its ID.
         """
         return Volume.get_object(api_token=self.tokens, volume_id=volume_id)
-
-    def get_all_projects(self):
-        """
-            All the projects of the account
-        """
-        data = self.get_data("projects")
-        projects = list()
-        for jsoned in data['projects']:
-            project = Project(**jsoned)
-            project.token = self.token
-            projects.append(project)
-        return projects
-
-    def get_project(self, project_id):
-        """
-            Return a Project by its ID.
-        """
-        return Project.get_object(
-            api_token=self.token,
-            project_id=project_id,
-        )
-
-    def get_default_project(self):
-        """
-            Return default project of the account
-        """
-        return Project.get_object(
-            api_token=self.token,
-            project_id="default",
-        )
 
     def get_all_firewalls(self):
         """

@@ -1,151 +1,82 @@
 {
   "load_balancers": [
-  {
-    "id": "4de2ac7b-495b-4884-9e69-1050d6793cd4",
-    "name": "example-lb-02",
-    "ip": "104.131.186.248",
-    "algorithm": "round_robin",
-    "status": "new",
-    "created_at": "2017-02-01T22:22:58Z",
-    "forwarding_rules": [
-      {
-        "entry_protocol": "http",
-        "entry_port": 80,
-        "target_protocol": "http",
-        "target_port": 80,
-        "certificate_id": "",
-        "tls_passthrough": false
+    {
+      "id": "4de7ac8b-495b-4884-9a69-1050c6793cd6",
+      "name": "example-lb-01",
+      "ip": "104.131.186.241",
+      "size": "lb-small",
+      "algorithm": "round_robin",
+      "status": "new",
+      "created_at": "2017-02-01T22:22:58Z",
+      "forwarding_rules": [
+        {
+          "entry_protocol": "http",
+          "entry_port": 80,
+          "target_protocol": "http",
+          "target_port": 80,
+          "certificate_id": "",
+          "tls_passthrough": false
+        },
+        {
+          "entry_protocol": "https",
+          "entry_port": 444,
+          "target_protocol": "https",
+          "target_port": 443,
+          "certificate_id": "",
+          "tls_passthrough": true
+        }
+      ],
+      "health_check": {
+        "protocol": "http",
+        "port": 80,
+        "path": "/",
+        "check_interval_seconds": 10,
+        "response_timeout_seconds": 5,
+        "healthy_threshold": 5,
+        "unhealthy_threshold": 3
       },
-      {
-        "entry_protocol": "https",
-        "entry_port": 444,
-        "target_protocol": "https",
-        "target_port": 443,
-        "certificate_id": "",
-        "tls_passthrough": true
-      }
-    ],
-    "health_check": {
-      "protocol": "http",
-      "port": 80,
-      "path": "/",
-      "check_interval_seconds": 10,
-      "response_timeout_seconds": 5,
-      "healthy_threshold": 5,
-      "unhealthy_threshold": 3
-    },
-    "sticky_sessions": {
-      "type": "none"
-    },
-    "region": {
-      "name": "New York 3",
-      "slug": "nyc3",
-      "sizes": [
-        "512mb",
-        "1gb",
-        "2gb",
-        "4gb",
-        "8gb",
-        "16gb",
-        "m-16gb",
-        "32gb",
-        "m-32gb",
-        "48gb",
-        "m-64gb",
-        "64gb",
-        "m-128gb",
-        "m-224gb"
-      ],
-      "features": [
-        "private_networking",
-        "backups",
-        "ipv6",
-        "metadata",
-        "install_agent"
-      ],
-      "available": true
-    },
-    "tag": "web",
-    "droplet_ids": [
-      3164444,
-      3164445
-    ],
-    "redirect_http_to_https": false,
-    "vpc_uuid": "08187eaa-90eb-40d6-a8f0-0222b28ded72"
-  },
-  {
-    "id": "4de7ac8b-495b-4884-9a69-1050c6793cd6",
-    "name": "example-lb-01",
-    "ip": "104.131.186.241",
-    "algorithm": "round_robin",
-    "status": "new",
-    "created_at": "2017-02-01T22:22:58Z",
-    "forwarding_rules": [
-      {
-        "entry_protocol": "http",
-        "entry_port": 80,
-        "target_protocol": "http",
-        "target_port": 80,
-        "certificate_id": "",
-        "tls_passthrough": false
+      "sticky_sessions": {
+        "type": "none"
       },
-      {
-        "entry_protocol": "https",
-        "entry_port": 444,
-        "target_protocol": "https",
-        "target_port": 443,
-        "certificate_id": "",
-        "tls_passthrough": true
-      }
-    ],
-    "health_check": {
-      "protocol": "http",
-      "port": 80,
-      "path": "/",
-      "check_interval_seconds": 10,
-      "response_timeout_seconds": 5,
-      "healthy_threshold": 5,
-      "unhealthy_threshold": 3
-    },
-    "sticky_sessions": {
-      "type": "none"
-    },
-    "region": {
-      "name": "New York 3",
-      "slug": "nyc3",
-      "sizes": [
-        "512mb",
-        "1gb",
-        "2gb",
-        "4gb",
-        "8gb",
-        "16gb",
-        "m-16gb",
-        "32gb",
-        "m-32gb",
-        "48gb",
-        "m-64gb",
-        "64gb",
-        "m-128gb",
-        "m-224gb"
+      "region": {
+        "name": "New York 3",
+        "slug": "nyc3",
+        "sizes": [
+          "s-1vcpu-1gb",
+          "s-1vcpu-2gb",
+          "s-1vcpu-3gb",
+          "s-2vcpu-2gb",
+          "s-3vcpu-1gb",
+          "s-2vcpu-4gb",
+          "s-4vcpu-8gb",
+          "s-6vcpu-16gb",
+          "s-8vcpu-32gb",
+          "s-12vcpu-48gb",
+          "s-16vcpu-64gb",
+          "s-20vcpu-96gb",
+          "s-24vcpu-128gb",
+          "s-32vcpu-192gb"
+        ],
+        "features": [
+          "private_networking",
+          "backups",
+          "ipv6",
+          "metadata",
+          "install_agent"
+        ],
+        "available": true
+      },
+      "tag": "",
+      "droplet_ids": [
+        3164444,
+        3164445
       ],
-      "features": [
-        "private_networking",
-        "backups",
-        "ipv6",
-        "metadata",
-        "install_agent"
-      ],
-      "available": true
-    },
-    "tag": "",
-    "droplet_ids": [
-      3164444,
-      3164445
-    ],
-    "redirect_http_to_https": false,
-    "vpc_uuid": "08187eaa-90eb-40d6-a8f0-0222b28ded72"
-  }],
+      "redirect_http_to_https": false,
+      "enable_proxy_protocol": false,
+      "enable_backend_keepalive": false,
+      "vpc_uuid": "c33931f2-a26a-4e61-b85c-4e95a2ec431b"
+    }
+  ],
   "links": {
   },
   "meta": {

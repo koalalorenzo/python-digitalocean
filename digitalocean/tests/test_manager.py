@@ -451,10 +451,10 @@ class TestManager(BaseTest):
         lbs = self.manager.get_all_load_balancers()
         resp_rules = lbs[0].forwarding_rules[0]
 
-        self.assertEqual(lbs[0].id, '4de2ac7b-495b-4884-9e69-1050d6793cd4')
+        self.assertEqual(lbs[0].id, '4de7ac8b-495b-4884-9a69-1050c6793cd6')
         self.assertEqual(lbs[0].algorithm, 'round_robin')
-        self.assertEqual(lbs[0].ip, '104.131.186.248')
-        self.assertEqual(lbs[0].name, 'example-lb-02')
+        self.assertEqual(lbs[0].ip, '104.131.186.241')
+        self.assertEqual(lbs[0].name, 'example-lb-01')
         self.assertEqual(len(lbs[0].forwarding_rules), 2)
         self.assertEqual(resp_rules.entry_protocol, 'http')
         self.assertEqual(resp_rules.entry_port, 80)
@@ -464,7 +464,7 @@ class TestManager(BaseTest):
         self.assertEqual(lbs[0].health_check.protocol, 'http')
         self.assertEqual(lbs[0].health_check.port, 80)
         self.assertEqual(lbs[0].sticky_sessions.type, 'none')
-        self.assertEqual(lbs[0].tag, 'web')
+        self.assertEqual(lbs[0].tag, '')
         self.assertEqual(lbs[0].droplet_ids, [3164444, 3164445])
 
     @responses.activate
@@ -533,6 +533,25 @@ class TestManager(BaseTest):
 
         self.assertEqual(volumes[0].id, "506f78a4-e098-11e5-ad9f-000f53306ae1")
         self.assertEqual(volumes[0].region['slug'], 'nyc1')
+        self.assertEqual(len(volumes), 1)
+
+    @responses.activate
+    def test_get_named_volumes(self):
+        data = json.loads(self.load_from_file('volumes/all.json'))
+        data["volumes"] = [
+            volume for volume in data["volumes"]
+            if volume["name"] == "another-example"]
+
+        url = self.base_url + "volumes?name=another-example&per_page=200"
+        responses.add(responses.GET, url,
+                      match_querystring=True,
+                      body=json.dumps(data),
+                      status=200,
+                      content_type='application/json')
+        volumes = self.manager.get_all_volumes(name="another-example")
+
+        self.assertEqual(volumes[0].id, "2d2967ff-491d-11e6-860c-000f53315870")
+        self.assertEqual(volumes[0].name, 'another-example')
         self.assertEqual(len(volumes), 1)
 
     @responses.activate

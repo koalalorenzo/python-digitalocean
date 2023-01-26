@@ -120,5 +120,65 @@ class TestFirewall(BaseTest):
 
         self.assertEqual(responses.calls[0].request.url, url)
 
+    @responses.activate
+    def test_add_inbound(self):
+        data = self.load_from_file('firewalls/rules.json')
+
+        url = self.base_url + "firewalls/12345/rules"
+        responses.add(responses.POST, url,
+                      body=data,
+                      status=204,
+                      content_type='application/json')
+
+        rule = json.loads(data)["rules"][0]
+        self.firewall.add_inbound([rule])
+
+        self.assertEqual(responses.calls[0].request.url, url)
+
+    @responses.activate
+    def test_add_outbound(self):
+        data = self.load_from_file('firewalls/rules.json')
+
+        url = self.base_url + "firewalls/12345/rules"
+        responses.add(responses.POST, url,
+                      body=data,
+                      status=204,
+                      content_type='application/json')
+
+        rule = json.loads(data)["rules"][0]
+        self.firewall.add_outbound([rule])
+
+        self.assertEqual(responses.calls[0].request.url, url)
+
+    @responses.activate
+    def test_remove_inbound(self):
+        data = self.load_from_file('firewalls/rules.json')
+
+        url = self.base_url + "firewalls/12345/rules"
+        responses.add(responses.DELETE, url,
+                      body=data,
+                      status=204,
+                      content_type='application/json')
+
+        rule = json.loads(data)["rules"][0]
+        self.firewall.remove_inbound([rule])
+
+        self.assertEqual(responses.calls[0].request.url, url)
+
+    @responses.activate
+    def test_remove_outbound(self):
+        data = self.load_from_file('firewalls/rules.json')
+
+        url = self.base_url + "firewalls/12345/rules"
+        responses.add(responses.DELETE, url,
+                      body=data,
+                      status=204,
+                      content_type='application/json')
+
+        rule = json.loads(data)["rules"][0]
+        self.firewall.remove_outbound([rule])
+
+        self.assertEqual(responses.calls[0].request.url, url)
+
 if __name__ == '__main__':
     unittest.main()

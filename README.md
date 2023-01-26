@@ -21,7 +21,7 @@
    - [Creating a Droplet and checking its status](#creating-a-droplet-and-checking-its-status)
    - [Checking the status of the droplet](#checking-the-status-of-the-droplet)
    - [Listing the Projects](#listing-the-projects)
-   - [Assign a resource for specific project](#assigne-a-resource-for-specific-project)
+   - [Assign a resource for specific project](#assign-a-resource-for-specific-project)
    - [List all the resources of a project](#list-all-the-resources-of-a-project)
    - [Add SSHKey into DigitalOcean Account](#add-sshkey-into-digitalocean-account)
    - [Creating a new droplet with all your SSH keys](#creating-a-new-droplet-with-all-your-ssh-keys)
@@ -84,7 +84,37 @@ python-digitalocean support all the features provided via digitalocean.com APIs,
 
 **[⬆ back to top](#table-of-contents)**
 
-## Examples
+## Examples
+
+### Listing the Projects
+
+This example shows how to list all the projects:
+
+```python
+import digitalocean
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+my_projects = manager.get_all_projects()
+print(my_projects)
+```
+
+### Assign a resource for specific project
+
+```python
+import digitalocean
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+my_projects = manager.get_all_projects()
+my_projects[0].assign_resource(["do:droplet:<Droplet Number>"])
+```
+
+### List all the resources of a project
+```python
+import digitalocean
+manager = digitalocean.Manager(token="secretspecialuniquesnowflake")
+my_projects = manager.get_all_projects()
+resources = my_projects[0].get_all_resources()
+print(resources)
+```
+
 ### Listing the droplets
 
 This example shows how to list all the active droplets:
@@ -240,7 +270,7 @@ droplet.create()
 
 ### Creating a Firewall
 
-This example creates a firewall that only accepts inbound tcp traffic on port 80 from a specific load balancer and allows outbout tcp traffic on all ports to all addresses.
+This example creates a firewall that only accepts inbound tcp traffic on port 80 from a specific load balancer and allows outbound tcp traffic on all ports to all addresses.
 
 ```python
 from digitalocean import Firewall, InboundRule, OutboundRule, Destinations, Sources
@@ -319,7 +349,7 @@ print(new_record)
 
 ### Update a domain record
 
-This example shows how to create new domain record (sub.example.com):
+This example shows how to modify an existing domain record (sub.example.com):
 
 ```python
 import digitalocean
@@ -328,7 +358,7 @@ domain = digitalocean.Domain(token=TOKEN, name="example.com")
 records = domain.get_records()
 id = None
 for r in records:
-    if r.name == 'usb':
+    if r.name == 'sub':
         r.data = '1.1.1.1'
         r.save()
 ```
@@ -375,7 +405,7 @@ print(manager.ratelimit_limit)
 
 ## Session customization
 
-You can take advandtage of the [requests](http://docs.python-requests.org/en/master/) library and configure the HTTP client under python-digitalocean.
+You can take advantage of the [requests](http://docs.python-requests.org/en/master/) library and configure the HTTP client under python-digitalocean.
 
 ### Configure retries in case of connection error
 

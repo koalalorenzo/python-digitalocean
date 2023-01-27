@@ -19,7 +19,7 @@
    - [Add a tag to a droplet](#add-a-tag-to-a-droplet)
    - [Shutdown all droplets](#shutdown-all-droplets)
    - [Creating a Droplet and checking its status](#creating-a-droplet-and-checking-its-status)
-   - [Creating a Reserved IP and Deleting it](#creating-reserved-ip-and-delete-it)
+   - [Creating a Reserved IP and Deleting it](#create-or-delete-reserved-ip)
    - [Checking the status of the droplet](#checking-the-status-of-the-droplet)
    - [Listing the Projects](#listing-the-projects)
    - [Assign a resource for specific project](#assign-a-resource-for-specific-project)

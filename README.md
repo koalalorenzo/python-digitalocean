@@ -202,13 +202,13 @@ import digitalocean
 
 floating_ip = digitalocean.FloatingIP(region_slug='nyc2', token="secretspecialuniquesnowflake")
          
-        # To Create IP
-        static_ip = floating_ip.reserve()
-        print(static_ip)
+# To Create IP
+static_ip = floating_ip.reserve()
+print(static_ip)
 
-        # To Delete IP
-        release_static_ip = floating_ip.destroy()
-        print(release_static_ip) # returns True on success
+# To Delete IP
+release_static_ip = floating_ip.destroy()
+print(release_static_ip) # returns True on success
         
 ```
 

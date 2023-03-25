@@ -19,6 +19,7 @@
    - [Add a tag to a droplet](#add-a-tag-to-a-droplet)
    - [Shutdown all droplets](#shutdown-all-droplets)
    - [Creating a Droplet and checking its status](#creating-a-droplet-and-checking-its-status)
+   - [Creating a Reserved IP and Deleting it](#create-or-delete-reserved-ip)
    - [Checking the status of the droplet](#checking-the-status-of-the-droplet)
    - [Listing the Projects](#listing-the-projects)
    - [Assign a resource for specific project](#assign-a-resource-for-specific-project)
@@ -74,6 +75,7 @@ python-digitalocean support all the features provided via digitalocean.com APIs,
 * Get public Images
 * Get Droplet's event status
 * Create and Remove a Droplet
+* Create or Delete Reserve IP
 * Create, Add and Remove Tags from Droplets
 * Resize a Droplet
 * Shutdown, restart and boot a Droplet
@@ -188,6 +190,26 @@ droplet = digitalocean.Droplet(token="secretspecialuniquesnowflake",
                                size_slug='s-1vcpu-1gb',  # 1GB RAM, 1 vCPU
                                backups=True)
 droplet.create()
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+### Create or Delete Reserved IP
+
+This example shows how to create a reserved ip in specific region and delete it
+```python
+import digitalocean
+
+floating_ip = digitalocean.FloatingIP(region_slug='nyc2', token="secretspecialuniquesnowflake")
+         
+# To Create IP
+static_ip = floating_ip.reserve()
+print(static_ip)
+
+# To Delete IP
+release_static_ip = floating_ip.destroy()
+print(release_static_ip) # returns True on success
+        
 ```
 
 **[⬆ back to top](#table-of-contents)**

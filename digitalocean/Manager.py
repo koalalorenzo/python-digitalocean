@@ -24,6 +24,8 @@ from .Tag import Tag
 from .Volume import Volume
 from .VPC import VPC
 from .Project import Project
+from .CDNEndpoint import CDNEndpoint
+
 
 class Manager(BaseAPI):
     def __init__(self, *args, **kwargs):
@@ -452,6 +454,27 @@ class Manager(BaseAPI):
         return Project.get_object(
             api_token=self.token,
             project_id="default",
+        )
+
+    def get_all_cdn_endpoints(self):
+        """
+            All the projects of the account
+        """
+        data = self.get_data("cdn/endpoints")
+        cdn_endpoints = list()
+        for jsoned in data['endpoints']:
+            cdn_endpoint = CDNEndpoint(**jsoned)
+            cdn_endpoint.token = self.token
+            cdn_endpoints.append(cdn_endpoint)
+        return cdn_endpoints
+
+    def get_cdn_endpoint(self, cdn_endpoint_id):
+        """
+            Return a Project by its ID.
+        """
+        return CDNEndpoint.get_object(
+            api_token=self.token,
+            cdn_endpoint_id=cdn_endpoint_id,
         )
 
     def __str__(self):

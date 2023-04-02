@@ -8,6 +8,7 @@ from .baseapi import BaseAPI
 from .Account import Account
 from .Action import Action
 from .Balance import Balance
+from .Billing import Billing
 from .Certificate import Certificate
 from .Domain import Domain
 from .Droplet import Droplet
@@ -42,6 +43,18 @@ class Manager(BaseAPI):
             Returns a Balance object.
         """
         return Balance.get_object(api_token=self.token)
+
+    def get_billing_history(self):
+        """
+            Billing history of the account
+        """
+        data = self.get_data("customers/my/billing_history")
+        billing_history = list()
+        for jsoned in data['billing_history']:
+            billing = Billing(**jsoned)
+            billing.token = self.token
+            billing_history.append(billing)
+        return billing_history
 
     def get_all_regions(self):
         """

@@ -232,7 +232,7 @@ class BaseAPI(object):
             params.setdefault("per_page", 200)
 
         req = self.__perform_request(url, type, params)
-        if req.status_code == 204:
+        if req.status_code in (202, 204):
             return True
 
         if req.status_code == 404:

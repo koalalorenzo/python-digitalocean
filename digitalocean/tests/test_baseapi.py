@@ -1,5 +1,7 @@
 import os
 
+from requests.structures import CaseInsensitiveDict
+
 from digitalocean.baseapi import BaseAPI
 try:
     import mock
@@ -83,3 +85,37 @@ class TestBaseAPI(BaseTest):
             mock_5xx_response.return_value.status_code = random.randint(500, 599) # random 5xx status code
 
             self.assertRaises(requests.HTTPError, self.manager.get_data, 'test')
+
+    def test_get_data_rate_limit_case_error(self):
+        with mock.patch.object(self.manager, '_BaseAPI__perform_request') as mock_429:
+            mock_429.return_value = requests.Response()
+            mock_429.return_value._content = b''
+            mock_429.return_value.status_code = 429
+            mock_429.return_value.headers = CaseInsensitiveDict(data={
+                'ratelimit-limit': "1200",
+                'ratelimit-remaining': "1193",
+                'rateLimit-reset': "1402425459"
+            })
+
+            self.assertRaises(requests.HTTPError, self.manager.get_data, 'test')
+
+            self.assertEqual(self.manager.ratelimit_limit, 1200)
+            self.assertEqual(self.manager.ratelimit_remaining, 1193)
+            self.assertEqual(self.manager.ratelimit_reset, 1402425459)
+
+    def test_get_data_rate_limit_case_ok(self):
+        with mock.patch.object(self.manager, '_BaseAPI__perform_request') as mock_200:
+            mock_200.return_value = requests.Response()
+            mock_200.return_value._content = b'{}'
+            mock_200.return_value.status_code = 200
+            mock_200.return_value.headers = CaseInsensitiveDict(data={
+                'ratelimit-limit': "1200",
+                'ratelimit-remaining': "1193",
+                'rateLimit-reset': "1402425459"
+            })
+
+            self.manager.get_data('test')
+
+            self.assertEqual(self.manager.ratelimit_limit, 1200)
+            self.assertEqual(self.manager.ratelimit_remaining, 1193)
+            self.assertEqual(self.manager.ratelimit_reset, 1402425459)

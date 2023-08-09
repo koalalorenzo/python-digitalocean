@@ -178,11 +178,14 @@ class BaseAPI(object):
 
     def __init_ratelimit(self, headers):
         # Add the account requests/hour limit
-        self.ratelimit_limit = headers.get('Ratelimit-Limit', None)
+        ratelimit_limit = headers.get('Ratelimit-Limit', None)
+        self.ratelimit_limit = int(ratelimit_limit) if ratelimit_limit is not None else None
         # Add the account requests remaining
-        self.ratelimit_remaining = headers.get('Ratelimit-Remaining', None)
+        ratelimit_remaining = headers.get('Ratelimit-Remaining', None)
+        self.ratelimit_remaining = int(ratelimit_remaining) if ratelimit_remaining is not None else None
         # Add the account requests limit reset time
-        self.ratelimit_reset = headers.get('Ratelimit-Reset', None)
+        ratelimit_reset = headers.get('Ratelimit-Reset', None)
+        self.ratelimit_reset = int(ratelimit_reset) if ratelimit_reset is not None else None
 
     @property
     def token(self):
@@ -238,6 +241,9 @@ class BaseAPI(object):
         if req.status_code == 404:
             raise NotFoundError()
 
+        # init request limits
+        self.__init_ratelimit(req.headers)
+
         if len(req.content) == 0:
             # Raise an error if the request failed and there is no response content
             req.raise_for_status()
@@ -253,9 +259,6 @@ class BaseAPI(object):
         if not req.ok:
             msg = [data[m] for m in ("id", "message") if m in data][1]
             raise DataReadError(msg)
-
-        # init request limits
-        self.__init_ratelimit(req.headers)
 
         # If there are more elements available (total) than the elements per
         # page, try to deal with pagination. Note: Breaking the logic on
